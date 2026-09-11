@@ -111,21 +111,21 @@ def render_pattern(pattern: dict[str, object]) -> None:
         ]
     )
 
-    st.write(pattern["description"])
+    st.write(str(pattern["description"]))
 
     columns = st.columns(3)
 
     with columns[0]:
         st.caption("Proposed destination")
-        st.write(pattern["destination"])
+        st.write(str(pattern["destination"]))
 
     with columns[1]:
         st.caption("Proposed owner")
-        st.write(pattern["owner"])
+        st.write(str(pattern["owner"]))
 
     with columns[2]:
         st.caption("Pattern direction")
-        st.write(pattern["trend"])
+        st.write(str(pattern["trend"]))
 
     with st.expander("View supporting evidence"):
         for evidence in pattern["evidence"]:
@@ -155,31 +155,6 @@ render_notice(
     "conversation as a complete conclusion."
 )
 
-metric_columns = st.columns(4)
-
-with metric_columns[0]:
-    render_metric("Patterns in view", len(PATTERNS))
-
-with metric_columns[1]:
-    render_metric(
-        "Needs attention",
-        sum(pattern["status"] == "Needs attention" for pattern in PATTERNS),
-    )
-
-with metric_columns[2]:
-    render_metric(
-        "Increasing",
-        sum(pattern["trend"] == "Increasing" for pattern in PATTERNS),
-    )
-
-with metric_columns[3]:
-    render_metric(
-        "Linked signals",
-        sum(int(pattern["signals"]) for pattern in PATTERNS),
-    )
-
-render_divider()
-
 st.markdown("## Filter patterns")
 
 filter_columns = st.columns(4)
@@ -205,7 +180,7 @@ with filter_columns[2]:
 with filter_columns[3]:
     search_text = st.text_input(
         "Search",
-        placeholder="Search themes, accounts, owners, or actions",
+        placeholder="Search themes, owners, destinations, or evidence",
     )
 
 filtered_patterns = [
@@ -228,6 +203,40 @@ filtered_patterns = [
 
 render_divider()
 
+metric_columns = st.columns(4)
+
+with metric_columns[0]:
+    render_metric("Patterns in view", len(filtered_patterns))
+
+with metric_columns[1]:
+    render_metric(
+        "Needs attention",
+        sum(
+            pattern["status"] == "Needs attention"
+            for pattern in filtered_patterns
+        ),
+    )
+
+with metric_columns[2]:
+    render_metric(
+        "Increasing",
+        sum(
+            pattern["trend"] == "Increasing"
+            for pattern in filtered_patterns
+        ),
+    )
+
+with metric_columns[3]:
+    render_metric(
+        "Linked signals",
+        sum(
+            int(pattern["signals"])
+            for pattern in filtered_patterns
+        ),
+    )
+
+render_divider()
+
 st.markdown(f"## {len(filtered_patterns)} patterns in view")
 
 if not filtered_patterns:
@@ -243,6 +252,6 @@ st.markdown("## Next layer")
 
 render_card(
     "From patterns to action",
-    "The next workspace will let a person review a proposed route, confirm "
+    "The next workspace lets a person review a proposed route, confirm "
     "ownership, record a decision, and preserve the workflow history.",
 )
