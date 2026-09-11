@@ -97,10 +97,69 @@ def inject_global_styles() -> None:
             }
 
             .block-container {
-                max-width: 1440px;
-                padding-top: 3rem;
-                padding-bottom: 3rem;
-            }
+    max-width: 1440px;
+    padding: 3rem 2.5rem 4rem;
+}
+
+@media (max-width: 900px) {
+    .block-container {
+        padding: 2.25rem 1.5rem 3rem;
+    }
+
+    .mmc-lede {
+        font-size: 1.02rem;
+    }
+
+    .mmc-card {
+        padding: 1.1rem;
+    }
+
+    .mmc-metric {
+        min-height: 7.5rem;
+        padding: 1rem;
+    }
+
+    .mmc-metric-value {
+        font-size: 2rem;
+    }
+}
+
+@media (max-width: 640px) {
+    .block-container {
+        padding: 1.75rem 1rem 2.5rem;
+    }
+
+    h1 {
+        font-size: 2.35rem;
+    }
+
+    h2 {
+        font-size: 1.65rem;
+    }
+
+    .mmc-lede {
+        font-size: 0.98rem;
+        line-height: 1.55;
+    }
+
+    .mmc-card {
+        margin-bottom: 0.85rem;
+        padding: 1rem;
+    }
+
+    .mmc-metric {
+        margin-bottom: 0.75rem;
+        min-height: auto;
+    }
+
+    .mmc-metric-value {
+        font-size: 1.85rem;
+    }
+
+    .mmc-divider {
+        margin: 1.5rem 0;
+    }
+}
 
             h1,
             h2,
