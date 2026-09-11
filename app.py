@@ -143,4 +143,45 @@ def render_overview() -> None:
 
 configure_page("Meeting Memory Console")
 render_sidebar_identity()
-render_overview()
+
+pages = [
+    st.Page(
+        render_overview,
+        title="Overview",
+        icon=":material/home:",
+        url_path="overview",
+    ),
+    st.Page(
+        "pages/1_Signal_Desk.py",
+        title="Signal Desk",
+        icon=":material/search_insights:",
+        url_path="signal-desk",
+    ),
+    st.Page(
+        "pages/2_Pattern_Library.py",
+        title="Pattern Library",
+        icon=":material/hub:",
+        url_path="pattern-library",
+    ),
+    st.Page(
+        "pages/3_Action_Queue.py",
+        title="Action Queue",
+        icon=":material/task_alt:",
+        url_path="action-queue",
+    ),
+    st.Page(
+        "pages/4_Learning_Loop.py",
+        title="Learning Loop",
+        icon=":material/school:",
+        url_path="learning-loop",
+    ),
+    st.Page(
+        "pages/5_Prototype_Context.py",
+        title="Prototype Context",
+        icon=":material/info:",
+        url_path="prototype-context",
+    ),
+]
+
+current_page = st.navigation(pages, position="sidebar")
+current_page.run()
