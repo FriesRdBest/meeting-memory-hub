@@ -144,31 +144,6 @@ render_notice(
     "destination and owner are suggestions for review, not automated decisions."
 )
 
-metric_columns = st.columns(4)
-
-with metric_columns[0]:
-    render_metric("Signals in view", len(SIGNALS))
-
-with metric_columns[1]:
-    render_metric(
-        "Needs review",
-        sum(signal["status"] == "Needs review" for signal in SIGNALS),
-    )
-
-with metric_columns[2]:
-    render_metric(
-        "High impact",
-        sum(signal["impact"] == "High" for signal in SIGNALS),
-    )
-
-with metric_columns[3]:
-    render_metric(
-        "Customer signals",
-        sum(signal["area"] == "Customer" for signal in SIGNALS),
-    )
-
-render_divider()
-
 st.markdown("## Filter signals")
 
 filter_columns = st.columns(4)
@@ -217,6 +192,40 @@ filtered_signals = [
 
 render_divider()
 
+metric_columns = st.columns(4)
+
+with metric_columns[0]:
+    render_metric("Signals in view", len(filtered_signals))
+
+with metric_columns[1]:
+    render_metric(
+        "Needs review",
+        sum(
+            signal["status"] == "Needs review"
+            for signal in filtered_signals
+        ),
+    )
+
+with metric_columns[2]:
+    render_metric(
+        "High impact",
+        sum(
+            signal["impact"] == "High"
+            for signal in filtered_signals
+        ),
+    )
+
+with metric_columns[3]:
+    render_metric(
+        "Customer signals",
+        sum(
+            signal["area"] == "Customer"
+            for signal in filtered_signals
+        ),
+    )
+
+render_divider()
+
 st.markdown(f"## {len(filtered_signals)} signals in view")
 
 if not filtered_signals:
@@ -232,7 +241,7 @@ st.markdown("## Next layer")
 
 render_card(
     "From signals to patterns",
-    "The next workspace will group repeated signals across conversations so "
+    "The next workspace groups repeated signals across conversations so "
     "recurring themes can be reviewed without treating one conversation as a "
     "complete conclusion.",
 )
