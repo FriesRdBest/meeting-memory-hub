@@ -285,6 +285,7 @@ def inject_global_styles() -> None:
                 color: var(--mmc-muted);
                 font-size: 0.92rem;
                 line-height: 1.55;
+                max-width: 100%;
                 padding: 0.85rem 1rem;
             }
 
