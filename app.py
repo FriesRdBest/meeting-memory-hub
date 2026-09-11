@@ -13,6 +13,8 @@ from utils.ui import (
 
 
 def render_overview() -> None:
+    render_sidebar_identity()
+
     render_page_header(
         eyebrow="Meeting Memory Console",
         title="From conversation to consequence",
@@ -142,7 +144,6 @@ def render_overview() -> None:
 
 
 configure_page("Meeting Memory Console")
-render_sidebar_identity()
 
 pages = [
     st.Page(
