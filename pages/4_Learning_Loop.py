@@ -148,31 +148,6 @@ render_notice(
     "individual performance judgments."
 )
 
-metric_columns = st.columns(4)
-
-with metric_columns[0]:
-    render_metric("Completed signals", len(LEARNING_RECORDS))
-
-with metric_columns[1]:
-    render_metric(
-        "High impact learning",
-        sum(record["impact"] == "High" for record in LEARNING_RECORDS),
-    )
-
-with metric_columns[2]:
-    render_metric(
-        "Business areas",
-        len({record["area"] for record in LEARNING_RECORDS}),
-    )
-
-with metric_columns[3]:
-    render_metric(
-        "Owners represented",
-        len({record["owner"] for record in LEARNING_RECORDS}),
-    )
-
-render_divider()
-
 st.markdown("## Search completed learning")
 
 filter_columns = st.columns(3)
@@ -208,6 +183,34 @@ filtered_records = [
     )
     and matches_search(record, search_text)
 ]
+
+render_divider()
+
+metric_columns = st.columns(4)
+
+with metric_columns[0]:
+    render_metric("Completed signals", len(filtered_records))
+
+with metric_columns[1]:
+    render_metric(
+        "High impact learning",
+        sum(
+            record["impact"] == "High"
+            for record in filtered_records
+        ),
+    )
+
+with metric_columns[2]:
+    render_metric(
+        "Business areas",
+        len({record["area"] for record in filtered_records}),
+    )
+
+with metric_columns[3]:
+    render_metric(
+        "Owners represented",
+        len({record["owner"] for record in filtered_records}),
+    )
 
 render_divider()
 
