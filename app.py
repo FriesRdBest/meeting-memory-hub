@@ -28,6 +28,35 @@ def render_overview() -> None:
         "are connected."
     )
 
+    st.markdown("## Start here")
+
+    st.write(
+        "You can explore the prototype in either direction. Start with the "
+        "workflow if you want to see the product in action, or start with "
+        "Prototype Context if you want to understand the intended scope, "
+        "boundaries, and operating model first."
+    )
+
+    review_columns = st.columns(2)
+
+    with review_columns[0]:
+        render_card(
+            "Explore the workflow",
+            "Open Signal Desk, then Pattern Library, Action Queue, and "
+            "Learning Loop to follow the journey from evidence to action "
+            "and retained organizational learning.",
+        )
+
+    with review_columns[1]:
+        render_card(
+            "Understand the concept",
+            "Open Prototype Context first to review the demonstration scope, "
+            "privacy boundaries, limitations, and production considerations "
+            "before exploring the workspaces.",
+        )
+
+    render_divider()
+
     st.markdown("## What this prototype is designed to do")
 
     st.write(
@@ -64,9 +93,9 @@ def render_overview() -> None:
 
     render_divider()
 
-    st.markdown("## Planned workspaces")
+    st.markdown("## Workspace map")
 
-    workspace_columns = st.columns(4)
+    workspace_columns = st.columns(5)
 
     workspaces = [
         (
@@ -89,11 +118,18 @@ def render_overview() -> None:
             "Learning Loop",
             "Review outcomes and recorded organizational learning.",
         ),
+        (
+            workspace_columns[4],
+            "Prototype Context",
+            "Review scope, boundaries, and the path toward production.",
+        ),
     ]
 
     for column, title, description in workspaces:
         with column:
             render_card(title, description)
+
+    render_divider()
 
     st.markdown("## Current scope")
 
