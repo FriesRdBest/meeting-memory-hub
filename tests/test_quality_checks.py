@@ -1,77 +1,78 @@
 from pathlib import Path
 
-from services.signal_service import SignalService
+from models.action import Action
+from models.reflection import Reflection
+from models.signal import Signal
+from repositories.action_repository import ActionRepository
+from repositories.reflection_repository import ReflectionRepository
+from repositories.signal_repository import SignalRepository
 from services.action_service import ActionService
 from services.reflection_service import ReflectionService
+from services.signal_service import SignalService
 
 
-def test_quality_checks_before_merge(tmp_path: Path) -> None:
-    signals_file = tmp_path / "signals.json"
-    actions_file = tmp_path / "actions.json"
-    reflections_file = tmp_path / "reflections.json"
+def test_workflow_records_include_required_fields(tmp_path: Path) -> None:
+    signal_service = SignalService(
+        SignalRepository(tmp_path / "signals.json")
+    )
+    action_service = ActionService(
+        ActionRepository(tmp_path / "actions.json")
+    )
+    reflection_service = ReflectionService(
+        ReflectionRepository(tmp_path / "reflections.json")
+    )
 
-    signal_service = SignalService(signals_file)
-    action_service = ActionService(actions_file)
-    reflection_service = ReflectionService(reflections_file)
+    signal = Signal(
+        id="SIG-001",
+        title="Repeated onboarding friction is slowing adoption",
+        type="Customer friction",
+        area="Customer",
+        impact="High",
+        confidence="High",
+        status="Needs review",
+        owner="Customer Success",
+        destination="Product discovery",
+        evidence="New teams report that the first workflow feels hard.",
+        context="Customer onboarding review",
+    )
 
-    signal = {
-        "id": "SIG-001",
-        "title": "Repeated onboarding friction is slowing adoption",
-        "type": "Customer friction",
-        "area": "Customer",
-        "impact": "High",
-        "confidence": "High",
-        "status": "Needs review",
-        "owner": "Customer Success",
-        "destination": "Product discovery",
-        "evidence": "New teams report that the first workflow feels hard.",
-        "context": "Customer onboarding review",
-    }
+    action = Action(
+        id="ACT-001",
+        signal_id=signal.id,
+        title="Review onboarding evidence",
+        description="Review recurring onboarding evidence with Product.",
+        owner="Customer Success",
+        destination="Product discovery",
+        status="In progress",
+        due_date="Oct 15, 2026",
+        created_at="Sep 12, 2026 at 07:52 AM",
+    )
 
-    action = {
-        "id": "ACT-001",
-        "signal_id": "SIG-001",
-        "title": "Review onboarding evidence",
-        "description": "Review recurring onboarding evidence with Product.",
-        "owner": "Customer Success",
-        "destination": "Product discovery",
-        "status": "In progress",
-        "due_date": "Oct 15, 2026",
-        "created_at": "Sep 12, 2026 at 07:52 AM",
-    }
+    reflection = Reflection(
+        id="LRN-001",
+        action_id=action.id,
+        outcome="A clearer first workflow guide was tested.",
+        learning="New teams need guidance toward first success.",
+        next_step="Review after the next onboarding cycle.",
+        recorded_at="Sep 12, 2026 at 08:15 AM",
+    )
 
-    reflection = {
-        "id": "LRN-001",
-        "action_id": "ACT-001",
-        "outcome": "A clearer first workflow guide was tested.",
-        "learning": "New teams need guidance toward first success.",
-        "next_step": "Review after the next onboarding cycle.",
-        "recorded_at": "Sep 12, 2026 at 08:15 AM",
-    }
+    signal_service.save_signals([signal])
+    action_service.save_actions([action])
+    reflection_service.save_reflections([reflection])
 
-    signal_service.save(signal)
-    action_service.save(action)
-    reflection_service.save(reflection)
+    stored_signal = signal_service.list_signals()[0]
+    stored_action = action_service.list_actions()[0]
+    stored_reflection = reflection_service.list_reflections()[0]
 
-    signals = signal_service.list_all()
-    actions = action_service.list_all()
-    reflections = reflection_service.list_all()
+    assert stored_signal.id
+    assert stored_signal.title
+    assert stored_signal.status
 
-    assert len(signals) > 0, "At least one signal must exist"
-    assert len(actions) > 0, "At least one action must exist"
-    assert len(reflections) > 0, "At least one reflection must exist"
+    assert stored_action.id
+    assert stored_action.signal_id == stored_signal.id
+    assert stored_action.status
 
-    for s in signals:
-        assert "id" in s
-        assert "title" in s
-        assert "status" in s
-
-    for a in actions:
-        assert "id" in a
-        assert "signal_id" in a
-        assert "status" in a
-
-    for r in reflections:
-        assert "id" in r
-        assert "action_id" in r
-        assert "learning" in r
+    assert stored_reflection.id
+    assert stored_reflection.action_id == stored_action.id
+    assert stored_reflection.learning
