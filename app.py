@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import streamlit as st
-
+from data.demo_signals import DEMO_SIGNALS
 from utils.ui import (
     configure_page,
     render_card,
@@ -142,7 +142,9 @@ def render_overview() -> None:
         "future work."
     )
 
-
+if "signals" not in st.session_state:
+    st.session_state.signals = [signal.copy() for signal in DEMO_SIGNALS]
+    
 configure_page("Meeting Memory Console")
 
 pages = [
