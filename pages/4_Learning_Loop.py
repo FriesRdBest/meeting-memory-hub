@@ -20,7 +20,6 @@ from utils.ui import (
     render_sidebar_identity,
 )
 
-
 REFLECTION_FILE_PATH = Path("data/reflections.json")
 
 LEARNING_RECORDS = [
@@ -279,7 +278,6 @@ def render_reflection_form() -> None:
         ),
     )
 
-    selected_action = get_action(selected_action_id)
     existing_reflection = get_reflection_for_action(selected_action_id)
 
     if existing_reflection:

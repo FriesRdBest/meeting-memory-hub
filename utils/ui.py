@@ -65,7 +65,7 @@ def inject_global_styles() -> None:
                 background: transparent;
             }
 
-            
+
 
             [data-testid="stSidebar"] {
                 background: rgba(15, 15, 19, 0.95);

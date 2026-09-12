@@ -20,7 +20,6 @@ from utils.ui import (
     render_sidebar_identity,
 )
 
-
 ACTION_FILE_PATH = Path("data/actions.json")
 
 

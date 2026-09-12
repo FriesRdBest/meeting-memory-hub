@@ -13,7 +13,6 @@ from utils.ui import (
     render_sidebar_identity,
 )
 
-
 PATTERNS = [
     {
         "id": "PAT-001",
