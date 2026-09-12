@@ -65,7 +65,7 @@ def inject_global_styles() -> None:
                 background: transparent;
             }
 
-            
+
 
             [data-testid="stSidebar"] {
                 background: rgba(15, 15, 19, 0.95);
@@ -379,9 +379,7 @@ def render_card(title: str, copy: str) -> None:
 
 def render_badges(labels: list[str]) -> None:
     badge_markup = "".join(
-        f'<span class="mmc-badge">{label}</span>'
-        for label in labels
-        if label
+        f'<span class="mmc-badge">{label}</span>' for label in labels if label
     )
     st.markdown(badge_markup, unsafe_allow_html=True)
 

@@ -14,74 +14,6 @@ from utils.ui import (
 )
 
 
-SIGNALS = [
-    {
-        "id": "SIG-001",
-        "title": "Repeated onboarding friction is slowing adoption",
-        "type": "Customer friction",
-        "area": "Customer",
-        "impact": "High",
-        "confidence": "High",
-        "status": "Needs review",
-        "owner": "Customer Success",
-        "destination": "Product discovery",
-        "evidence": (
-            "We keep hearing that the first workflow feels harder than it "
-            "should, especially for new teams."
-        ),
-        "context": "Customer onboarding review",
-    },
-    {
-        "id": "SIG-002",
-        "title": "Reporting requests are becoming a recurring product theme",
-        "type": "Product insight",
-        "area": "Product",
-        "impact": "Medium",
-        "confidence": "High",
-        "status": "Ready",
-        "owner": "Product Operations",
-        "destination": "Roadmap review",
-        "evidence": (
-            "The reporting question came up again this week, and it sounds "
-            "like more than a one-off request."
-        ),
-        "context": "Quarterly product conversation",
-    },
-    {
-        "id": "SIG-003",
-        "title": "A strategic commitment has no clear operational owner",
-        "type": "Commitment",
-        "area": "Operations",
-        "impact": "High",
-        "confidence": "Medium",
-        "status": "Needs review",
-        "owner": "Unassigned",
-        "destination": "Leadership follow-up",
-        "evidence": (
-            "Everyone agreed that this matters, but I am not sure who is "
-            "actually accountable for moving it forward."
-        ),
-        "context": "Leadership planning meeting",
-    },
-    {
-        "id": "SIG-004",
-        "title": "A customer objection is repeating across conversations",
-        "type": "Customer friction",
-        "area": "Customer",
-        "impact": "Medium",
-        "confidence": "Medium",
-        "status": "Watching",
-        "owner": "Revenue Operations",
-        "destination": "Pattern review",
-        "evidence": (
-            "This is the third conversation where the same concern about "
-            "implementation effort has appeared."
-        ),
-        "context": "Account review",
-    },
-]
-
-
 def matches_search(signal: dict[str, str], search_text: str) -> bool:
     if not search_text:
         return True
@@ -144,6 +76,8 @@ render_notice(
     "destination and owner are suggestions for review, not automated decisions."
 )
 
+signals = st.session_state.get("signals", [])
+
 st.markdown("## Filter signals")
 
 filter_columns = st.columns(4)
@@ -151,19 +85,19 @@ filter_columns = st.columns(4)
 with filter_columns[0]:
     selected_type = st.selectbox(
         "Signal type",
-        ["All"] + sorted({signal["type"] for signal in SIGNALS}),
+        ["All"] + sorted({signal["type"] for signal in signals}),
     )
 
 with filter_columns[1]:
     selected_impact = st.selectbox(
         "Impact",
-        ["All"] + sorted({signal["impact"] for signal in SIGNALS}),
+        ["All"] + sorted({signal["impact"] for signal in signals}),
     )
 
 with filter_columns[2]:
     selected_status = st.selectbox(
         "Status",
-        ["All"] + sorted({signal["status"] for signal in SIGNALS}),
+        ["All"] + sorted({signal["status"] for signal in signals}),
     )
 
 with filter_columns[3]:
@@ -174,19 +108,10 @@ with filter_columns[3]:
 
 filtered_signals = [
     signal
-    for signal in SIGNALS
-    if (
-        selected_type == "All"
-        or signal["type"] == selected_type
-    )
-    and (
-        selected_impact == "All"
-        or signal["impact"] == selected_impact
-    )
-    and (
-        selected_status == "All"
-        or signal["status"] == selected_status
-    )
+    for signal in signals
+    if (selected_type == "All" or signal["type"] == selected_type)
+    and (selected_impact == "All" or signal["impact"] == selected_impact)
+    and (selected_status == "All" or signal["status"] == selected_status)
     and matches_search(signal, search_text)
 ]
 
@@ -200,28 +125,19 @@ with metric_columns[0]:
 with metric_columns[1]:
     render_metric(
         "Needs review",
-        sum(
-            signal["status"] == "Needs review"
-            for signal in filtered_signals
-        ),
+        sum(signal["status"] == "Needs review" for signal in filtered_signals),
     )
 
 with metric_columns[2]:
     render_metric(
         "High impact",
-        sum(
-            signal["impact"] == "High"
-            for signal in filtered_signals
-        ),
+        sum(signal["impact"] == "High" for signal in filtered_signals),
     )
 
 with metric_columns[3]:
     render_metric(
         "Customer signals",
-        sum(
-            signal["area"] == "Customer"
-            for signal in filtered_signals
-        ),
+        sum(signal["area"] == "Customer" for signal in filtered_signals),
     )
 
 render_divider()
@@ -229,9 +145,7 @@ render_divider()
 st.markdown(f"## {len(filtered_signals)} signals in view")
 
 if not filtered_signals:
-    st.info(
-        "No signals match the current filters. Adjust the filters and try again."
-    )
+    st.info("No signals match the current filters. Adjust the filters and try again.")
 else:
     for signal in filtered_signals:
         render_signal(signal)

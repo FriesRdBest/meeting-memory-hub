@@ -11,7 +11,6 @@ from utils.ui import (
     render_sidebar_identity,
 )
 
-
 configure_page("Prototype Context | Meeting Memory Console")
 render_sidebar_identity()
 
