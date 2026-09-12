@@ -1,51 +1,66 @@
 DEMO_SIGNALS = [
     {
-        "id": "sig_001",
-        "title": "Improve login page load time",
-        "description": "Users report slow loading on mobile. Engineering will investigate the caching approach.",
-        "status": "active",
-        "category": "product",
+        "id": "SIG-001",
+        "title": "Repeated onboarding friction is slowing adoption",
+        "type": "Customer friction",
+        "area": "Customer",
+        "impact": "High",
+        "confidence": "High",
+        "status": "Needs review",
+        "owner": "Customer Success",
+        "destination": "Product discovery",
+        "evidence": (
+            "We keep hearing that the first workflow feels harder than it "
+            "should, especially for new teams."
+        ),
+        "context": "Customer onboarding review",
     },
     {
-        "id": "sig_002",
-        "title": "Billing invoice format is confusing",
-        "description": "Several customers asked about the invoice line items. Finance will review the template.",
-        "status": "active",
-        "category": "billing",
+        "id": "SIG-002",
+        "title": "Reporting requests are becoming a recurring product theme",
+        "type": "Product insight",
+        "area": "Product",
+        "impact": "Medium",
+        "confidence": "High",
+        "status": "Ready",
+        "owner": "Product Operations",
+        "destination": "Roadmap review",
+        "evidence": (
+            "The reporting question came up again this week, and it sounds "
+            "like more than a one-off request."
+        ),
+        "context": "Quarterly product conversation",
     },
     {
-        "id": "sig_003",
-        "title": "Onboarding step three has a high drop off",
-        "description": "Many users leave during API key setup. Product will review the instructions and help text.",
-        "status": "active",
-        "category": "onboarding",
+        "id": "SIG-003",
+        "title": "A strategic commitment has no clear operational owner",
+        "type": "Commitment",
+        "area": "Operations",
+        "impact": "High",
+        "confidence": "Medium",
+        "status": "Needs review",
+        "owner": "Unassigned",
+        "destination": "Leadership follow-up",
+        "evidence": (
+            "Everyone agreed that this matters, but I am not sure who is "
+            "actually accountable for moving it forward."
+        ),
+        "context": "Leadership planning meeting",
     },
     {
-        "id": "sig_004",
-        "title": "Support ticket tags are inconsistent",
-        "description": "The team uses different tags for similar issues. Operations will prepare a tagging guide.",
-        "status": "active",
-        "category": "support",
-    },
-    {
-        "id": "sig_005",
-        "title": "Customers want bulk export",
-        "description": "An enterprise prospect needs CSV export for more than ten thousand records. Sales will validate priority with Product.",
-        "status": "active",
-        "category": "product",
-    },
-    {
-        "id": "sig_006",
-        "title": "Search is showing older documentation",
-        "description": "Users are finding version one documentation when looking for version two features. The documentation team will review search indexing.",
-        "status": "active",
-        "category": "documentation",
-    },
-    {
-        "id": "sig_007",
-        "title": "The weekly meeting format needs improvement",
-        "description": "The team prefers written updates followed by focused discussion. The team will try a new agenda format.",
-        "status": "active",
-        "category": "process",
+        "id": "SIG-004",
+        "title": "A customer objection is repeating across conversations",
+        "type": "Customer friction",
+        "area": "Customer",
+        "impact": "Medium",
+        "confidence": "Medium",
+        "status": "Watching",
+        "owner": "Revenue Operations",
+        "destination": "Pattern review",
+        "evidence": (
+            "This is the third conversation where the same concern about "
+            "implementation effort has appeared."
+        ),
+        "context": "Account review",
     },
 ]
