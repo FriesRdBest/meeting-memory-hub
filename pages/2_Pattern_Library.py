@@ -186,18 +186,9 @@ with filter_columns[3]:
 filtered_patterns = [
     pattern
     for pattern in PATTERNS
-    if (
-        selected_category == "All"
-        or pattern["category"] == selected_category
-    )
-    and (
-        selected_trend == "All"
-        or pattern["trend"] == selected_trend
-    )
-    and (
-        selected_status == "All"
-        or pattern["status"] == selected_status
-    )
+    if (selected_category == "All" or pattern["category"] == selected_category)
+    and (selected_trend == "All" or pattern["trend"] == selected_trend)
+    and (selected_status == "All" or pattern["status"] == selected_status)
     and matches_search(pattern, search_text)
 ]
 
@@ -211,28 +202,19 @@ with metric_columns[0]:
 with metric_columns[1]:
     render_metric(
         "Needs attention",
-        sum(
-            pattern["status"] == "Needs attention"
-            for pattern in filtered_patterns
-        ),
+        sum(pattern["status"] == "Needs attention" for pattern in filtered_patterns),
     )
 
 with metric_columns[2]:
     render_metric(
         "Increasing",
-        sum(
-            pattern["trend"] == "Increasing"
-            for pattern in filtered_patterns
-        ),
+        sum(pattern["trend"] == "Increasing" for pattern in filtered_patterns),
     )
 
 with metric_columns[3]:
     render_metric(
         "Linked signals",
-        sum(
-            int(pattern["signals"])
-            for pattern in filtered_patterns
-        ),
+        sum(int(pattern["signals"]) for pattern in filtered_patterns),
     )
 
 render_divider()
@@ -240,9 +222,7 @@ render_divider()
 st.markdown(f"## {len(filtered_patterns)} patterns in view")
 
 if not filtered_patterns:
-    st.info(
-        "No patterns match the current filters. Adjust the filters and try again."
-    )
+    st.info("No patterns match the current filters. Adjust the filters and try again.")
 else:
     for pattern in filtered_patterns:
         render_pattern(pattern)

@@ -15,10 +15,7 @@ from utils.ui import (
 
 def initialise_workflow_state() -> None:
     if "signals" not in st.session_state:
-        st.session_state.signals = [
-            signal.copy()
-            for signal in DEMO_SIGNALS
-        ]
+        st.session_state.signals = [signal.copy() for signal in DEMO_SIGNALS]
 
     if "actions" not in st.session_state:
         st.session_state.actions = []

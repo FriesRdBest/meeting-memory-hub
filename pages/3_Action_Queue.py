@@ -196,8 +196,7 @@ def render_action_form(signal: dict[str, str], action: Action) -> None:
         note = st.text_area(
             "Decision note",
             placeholder=(
-                "Record why this route was chosen, changed, or returned "
-                "for review."
+                "Record why this route was chosen, changed, or returned for review."
             ),
         )
 
@@ -214,9 +213,7 @@ def render_action_form(signal: dict[str, str], action: Action) -> None:
         )
 
         if saved:
-            st.success(
-                f"{signal['id']} was updated to “{decision}” and saved."
-            )
+            st.success(f"{signal['id']} was updated to “{decision}” and saved.")
         else:
             st.warning(
                 f"{signal['id']} was updated for this session, but the "
@@ -230,19 +227,12 @@ def render_history() -> None:
     st.markdown("## Decision history")
 
     if not st.session_state.action_history:
-        st.caption(
-            "No decisions have been recorded in this browser session yet."
-        )
+        st.caption("No decisions have been recorded in this browser session yet.")
         return
 
     for event in st.session_state.action_history:
-        st.markdown(
-            f"**{event['signal_id']} · {event['decision']}**"
-        )
-        st.caption(
-            f"{event['updated_at']} · {event['owner']} → "
-            f"{event['destination']}"
-        )
+        st.markdown(f"**{event['signal_id']} · {event['decision']}**")
+        st.caption(f"{event['updated_at']} · {event['owner']} → {event['destination']}")
 
         if event["note"]:
             st.write(event["note"])
@@ -270,10 +260,7 @@ render_notice(
     "evidence, confirms or changes the proposed route, and records why."
 )
 
-actions_by_signal = {
-    action.signal_id: action
-    for action in st.session_state.actions
-}
+actions_by_signal = {action.signal_id: action for action in st.session_state.actions}
 
 metric_columns = st.columns(4)
 
@@ -297,19 +284,13 @@ with metric_columns[1]:
 with metric_columns[2]:
     render_metric(
         "In progress",
-        sum(
-            action.status == "In progress"
-            for action in st.session_state.actions
-        ),
+        sum(action.status == "In progress" for action in st.session_state.actions),
     )
 
 with metric_columns[3]:
     render_metric(
         "Completed",
-        sum(
-            action.status == "Completed"
-            for action in st.session_state.actions
-        ),
+        sum(action.status == "Completed" for action in st.session_state.actions),
     )
 
 render_divider()
@@ -352,9 +333,7 @@ else:
     selected_signal_id = st.selectbox(
         "Choose a signal to review",
         options=[signal["id"] for signal in signals],
-        format_func=lambda signal_id: (
-            f"{signal_id} · {get_signal(signal_id)['title']}"
-        ),
+        format_func=lambda signal_id: f"{signal_id} · {get_signal(signal_id)['title']}",
     )
 
     selected_signal = get_signal(selected_signal_id)

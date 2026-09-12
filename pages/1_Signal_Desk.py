@@ -109,18 +109,9 @@ with filter_columns[3]:
 filtered_signals = [
     signal
     for signal in signals
-    if (
-        selected_type == "All"
-        or signal["type"] == selected_type
-    )
-    and (
-        selected_impact == "All"
-        or signal["impact"] == selected_impact
-    )
-    and (
-        selected_status == "All"
-        or signal["status"] == selected_status
-    )
+    if (selected_type == "All" or signal["type"] == selected_type)
+    and (selected_impact == "All" or signal["impact"] == selected_impact)
+    and (selected_status == "All" or signal["status"] == selected_status)
     and matches_search(signal, search_text)
 ]
 
@@ -134,28 +125,19 @@ with metric_columns[0]:
 with metric_columns[1]:
     render_metric(
         "Needs review",
-        sum(
-            signal["status"] == "Needs review"
-            for signal in filtered_signals
-        ),
+        sum(signal["status"] == "Needs review" for signal in filtered_signals),
     )
 
 with metric_columns[2]:
     render_metric(
         "High impact",
-        sum(
-            signal["impact"] == "High"
-            for signal in filtered_signals
-        ),
+        sum(signal["impact"] == "High" for signal in filtered_signals),
     )
 
 with metric_columns[3]:
     render_metric(
         "Customer signals",
-        sum(
-            signal["area"] == "Customer"
-            for signal in filtered_signals
-        ),
+        sum(signal["area"] == "Customer" for signal in filtered_signals),
     )
 
 render_divider()
@@ -163,9 +145,7 @@ render_divider()
 st.markdown(f"## {len(filtered_signals)} signals in view")
 
 if not filtered_signals:
-    st.info(
-        "No signals match the current filters. Adjust the filters and try again."
-    )
+    st.info("No signals match the current filters. Adjust the filters and try again.")
 else:
     for signal in filtered_signals:
         render_signal(signal)

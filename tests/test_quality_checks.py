@@ -12,12 +12,8 @@ from services.signal_service import SignalService
 
 
 def test_workflow_records_include_required_fields(tmp_path: Path) -> None:
-    signal_service = SignalService(
-        SignalRepository(tmp_path / "signals.json")
-    )
-    action_service = ActionService(
-        ActionRepository(tmp_path / "actions.json")
-    )
+    signal_service = SignalService(SignalRepository(tmp_path / "signals.json"))
+    action_service = ActionService(ActionRepository(tmp_path / "actions.json"))
     reflection_service = ReflectionService(
         ReflectionRepository(tmp_path / "reflections.json")
     )

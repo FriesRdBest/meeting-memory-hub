@@ -98,9 +98,7 @@ def get_reflection_service() -> ReflectionService:
 def initialise_state() -> None:
     if "reflections" not in st.session_state:
         try:
-            st.session_state.reflections = (
-                get_reflection_service().list_reflections()
-            )
+            st.session_state.reflections = get_reflection_service().list_reflections()
         except (OSError, ValueError):
             st.session_state.reflections = []
 
@@ -184,9 +182,7 @@ def create_reflection(
             outcome=outcome.strip(),
             learning=learning.strip(),
             next_step=next_step.strip(),
-            recorded_at=datetime.now().strftime(
-                "%b %d, %Y at %I:%M %p"
-            ),
+            recorded_at=datetime.now().strftime("%b %d, %Y at %I:%M %p"),
         )
         st.session_state.reflections.append(reflection)
 
@@ -295,31 +291,19 @@ def render_reflection_form() -> None:
     with st.form(f"reflection_form_{selected_action_id}"):
         outcome = st.text_area(
             "Observed outcome",
-            value=(
-                existing_reflection.outcome
-                if existing_reflection
-                else ""
-            ),
+            value=(existing_reflection.outcome if existing_reflection else ""),
             placeholder="What happened after the action was completed?",
         )
 
         learning = st.text_area(
             "Learning retained",
-            value=(
-                existing_reflection.learning
-                if existing_reflection
-                else ""
-            ),
+            value=(existing_reflection.learning if existing_reflection else ""),
             placeholder="What should the organisation carry forward?",
         )
 
         next_step = st.text_input(
             "Next step",
-            value=(
-                existing_reflection.next_step
-                if existing_reflection
-                else ""
-            ),
+            value=(existing_reflection.next_step if existing_reflection else ""),
             placeholder="What should happen next, if anything?",
         )
 
@@ -407,14 +391,8 @@ with filter_columns[2]:
 filtered_records = [
     record
     for record in all_records
-    if (
-        selected_area == "All"
-        or record["area"] == selected_area
-    )
-    and (
-        selected_impact == "All"
-        or record["impact"] == selected_impact
-    )
+    if (selected_area == "All" or record["area"] == selected_area)
+    and (selected_impact == "All" or record["impact"] == selected_impact)
     and matches_search(record, search_text)
 ]
 
@@ -428,10 +406,7 @@ with metric_columns[0]:
 with metric_columns[1]:
     render_metric(
         "High impact learning",
-        sum(
-            record["impact"] == "High"
-            for record in filtered_records
-        ),
+        sum(record["impact"] == "High" for record in filtered_records),
     )
 
 with metric_columns[2]:
