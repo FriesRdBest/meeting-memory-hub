@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import streamlit as st
+
 from data.demo_signals import DEMO_SIGNALS
 from utils.ui import (
     configure_page,
@@ -10,6 +11,20 @@ from utils.ui import (
     render_page_header,
     render_sidebar_identity,
 )
+
+
+def initialise_workflow_state() -> None:
+    if "signals" not in st.session_state:
+        st.session_state.signals = [
+            signal.copy()
+            for signal in DEMO_SIGNALS
+        ]
+
+    if "actions" not in st.session_state:
+        st.session_state.actions = []
+
+    if "reflections" not in st.session_state:
+        st.session_state.reflections = []
 
 
 def render_overview() -> None:
@@ -25,9 +40,9 @@ def render_overview() -> None:
     )
 
     render_notice(
-        "This first deployment is intentionally lightweight. It proves the "
-        "application shell and visual system before the deeper workspaces "
-        "are connected."
+        "This medium-build deployment uses fictional demonstration data. "
+        "It now connects a signal to an accountable action and a recorded "
+        "learning outcome within the current workspace session."
     )
 
     st.markdown("## Start here")
@@ -136,15 +151,15 @@ def render_overview() -> None:
     st.markdown("## Current scope")
 
     st.write(
-        "This deployment uses demonstration data and focuses on proving the "
-        "workflow concept. Authentication, live integrations, multi-user "
-        "collaboration, production security, and background processing remain "
-        "future work."
+        "This deployment uses fictional demonstration data and focuses on "
+        "proving the workflow concept. The shared prototype session connects "
+        "signals, accountable actions, and learning records. Authentication, "
+        "live integrations, multi-user collaboration, production security, "
+        "and durable cloud storage remain future work."
     )
 
-if "signals" not in st.session_state:
-    st.session_state.signals = [signal.copy() for signal in DEMO_SIGNALS]
-    
+
+initialise_workflow_state()
 configure_page("Meeting Memory Console")
 
 pages = [
