@@ -1,0 +1,51 @@
+DEMO_SIGNALS = [
+    {
+        "id": "sig_001",
+        "title": "Improve login page load time",
+        "description": "Users report slow loading on mobile. Engineering will investigate the caching approach.",
+        "status": "active",
+        "category": "product",
+    },
+    {
+        "id": "sig_002",
+        "title": "Billing invoice format is confusing",
+        "description": "Several customers asked about the invoice line items. Finance will review the template.",
+        "status": "active",
+        "category": "billing",
+    },
+    {
+        "id": "sig_003",
+        "title": "Onboarding step three has a high drop off",
+        "description": "Many users leave during API key setup. Product will review the instructions and help text.",
+        "status": "active",
+        "category": "onboarding",
+    },
+    {
+        "id": "sig_004",
+        "title": "Support ticket tags are inconsistent",
+        "description": "The team uses different tags for similar issues. Operations will prepare a tagging guide.",
+        "status": "active",
+        "category": "support",
+    },
+    {
+        "id": "sig_005",
+        "title": "Customers want bulk export",
+        "description": "An enterprise prospect needs CSV export for more than ten thousand records. Sales will validate priority with Product.",
+        "status": "active",
+        "category": "product",
+    },
+    {
+        "id": "sig_006",
+        "title": "Search is showing older documentation",
+        "description": "Users are finding version one documentation when looking for version two features. The documentation team will review search indexing.",
+        "status": "active",
+        "category": "documentation",
+    },
+    {
+        "id": "sig_007",
+        "title": "The weekly meeting format needs improvement",
+        "description": "The team prefers written updates followed by focused discussion. The team will try a new agenda format.",
+        "status": "active",
+        "category": "process",
+    },
+]
