@@ -5,7 +5,7 @@ This guide walks a stakeholder through a complete end-to-end flow in the Meeting
 ## Prerequisites
 
 - You have the application running locally or in a Codespace.
-- You are on the `feature/demo-flow` branch (or a branch that includes the demo banners).
+- You are on the `main` branch (which includes the demo banners).
 
 ## Step 1 — Signal Desk
 
