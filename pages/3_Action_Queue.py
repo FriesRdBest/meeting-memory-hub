@@ -212,7 +212,7 @@ def render_action_form(signal: dict[str, str], action: Action) -> None:
         )
 
         if saved:
-            st.success(f"{signal['id']} was updated to “{decision}” and saved.")
+            st.success(f"{signal['id']} was updated to "{decision}" and saved.")
         else:
             st.warning(
                 f"{signal['id']} was updated for this session, but the "
@@ -261,8 +261,9 @@ render_notice(
 
 # Demo banner for medium-build walkthrough
 st.info(
-    "Demo mode: For the walkthrough, choose **SIG-001** “Repeated onboarding friction…” "
-    "below, then use “Start work” → “Mark completed”. After that, record a reflection in Learning Loop."
+    "Demo mode: For the walkthrough, choose **SIG-001**. "
+    "Use Start work → Mark completed, then record a reflection "
+    "in Learning Loop."
 )
 
 actions_by_signal = {action.signal_id: action for action in st.session_state.actions}
