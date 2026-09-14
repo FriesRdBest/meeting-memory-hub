@@ -36,12 +36,19 @@ def inject_global_styles() -> None:
             :root {
                 --mmc-blue: #2F35FF;
                 --mmc-blue-deep: #1D239D;
-                --mmc-blue-pale: #E2E2FE;
-                --mmc-success: #2EAD72;
-                --mmc-warning: #C78312;
-                --mmc-danger: #D95050;
-                --mmc-radius-card: 1.05rem;
-                --mmc-radius-control: 0.72rem;
+                --mmc-black: #0B0B0D;
+                --mmc-surface: #15151A;
+                --mmc-surface-raised: #1D1D24;
+                --mmc-border: rgba(247, 247, 250, 0.12);
+                --mmc-border-strong: rgba(119, 125, 255, 0.42);
+                --mmc-text: #F7F7FA;
+                --mmc-muted: #B7B7C6;
+                --mmc-subtle: #858596;
+                --mmc-success: #61D095;
+                --mmc-warning: #F5BE62;
+                --mmc-danger: #F17B7B;
+                --mmc-radius: 1rem;
+                --mmc-radius-small: 0.72rem;
             }
 
             html,
@@ -60,17 +67,17 @@ def inject_global_styles() -> None:
             .stApp {
                 background:
                     radial-gradient(
-                        circle at 92% 2%,
+                        circle at 88% 4%,
                         rgba(47, 53, 255, 0.18),
-                        transparent 29%
+                        transparent 27%
                     ),
                     radial-gradient(
-                        circle at 8% 96%,
+                        circle at 8% 98%,
                         rgba(47, 53, 255, 0.10),
                         transparent 24%
                     ),
-                    #0B0B0D;
-                color: #F7F7FA;
+                    var(--mmc-black);
+                color: var(--mmc-text);
             }
 
             [data-testid="stHeader"] {
@@ -82,31 +89,31 @@ def inject_global_styles() -> None:
             }
 
             [data-testid="stSidebar"] {
-                background: rgba(12, 12, 16, 0.98);
-                border-right: 1px solid rgba(247, 247, 250, 0.10);
+                background: rgba(15, 15, 19, 0.98);
+                border-right: 1px solid var(--mmc-border);
             }
 
             [data-testid="stSidebar"] * {
-                color: #F7F7FA;
+                color: var(--mmc-text);
             }
 
             [data-testid="stSidebarContent"] {
-                padding-top: 0.75rem;
+                padding-top: 0.7rem;
             }
 
             [data-testid="stSidebarNav"] {
-                padding-top: 1rem;
+                padding-top: 1.15rem;
             }
 
             [data-testid="stSidebarNav"] ul {
-                gap: 0.2rem;
+                gap: 0.22rem;
             }
 
             [data-testid="stSidebarNav"] a {
                 border: 1px solid transparent;
-                border-radius: 0.82rem;
-                margin: 0.1rem 0.6rem;
-                padding: 0.66rem 0.78rem;
+                border-radius: 0.8rem;
+                margin: 0.08rem 0.6rem;
+                padding: 0.62rem 0.75rem;
                 transition:
                     background 160ms ease,
                     border-color 160ms ease,
@@ -115,7 +122,7 @@ def inject_global_styles() -> None:
 
             [data-testid="stSidebarNav"] a:hover {
                 background: rgba(47, 53, 255, 0.16);
-                border-color: rgba(117, 122, 255, 0.20);
+                border-color: rgba(117, 122, 255, 0.22);
                 transform: translateX(2px);
             }
 
@@ -128,7 +135,7 @@ def inject_global_styles() -> None:
                     );
                 border-color: rgba(114, 119, 255, 0.40);
                 box-shadow:
-                    inset 3px 0 0 #2F35FF,
+                    inset 3px 0 0 var(--mmc-blue),
                     0 8px 24px rgba(19, 25, 182, 0.18);
                 color: #FFFFFF;
                 font-weight: 760;
@@ -143,7 +150,7 @@ def inject_global_styles() -> None:
             h2,
             h3,
             h4 {
-                color: #F7F7FA !important;
+                color: var(--mmc-text) !important;
                 letter-spacing: -0.04em;
             }
 
@@ -176,15 +183,15 @@ def inject_global_styles() -> None:
             li,
             label,
             [data-testid="stMarkdownContainer"] {
-                color: #B7B7C6;
+                color: var(--mmc-muted);
             }
 
             [data-testid="stCaptionContainer"] {
-                color: #858596;
+                color: var(--mmc-subtle);
             }
 
             [data-testid="stMarkdownContainer"] strong {
-                color: #F7F7FA;
+                color: var(--mmc-text);
             }
 
             .mmc-eyebrow {
@@ -210,8 +217,8 @@ def inject_global_styles() -> None:
                         rgba(28, 28, 35, 0.96),
                         rgba(18, 18, 23, 0.92)
                     );
-                border: 1px solid rgba(247, 247, 250, 0.12);
-                border-radius: var(--mmc-radius-card);
+                border: 1px solid var(--mmc-border);
+                border-radius: var(--mmc-radius);
                 box-shadow:
                     0 18px 46px rgba(0, 0, 0, 0.20),
                     inset 0 1px 0 rgba(255, 255, 255, 0.025);
@@ -220,7 +227,7 @@ def inject_global_styles() -> None:
             }
 
             .mmc-card-title {
-                color: #F7F7FA;
+                color: var(--mmc-text);
                 font-size: 1.03rem;
                 font-weight: 760;
                 letter-spacing: -0.022em;
@@ -228,7 +235,7 @@ def inject_global_styles() -> None:
             }
 
             .mmc-card-copy {
-                color: #B7B7C6;
+                color: var(--mmc-muted);
                 font-size: 0.95rem;
                 line-height: 1.64;
                 margin: 0;
@@ -242,7 +249,7 @@ def inject_global_styles() -> None:
                         rgba(25, 25, 34, 0.96)
                     );
                 border: 1px solid rgba(111, 117, 255, 0.48);
-                border-radius: var(--mmc-radius-card);
+                border-radius: var(--mmc-radius);
                 box-shadow:
                     0 18px 46px rgba(0, 0, 0, 0.22),
                     inset 0 1px 0 rgba(255, 255, 255, 0.06);
@@ -269,7 +276,7 @@ def inject_global_styles() -> None:
             }
 
             .mmc-metric-label {
-                color: #B7B7C6;
+                color: var(--mmc-muted);
                 font-size: 0.74rem;
                 font-weight: 760;
                 letter-spacing: 0.08em;
@@ -303,25 +310,25 @@ def inject_global_styles() -> None:
             }
 
             .mmc-badge--success {
-                background: rgba(46, 173, 114, 0.14);
+                background: rgba(97, 208, 149, 0.14);
                 border-color: rgba(97, 208, 149, 0.52);
                 color: #7AE4A9;
             }
 
             .mmc-badge--warning {
-                background: rgba(199, 131, 18, 0.15);
+                background: rgba(245, 190, 98, 0.15);
                 border-color: rgba(245, 190, 98, 0.54);
                 color: #FFD183;
             }
 
             .mmc-badge--danger {
-                background: rgba(217, 80, 80, 0.14);
+                background: rgba(241, 123, 123, 0.14);
                 border-color: rgba(241, 123, 123, 0.54);
                 color: #FFAAAA;
             }
 
             .mmc-divider {
-                border-top: 1px solid rgba(247, 247, 250, 0.11);
+                border-top: 1px solid var(--mmc-border);
                 margin: 2.4rem 0;
             }
 
@@ -333,7 +340,7 @@ def inject_global_styles() -> None:
                         rgba(47, 53, 255, 0.08)
                     );
                 border: 1px solid rgba(101, 106, 255, 0.26);
-                border-left: 3px solid #2F35FF;
+                border-left: 3px solid var(--mmc-blue);
                 border-radius: 0.76rem;
                 color: #C5C5D3;
                 font-size: 0.94rem;
@@ -343,7 +350,7 @@ def inject_global_styles() -> None:
             }
 
             .mmc-sidebar-identity {
-                border-bottom: 1px solid rgba(247, 247, 250, 0.11);
+                border-bottom: 1px solid var(--mmc-border);
                 margin: 0.3rem 0.75rem 1.1rem;
                 padding: 0.75rem 0 1.3rem;
             }
@@ -360,27 +367,27 @@ def inject_global_styles() -> None:
             div[data-testid="stTextArea"] textarea {
                 background: rgba(27, 27, 34, 0.96) !important;
                 border-color: rgba(247, 247, 250, 0.13) !important;
-                border-radius: var(--mmc-radius-control) !important;
-                color: #F7F7FA !important;
+                border-radius: var(--mmc-radius-small) !important;
+                color: var(--mmc-text) !important;
             }
 
             div[data-testid="stTextInput"] input::placeholder,
             div[data-testid="stTextArea"] textarea::placeholder {
-                color: #858596;
+                color: var(--mmc-subtle);
             }
 
             div[data-baseweb="select"] > div,
             div[data-baseweb="select"] * {
-                color: #F7F7FA !important;
+                color: var(--mmc-text) !important;
             }
 
             div[data-baseweb="popover"],
             [data-baseweb="menu"] {
-                background: #1D1D24 !important;
+                background: var(--mmc-surface-raised) !important;
             }
 
             [data-baseweb="menu"] li {
-                color: #F7F7FA !important;
+                color: var(--mmc-text) !important;
             }
 
             [data-baseweb="menu"] li:hover {
@@ -389,7 +396,7 @@ def inject_global_styles() -> None:
 
             div[data-testid="stButton"] > button,
             div[data-testid="stFormSubmitButton"] > button {
-                background: #2F35FF;
+                background: var(--mmc-blue);
                 border: 1px solid rgba(255, 255, 255, 0.16);
                 border-radius: 0.72rem;
                 box-shadow: 0 12px 28px rgba(47, 53, 255, 0.26);
@@ -415,12 +422,12 @@ def inject_global_styles() -> None:
                 background: rgba(247, 247, 250, 0.07);
                 border-color: rgba(247, 247, 250, 0.13);
                 box-shadow: none;
-                color: #F7F7FA !important;
+                color: var(--mmc-text) !important;
             }
 
             div[data-testid="stButton"] > button[kind="secondary"]:hover {
                 background: rgba(47, 53, 255, 0.14);
-                border-color: rgba(111, 117, 255, 0.40);
+                border-color: var(--mmc-border-strong);
                 box-shadow: none;
             }
 
@@ -432,7 +439,7 @@ def inject_global_styles() -> None:
             }
 
             [data-testid="stExpander"] summary {
-                color: #F7F7FA;
+                color: var(--mmc-text);
                 font-weight: 670;
             }
 
@@ -442,12 +449,18 @@ def inject_global_styles() -> None:
             }
 
             [data-testid="stAlert"] * {
-                color: #F7F7FA;
+                color: var(--mmc-text);
+            }
+
+            [data-testid="stDataFrame"] {
+                border: 1px solid var(--mmc-border);
+                border-radius: 0.9rem;
+                overflow: hidden;
             }
 
             blockquote {
                 background: rgba(47, 53, 255, 0.10);
-                border-left: 3px solid #2F35FF;
+                border-left: 3px solid var(--mmc-blue);
                 border-radius: 0 0.62rem 0.62rem 0;
                 color: #C5C5D3;
                 line-height: 1.65;
@@ -461,6 +474,15 @@ def inject_global_styles() -> None:
             [data-baseweb="select"] > div:focus-within {
                 box-shadow: 0 0 0 3px rgba(100, 105, 255, 0.44) !important;
                 outline: none !important;
+            }
+
+            @media (prefers-reduced-motion: reduce) {
+                *,
+                *::before,
+                *::after {
+                    scroll-behavior: auto !important;
+                    transition-duration: 0.01ms !important;
+                }
             }
 
             @media (max-width: 900px) {
