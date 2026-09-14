@@ -25,12 +25,12 @@ REFLECTION_FILE_PATH = Path("data/reflections.json")
 LEARNING_RECORDS = [
     {
         "id": "SIG-014",
-        "title": "Implementation guidance reduced early-stage hesitation",
+        "title": "Implementation guidance reduced early stage hesitation",
         "type": "Customer friction",
         "area": "Customer",
         "impact": "High",
         "outcome": (
-            "Customer Success introduced a structured first-workflow guide "
+            "Customer Success introduced a structured first workflow guide "
             "and added an implementation checkpoint during onboarding."
         ),
         "learning": (
@@ -68,7 +68,7 @@ LEARNING_RECORDS = [
     },
     {
         "id": "SIG-022",
-        "title": "Named ownership made a cross-functional commitment visible",
+        "title": "Named ownership made a cross functional commitment visible",
         "type": "Commitment",
         "area": "Operations",
         "impact": "High",
@@ -229,11 +229,11 @@ def render_learning_record(record: dict[str, str]) -> None:
     columns = st.columns(2)
 
     with columns[0]:
-        st.markdown("#### Observed outcome")
+        st.markdown("#### What happened")
         st.write(record["outcome"])
 
     with columns[1]:
-        st.markdown("#### Learning retained")
+        st.markdown("#### What the organization retained")
         st.write(record["learning"])
 
     detail_columns = st.columns(2)
@@ -243,34 +243,34 @@ def render_learning_record(record: dict[str, str]) -> None:
         st.write(record["owner"])
 
     with detail_columns[1]:
-        st.caption("Completed")
+        st.caption("Learning recorded")
         st.write(record["completed"])
 
     if record.get("next_step"):
         st.caption(f"Next step: {record['next_step']}")
 
-    with st.expander("View original evidence"):
+    with st.expander("Open original evidence"):
         st.markdown(f"> {record['evidence']}")
         st.caption(
-            "Demonstration evidence only. The record illustrates how a signal "
-            "can progress through review, action, outcome, and learning."
+            "The original observation remains connected to the completed work "
+            "and the retained learning."
         )
 
 
 def render_reflection_form() -> None:
     completed_actions = get_completed_actions()
 
-    st.markdown("## Record learning from completed work")
+    st.markdown("## Record what the organization should remember")
 
     if not completed_actions:
         st.caption(
-            "Complete an action in Action Queue before recording its observed "
-            "outcome and retained learning."
+            "Complete an action in Action Queue first. Once work is complete, "
+            "record what happened and what future decisions should begin with."
         )
         return
 
     selected_action_id = st.selectbox(
-        "Choose a completed action",
+        "Choose completed work",
         options=[action.id for action in completed_actions],
         format_func=lambda action_id: (
             f"{get_signal(get_action(action_id).signal_id)['id']} · "
@@ -278,40 +278,61 @@ def render_reflection_form() -> None:
         ),
     )
 
+    selected_action = get_action(selected_action_id)
+    selected_signal = get_signal(selected_action.signal_id)
     existing_reflection = get_reflection_for_action(selected_action_id)
+
+    if selected_signal:
+        render_badges(
+            [
+                selected_signal["type"],
+                selected_signal["area"],
+                f"{selected_signal['impact']} impact",
+                "Completed work",
+            ]
+        )
+        st.caption(
+            f"Original signal: {selected_signal['id']} · "
+            f"{selected_signal['title']}"
+        )
 
     if existing_reflection:
         st.caption(
-            "A learning record already exists for this action. Saving the "
-            "form will update it."
+            "A learning record already exists for this work. Saving the form "
+            "will update the retained organizational memory."
         )
 
     with st.form(f"reflection_form_{selected_action_id}"):
         outcome = st.text_area(
-            "Observed outcome",
+            "What happened?",
             value=(existing_reflection.outcome if existing_reflection else ""),
-            placeholder="What happened after the action was completed?",
+            placeholder=(
+                "Describe the observed result after this work was completed."
+            ),
         )
 
         learning = st.text_area(
-            "Learning retained",
+            "What should the organization remember?",
             value=(existing_reflection.learning if existing_reflection else ""),
-            placeholder="What should the organisation carry forward?",
+            placeholder=(
+                "Capture the lesson that should inform future signals, "
+                "patterns, and decisions."
+            ),
         )
 
         next_step = st.text_input(
-            "Next step",
+            "What happens next? Optional",
             value=(existing_reflection.next_step if existing_reflection else ""),
-            placeholder="What should happen next, if anything?",
+            placeholder="Record any follow up that remains.",
         )
 
-        submitted = st.form_submit_button("Save learning record")
+        submitted = st.form_submit_button("Save organizational learning")
 
     if submitted:
         if not outcome.strip() or not learning.strip():
             st.error(
-                "Add both an observed outcome and retained learning before "
-                "saving the record."
+                "Add both what happened and what the organization should "
+                "remember before saving."
             )
             return
 
@@ -323,11 +344,14 @@ def render_reflection_form() -> None:
         )
 
         if saved:
-            st.success("The learning record was saved.")
+            st.success(
+                "Learning saved. This completed work is now connected to its "
+                "outcome and retained organizational memory."
+            )
         else:
             st.warning(
-                "The learning record is available in this session, but the "
-                "host could not save it permanently."
+                "The learning is available in this session, but the host "
+                "could not save it permanently."
             )
 
         st.rerun()
@@ -339,24 +363,23 @@ initialise_state()
 
 render_page_header(
     eyebrow="Learning Loop",
-    title="What the organisation carries forward",
+    title="What the organization carries forward",
     description=(
-        "Review completed signals, observed outcomes, and the lessons the "
-        "organisation has chosen to preserve from repeated meeting evidence."
+        "Completion is not the end of the workflow. Record what happened, "
+        "what was learned, and what future decisions should begin with."
     ),
 )
 
 render_notice(
     "Learning is recorded after human review and an observed outcome. These "
-    "records are organizational memory, not automated conclusions or "
+    "records preserve organizational memory, not automated conclusions or "
     "individual performance judgments."
 )
 
-# Demo banner for medium-build walkthrough
 st.info(
-    "Demo mode: After completing your action for **SIG-001**, "
-    "choose it below and record a reflection. This completes "
-    "the Signal → Action → Reflection demo."
+    "Demo journey: After completing **SIG-001** in Action Queue, choose the "
+    "completed work below. Record what happened and what the organization "
+    "should remember to complete the full workflow."
 )
 
 render_reflection_form()
@@ -371,7 +394,7 @@ all_records = LEARNING_RECORDS + connected_records
 
 render_divider()
 
-st.markdown("## Search completed learning")
+st.markdown("## Find retained learning")
 
 filter_columns = st.columns(3)
 
@@ -406,7 +429,7 @@ render_divider()
 metric_columns = st.columns(4)
 
 with metric_columns[0]:
-    render_metric("Completed signals", len(filtered_records))
+    render_metric("Learning records", len(filtered_records))
 
 with metric_columns[1]:
     render_metric(
@@ -428,39 +451,39 @@ with metric_columns[3]:
 
 render_divider()
 
-st.markdown(f"## {len(filtered_records)} completed records in view")
+st.markdown(f"## {len(filtered_records)} learning records in view")
 
 if not filtered_records:
     st.info(
-        "No completed learning records match the current filters. Adjust the "
-        "filters and try again."
+        "No learning records match the current filters. Adjust the filters or "
+        "search terms and try again."
     )
 else:
     for record in filtered_records:
         render_learning_record(record)
         render_divider()
 
-st.markdown("## What this proves")
+st.markdown("## What this makes possible")
 
 proof_columns = st.columns(3)
 
 with proof_columns[0]:
     render_card(
-        "Memory with evidence",
-        "The original meeting observation remains available alongside the "
-        "resulting outcome and retained learning.",
+        "Evidence remains connected",
+        "The original meeting observation stays linked to the completed work, "
+        "its observed outcome, and the lesson that was retained.",
     )
 
 with proof_columns[1]:
     render_card(
-        "Accountability through action",
-        "Each completed record makes the responsible owner and progression "
-        "from signal to outcome visible.",
+        "Accountability becomes visible",
+        "Each completed record shows who owned the work and how the "
+        "organization moved from signal to outcome.",
     )
 
 with proof_columns[2]:
     render_card(
-        "Learning beyond one meeting",
-        "The organization can retain lessons from repeated evidence rather "
-        "than treating meetings as isolated events.",
+        "The next decision improves",
+        "Retained learning strengthens Pattern Library, helping people begin "
+        "future decisions with organizational context rather than memory alone.",
     )
