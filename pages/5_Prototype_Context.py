@@ -18,39 +18,91 @@ render_page_header(
     eyebrow="Prototype Context",
     title="What this demonstration proves",
     description=(
-        "Understand the intended scope, limitations, privacy boundaries, and "
-        "next steps for the Meeting Memory Console prototype."
+        "This prototype makes an operating model tangible: conversations can "
+        "become evidence, evidence can inform accountable action, and completed "
+        "work can become organizational learning."
     ),
 )
 
 render_notice(
-    "This page explains what the demonstration shows, what it does not do, "
-    "and how the design could evolve toward production use."
+    "This page explains the intended product boundaries. The demonstration "
+    "uses fictional data to make the workflow visible and inspectable without "
+    "making claims about live organizational activity."
 )
 
-# Demo banner for medium-build walkthrough
-st.info(
-    "Demo mode: After walking through Signal Desk → Action Queue → Learning Loop, "
-    "use this page to explain the prototype's scope and next steps to stakeholders."
-)
+st.markdown("## The operating model")
+
+flow_columns = st.columns(4)
+
+flow = [
+    (
+        flow_columns[0],
+        "Signal Desk",
+        "A useful observation from a conversation becomes visible with its "
+        "source context and proposed route.",
+    ),
+    (
+        flow_columns[1],
+        "Pattern Library",
+        "Related signals are reviewed together so repeated evidence can inform "
+        "a decision before work begins.",
+    ),
+    (
+        flow_columns[2],
+        "Action Queue",
+        "A person confirms ownership, destination, and the next move. The "
+        "system records the decision instead of making it automatically.",
+    ),
+    (
+        flow_columns[3],
+        "Learning Loop",
+        "Completed work is connected to its outcome and a lesson the "
+        "organization chooses to retain.",
+    ),
+]
+
+for column, title, description in flow:
+    with column:
+        render_card(title, description)
+
+render_divider()
 
 st.markdown("## What this prototype demonstrates")
 
-st.write(
-    "Meeting Memory Console demonstrates how organizations can turn useful "
-    "conversation signals into structured, reviewable workflow without "
-    "treating any single conversation as a final conclusion."
-)
+demonstration_columns = st.columns(3)
 
-st.write(
-    "The prototype makes signals visible, groups repeated signals into "
-    "patterns, proposes destinations and owners, records human decisions, "
-    "and preserves outcomes and learning."
-)
+with demonstration_columns[0]:
+    render_card(
+        "Signals remain visible",
+        "Meaningful observations no longer disappear when a conversation ends. "
+        "Their supporting evidence remains available for review.",
+    )
 
-st.write(
-    "The current build uses fictional demonstration data. Its purpose is to "
-    "make the intended operating model tangible and inspectable."
+with demonstration_columns[1]:
+    render_card(
+        "People remain accountable",
+        "Suggested routes do not become action automatically. A human reviews "
+        "the evidence, confirms the route, and records the decision.",
+    )
+
+with demonstration_columns[2]:
+    render_card(
+        "Learning compounds",
+        "Outcomes and retained learning stay connected to the original signal, "
+        "strengthening the organizational memory available next time.",
+    )
+
+render_divider()
+
+st.markdown("## Why Pattern Library comes before Action Queue")
+
+render_card(
+    "Memory before commitment",
+    "Organizations often revisit the same problem because the relevant "
+    "context lives across separate meetings, teams, and people. Pattern "
+    "Library belongs between Signal Desk and Action Queue because it gives "
+    "the person making a decision a chance to see repeated evidence before "
+    "resources, ownership, and urgency are committed.",
 )
 
 render_divider()
@@ -60,95 +112,98 @@ st.markdown("## What this prototype does not do")
 limitations = [
     (
         "No live meeting ingestion",
-        "The current build does not connect to meeting recordings, transcripts, "
+        "The current build does not connect to recordings, transcripts, "
         "calendars, or external conversation platforms.",
     ),
     (
         "No automated decisions",
-        "Suggested routes and owners are illustrative. A person must review "
-        "evidence before action is taken.",
+        "Proposed routes and owners are illustrative. A person must review "
+        "evidence before consequential work progresses.",
     ),
     (
         "No production security controls",
-        "Authentication, access controls, tenancy, audit infrastructure, and "
-        "retention policies would be required before production use.",
+        "Authentication, access controls, tenancy, audit infrastructure, "
+        "retention policies, and governance would be needed before production use.",
     ),
     (
-        "No replacement of existing systems",
-        "The concept is intended to sit alongside CRM, project, communication, "
+        "No replacement for existing systems",
+        "The concept is designed to work alongside CRM, project, communication, "
         "and data systems rather than replace them.",
     ),
 ]
 
-for title, description in limitations:
-    render_card(title, description)
+limitation_columns = st.columns(2)
+
+for index, (title, description) in enumerate(limitations):
+    with limitation_columns[index % 2]:
+        render_card(title, description)
 
 render_divider()
 
 st.markdown("## Privacy and intended boundaries")
 
 st.write(
-    "The demonstration data is fictional and contains no real company data, "
-    "customer data, meeting recordings, transcripts, personal information, "
-    "or internal information."
+    "The demonstration data is fictional. It contains no real customer data, "
+    "meeting recordings, transcripts, personal information, or internal "
+    "organizational information."
 )
 
 st.write(
-    "In a production system, meeting-derived information would require clear "
-    "rules for consent, access, retention, deletion, and approved use. Signals "
-    "should describe organizational observations rather than serve as "
-    "individual performance judgments."
+    "A production system would require clear rules for consent, access, "
+    "retention, deletion, security, and approved use. Signals should describe "
+    "organizational observations, not become unreviewed judgments about people."
 )
 
 st.write(
-    "The human review step is an intentional product boundary. The system "
-    "should support better organizational memory and accountability without "
-    "turning conversation signals into unreviewed conclusions about people."
+    "Human review is an intentional product boundary. The system is designed "
+    "to improve organizational memory and accountability without turning "
+    "meeting signals into automatic conclusions."
 )
 
 render_divider()
 
-st.markdown("## Design principles")
+st.markdown("## Principles that guide the product")
 
 principle_columns = st.columns(3)
 
 with principle_columns[0]:
     render_card(
         "Evidence before automation",
-        "Every signal or pattern should expose the evidence that supports it.",
+        "Every signal and pattern should expose the evidence that supports it.",
     )
 
 with principle_columns[1]:
     render_card(
         "Human review before action",
-        "Consequential workflow changes should require a person to review "
-        "and confirm the route.",
+        "Consequential workflow changes require a person to review and confirm "
+        "the appropriate route.",
     )
 
 with principle_columns[2]:
     render_card(
         "Learning after completion",
-        "Outcomes and learning should remain visible after the immediate "
-        "action is complete.",
+        "Outcomes and retained learning remain visible after immediate work "
+        "has ended, improving the next decision.",
     )
 
 render_divider()
 
-st.markdown("## Next steps toward production")
+st.markdown("## Path toward production")
 
 st.write(
-    "A production implementation would require stakeholder requirements, user "
-    "research, security review, privacy assessment, data governance, "
-    "integration design, engineering collaboration, and measured rollout."
+    "A production implementation would begin with stakeholder requirements, "
+    "user research, privacy assessment, data governance, security review, "
+    "integration design, engineering collaboration, and a measured rollout."
 )
 
 st.write(
-    "The next technical phase would replace the demonstration records with "
-    "validated domain models, persistent storage, repository abstractions, "
-    "service-layer workflows, automated tests, and controlled integrations."
+    "The next technical stage would replace demonstration records with live "
+    "data pipelines, durable storage, validated access control, multi user "
+    "collaboration, auditability, and carefully controlled intelligence "
+    "features."
 )
 
 st.write(
-    "The prototype is intentionally focused on proving the operating model "
-    "before adding the complexity of live infrastructure."
+    "The prototype remains intentionally focused. It proves the operating "
+    "model before adding the complexity of production infrastructure."
 )
