@@ -36,27 +36,41 @@ def inject_global_styles() -> None:
             :root {
                 --mmc-blue: #2F35FF;
                 --mmc-blue-deep: #1D239D;
-                --mmc-success: #61D095;
-                --mmc-warning: #F5BE62;
-                --mmc-danger: #F17B7B;
-                --mmc-radius: 1rem;
-                --mmc-radius-small: 0.72rem;
+                --mmc-blue-pale: #E2E2FE;
+                --mmc-success: #2EAD72;
+                --mmc-warning: #C78312;
+                --mmc-danger: #D95050;
+                --mmc-radius-card: 1.05rem;
+                --mmc-radius-control: 0.72rem;
+            }
+
+            html,
+            body,
+            [class*="css"] {
+                font-family:
+                    Inter,
+                    ui-sans-serif,
+                    system-ui,
+                    -apple-system,
+                    BlinkMacSystemFont,
+                    "Segoe UI",
+                    sans-serif;
             }
 
             .stApp {
                 background:
                     radial-gradient(
-                        circle at 88% 4%,
+                        circle at 92% 2%,
                         rgba(47, 53, 255, 0.18),
-                        transparent 27%
+                        transparent 29%
                     ),
                     radial-gradient(
-                        circle at 8% 98%,
+                        circle at 8% 96%,
                         rgba(47, 53, 255, 0.10),
-                        transparent 25%
+                        transparent 24%
                     ),
-                    var(--background-color);
-                color: var(--text-color);
+                    #0B0B0D;
+                color: #F7F7FA;
             }
 
             [data-testid="stHeader"] {
@@ -68,35 +82,31 @@ def inject_global_styles() -> None:
             }
 
             [data-testid="stSidebar"] {
-                background: var(--secondary-background-color);
-                border-right: 1px solid color-mix(
-                    in srgb,
-                    var(--text-color) 12%,
-                    transparent
-                );
+                background: rgba(12, 12, 16, 0.98);
+                border-right: 1px solid rgba(247, 247, 250, 0.10);
             }
 
             [data-testid="stSidebar"] * {
-                color: var(--text-color);
+                color: #F7F7FA;
             }
 
             [data-testid="stSidebarContent"] {
-                padding-top: 0.7rem;
+                padding-top: 0.75rem;
             }
 
             [data-testid="stSidebarNav"] {
-                padding-top: 1.15rem;
+                padding-top: 1rem;
             }
 
             [data-testid="stSidebarNav"] ul {
-                gap: 0.22rem;
+                gap: 0.2rem;
             }
 
             [data-testid="stSidebarNav"] a {
                 border: 1px solid transparent;
-                border-radius: 0.8rem;
-                margin: 0.08rem 0.6rem;
-                padding: 0.62rem 0.75rem;
+                border-radius: 0.82rem;
+                margin: 0.1rem 0.6rem;
+                padding: 0.66rem 0.78rem;
                 transition:
                     background 160ms ease,
                     border-color 160ms ease,
@@ -104,16 +114,8 @@ def inject_global_styles() -> None:
             }
 
             [data-testid="stSidebarNav"] a:hover {
-                background: color-mix(
-                    in srgb,
-                    var(--mmc-blue) 14%,
-                    transparent
-                );
-                border-color: color-mix(
-                    in srgb,
-                    var(--text-color) 12%,
-                    transparent
-                );
+                background: rgba(47, 53, 255, 0.16);
+                border-color: rgba(117, 122, 255, 0.20);
                 transform: translateX(2px);
             }
 
@@ -121,134 +123,114 @@ def inject_global_styles() -> None:
                 background:
                     linear-gradient(
                         90deg,
-                        rgba(47, 53, 255, 0.34),
+                        rgba(47, 53, 255, 0.38),
                         rgba(47, 53, 255, 0.18)
                     );
-                border-color: rgba(110, 115, 255, 0.38);
-                box-shadow: inset 3px 0 0 var(--mmc-blue);
-                color: var(--text-color);
-                font-weight: 750;
+                border-color: rgba(114, 119, 255, 0.40);
+                box-shadow:
+                    inset 3px 0 0 #2F35FF,
+                    0 8px 24px rgba(19, 25, 182, 0.18);
+                color: #FFFFFF;
+                font-weight: 760;
             }
 
             .block-container {
                 max-width: 1440px;
-                padding: 3.25rem 2.75rem 4.5rem;
+                padding: 3.25rem 2.75rem 4.75rem;
             }
 
             h1,
             h2,
             h3,
             h4 {
-                color: var(--text-color) !important;
-                letter-spacing: -0.035em;
+                color: #F7F7FA !important;
+                letter-spacing: -0.04em;
             }
 
             h1 {
-                font-size: clamp(2.55rem, 4.6vw, 4.6rem);
-                font-weight: 760;
-                line-height: 1.02;
+                font-size: clamp(2.65rem, 4.8vw, 4.7rem);
+                font-weight: 780;
+                line-height: 1.01;
                 margin-bottom: 0.9rem;
             }
 
             h2 {
-                font-size: clamp(1.55rem, 2.4vw, 2.15rem);
-                font-weight: 730;
+                font-size: clamp(1.55rem, 2.3vw, 2.15rem);
+                font-weight: 740;
                 line-height: 1.15;
-                margin-top: 2.35rem;
+                margin-top: 2.45rem;
             }
 
             h3 {
-                font-size: 1.17rem;
-                font-weight: 720;
-                line-height: 1.25;
+                font-size: 1.16rem;
+                font-weight: 730;
+                line-height: 1.3;
             }
 
             h4 {
-                font-size: 0.95rem;
-                font-weight: 720;
+                font-size: 0.96rem;
+                font-weight: 730;
             }
 
             p,
             li,
             label,
             [data-testid="stMarkdownContainer"] {
-                color: color-mix(
-                    in srgb,
-                    var(--text-color) 73%,
-                    var(--background-color)
-                );
+                color: #B7B7C6;
             }
 
             [data-testid="stCaptionContainer"] {
-                color: color-mix(
-                    in srgb,
-                    var(--text-color) 56%,
-                    var(--background-color)
-                );
+                color: #858596;
             }
 
             [data-testid="stMarkdownContainer"] strong {
-                color: var(--text-color);
+                color: #F7F7FA;
             }
 
             .mmc-eyebrow {
-                color: var(--mmc-blue);
-                font-size: 0.74rem;
-                font-weight: 830;
-                letter-spacing: 0.13em;
-                margin-bottom: 0.9rem;
+                color: #5D63FF;
+                font-size: 0.73rem;
+                font-weight: 840;
+                letter-spacing: 0.14em;
+                margin-bottom: 0.95rem;
                 text-transform: uppercase;
             }
 
             .mmc-lede {
-                color: color-mix(
-                    in srgb,
-                    var(--text-color) 73%,
-                    var(--background-color)
-                );
-                font-size: clamp(1.05rem, 1.5vw, 1.18rem);
+                color: #C5C5D3;
+                font-size: clamp(1.05rem, 1.5vw, 1.2rem);
                 line-height: 1.68;
-                max-width: 800px;
+                max-width: 810px;
             }
 
             .mmc-card {
                 background:
                     linear-gradient(
                         145deg,
-                        var(--secondary-background-color),
-                        color-mix(
-                            in srgb,
-                            var(--secondary-background-color) 86%,
-                            var(--background-color)
-                        )
+                        rgba(28, 28, 35, 0.96),
+                        rgba(18, 18, 23, 0.92)
                     );
-                border: 1px solid color-mix(
-                    in srgb,
-                    var(--text-color) 12%,
-                    transparent
-                );
-                border-radius: var(--mmc-radius);
-                box-shadow: 0 9px 26px rgba(0, 0, 0, 0.11);
+                border: 1px solid rgba(247, 247, 250, 0.12);
+                border-radius: var(--mmc-radius-card);
+                box-shadow:
+                    0 18px 46px rgba(0, 0, 0, 0.20),
+                    inset 0 1px 0 rgba(255, 255, 255, 0.025);
                 min-height: 100%;
-                padding: 1.4rem;
+                padding: 1.42rem;
             }
 
             .mmc-card-title {
-                color: var(--text-color);
-                font-size: 1.02rem;
+                color: #F7F7FA;
+                font-size: 1.03rem;
                 font-weight: 760;
-                letter-spacing: -0.018em;
+                letter-spacing: -0.022em;
                 margin-bottom: 0.55rem;
             }
 
             .mmc-card-copy {
-                color: color-mix(
-                    in srgb,
-                    var(--text-color) 73%,
-                    var(--background-color)
-                );
+                color: #B7B7C6;
                 font-size: 0.95rem;
-                line-height: 1.62;
+                line-height: 1.64;
                 margin: 0;
             }
 
@@ -256,158 +238,118 @@ def inject_global_styles() -> None:
                 background:
                     linear-gradient(
                         135deg,
-                        rgba(47, 53, 255, 0.28),
-                        var(--secondary-background-color)
+                        rgba(47, 53, 255, 0.34),
+                        rgba(25, 25, 34, 0.96)
                     );
-                border: 1px solid rgba(104, 109, 255, 0.42);
-                border-radius: var(--mmc-radius);
-                box-shadow: 0 9px 26px rgba(0, 0, 0, 0.11);
-                min-height: 9.1rem;
+                border: 1px solid rgba(111, 117, 255, 0.48);
+                border-radius: var(--mmc-radius-card);
+                box-shadow:
+                    0 18px 46px rgba(0, 0, 0, 0.22),
+                    inset 0 1px 0 rgba(255, 255, 255, 0.06);
+                min-height: 9.2rem;
                 overflow: hidden;
-                padding: 1.3rem;
+                padding: 1.32rem;
                 position: relative;
             }
 
             .mmc-metric::after {
-                background: rgba(255, 255, 255, 0.10);
+                background:
+                    radial-gradient(
+                        circle,
+                        rgba(255, 255, 255, 0.14),
+                        transparent 68%
+                    );
                 border-radius: 50%;
                 content: "";
-                height: 9rem;
+                height: 12rem;
                 position: absolute;
-                right: -4rem;
-                top: -5rem;
-                width: 9rem;
+                right: -4.5rem;
+                top: -6.5rem;
+                width: 12rem;
             }
 
             .mmc-metric-label {
-                color: color-mix(
-                    in srgb,
-                    var(--text-color) 70%,
-                    var(--background-color)
-                );
-                font-size: 0.75rem;
-                font-weight: 750;
-                letter-spacing: 0.075em;
+                color: #B7B7C6;
+                font-size: 0.74rem;
+                font-weight: 760;
+                letter-spacing: 0.08em;
                 position: relative;
                 text-transform: uppercase;
                 z-index: 1;
             }
 
             .mmc-metric-value {
-                color: var(--text-color);
-                font-size: 2.55rem;
-                font-weight: 810;
-                letter-spacing: -0.06em;
-                line-height: 1.1;
-                margin-top: 0.62rem;
+                color: #FFFFFF;
+                font-size: 2.6rem;
+                font-weight: 820;
+                letter-spacing: -0.065em;
+                line-height: 1.05;
+                margin-top: 0.66rem;
                 position: relative;
                 z-index: 1;
             }
 
             .mmc-badge {
-                background: color-mix(
-                    in srgb,
-                    var(--mmc-blue) 13%,
-                    transparent
-                );
-                border: 1px solid rgba(100, 105, 255, 0.40);
+                background: rgba(47, 53, 255, 0.16);
+                border: 1px solid rgba(105, 110, 255, 0.42);
                 border-radius: 999px;
-                color: var(--text-color);
+                color: #E9E9FF;
                 display: inline-block;
                 font-size: 0.73rem;
                 font-weight: 720;
                 letter-spacing: -0.01em;
-                margin: 0 0.32rem 0.45rem 0;
-                padding: 0.3rem 0.64rem;
+                margin: 0 0.34rem 0.46rem 0;
+                padding: 0.3rem 0.65rem;
             }
 
             .mmc-badge--success {
-                background: color-mix(
-                    in srgb,
-                    var(--mmc-success) 14%,
-                    transparent
-                );
-                border-color: color-mix(
-                    in srgb,
-                    var(--mmc-success) 62%,
-                    transparent
-                );
-                color: var(--mmc-success);
+                background: rgba(46, 173, 114, 0.14);
+                border-color: rgba(97, 208, 149, 0.52);
+                color: #7AE4A9;
             }
 
             .mmc-badge--warning {
-                background: color-mix(
-                    in srgb,
-                    var(--mmc-warning) 14%,
-                    transparent
-                );
-                border-color: color-mix(
-                    in srgb,
-                    var(--mmc-warning) 62%,
-                    transparent
-                );
-                color: var(--mmc-warning);
+                background: rgba(199, 131, 18, 0.15);
+                border-color: rgba(245, 190, 98, 0.54);
+                color: #FFD183;
             }
 
             .mmc-badge--danger {
-                background: color-mix(
-                    in srgb,
-                    var(--mmc-danger) 14%,
-                    transparent
-                );
-                border-color: color-mix(
-                    in srgb,
-                    var(--mmc-danger) 62%,
-                    transparent
-                );
-                color: var(--mmc-danger);
+                background: rgba(217, 80, 80, 0.14);
+                border-color: rgba(241, 123, 123, 0.54);
+                color: #FFAAAA;
             }
 
             .mmc-divider {
-                border-top: 1px solid color-mix(
-                    in srgb,
-                    var(--text-color) 12%,
-                    transparent
-                );
-                margin: 2.35rem 0;
+                border-top: 1px solid rgba(247, 247, 250, 0.11);
+                margin: 2.4rem 0;
             }
 
             .mmc-notice {
-                background: color-mix(
-                    in srgb,
-                    var(--mmc-blue) 12%,
-                    transparent
-                );
-                border: 1px solid rgba(100, 105, 255, 0.28);
-                border-left: 3px solid var(--mmc-blue);
-                border-radius: 0.75rem;
-                color: color-mix(
-                    in srgb,
-                    var(--text-color) 73%,
-                    var(--background-color)
-                );
+                background:
+                    linear-gradient(
+                        90deg,
+                        rgba(47, 53, 255, 0.16),
+                        rgba(47, 53, 255, 0.08)
+                    );
+                border: 1px solid rgba(101, 106, 255, 0.26);
+                border-left: 3px solid #2F35FF;
+                border-radius: 0.76rem;
+                color: #C5C5D3;
                 font-size: 0.94rem;
                 line-height: 1.58;
                 max-width: 100%;
-                padding: 0.95rem 1rem;
+                padding: 0.96rem 1.04rem;
             }
 
             .mmc-sidebar-identity {
-                border-bottom: 1px solid color-mix(
-                    in srgb,
-                    var(--text-color) 12%,
-                    transparent
-                );
+                border-bottom: 1px solid rgba(247, 247, 250, 0.11);
                 margin: 0.3rem 0.75rem 1.1rem;
                 padding: 0.75rem 0 1.3rem;
             }
 
             .mmc-sidebar-tagline {
-                color: color-mix(
-                    in srgb,
-                    var(--text-color) 70%,
-                    var(--background-color)
-                );
+                color: #A4A4B5;
                 font-size: 0.88rem;
                 line-height: 1.5;
                 margin: 0;
@@ -416,61 +358,44 @@ def inject_global_styles() -> None:
             div[data-testid="stSelectbox"] > div > div,
             div[data-testid="stTextInput"] input,
             div[data-testid="stTextArea"] textarea {
-                background: var(--secondary-background-color) !important;
-                border-color: color-mix(
-                    in srgb,
-                    var(--text-color) 15%,
-                    transparent
-                ) !important;
-                border-radius: var(--mmc-radius-small) !important;
-                color: var(--text-color) !important;
-            }
-
-            div[data-testid="stTextInput"] input,
-            div[data-testid="stTextArea"] textarea {
-                caret-color: var(--mmc-blue);
+                background: rgba(27, 27, 34, 0.96) !important;
+                border-color: rgba(247, 247, 250, 0.13) !important;
+                border-radius: var(--mmc-radius-control) !important;
+                color: #F7F7FA !important;
             }
 
             div[data-testid="stTextInput"] input::placeholder,
             div[data-testid="stTextArea"] textarea::placeholder {
-                color: color-mix(
-                    in srgb,
-                    var(--text-color) 50%,
-                    var(--background-color)
-                );
+                color: #858596;
             }
 
             div[data-baseweb="select"] > div,
             div[data-baseweb="select"] * {
-                color: var(--text-color) !important;
+                color: #F7F7FA !important;
             }
 
             div[data-baseweb="popover"],
             [data-baseweb="menu"] {
-                background: var(--secondary-background-color) !important;
+                background: #1D1D24 !important;
             }
 
             [data-baseweb="menu"] li {
-                color: var(--text-color) !important;
+                color: #F7F7FA !important;
             }
 
             [data-baseweb="menu"] li:hover {
-                background: color-mix(
-                    in srgb,
-                    var(--mmc-blue) 13%,
-                    transparent
-                ) !important;
+                background: rgba(47, 53, 255, 0.16) !important;
             }
 
             div[data-testid="stButton"] > button,
             div[data-testid="stFormSubmitButton"] > button {
-                background: var(--mmc-blue);
+                background: #2F35FF;
                 border: 1px solid rgba(255, 255, 255, 0.16);
-                border-radius: 0.7rem;
-                box-shadow: 0 10px 26px rgba(47, 53, 255, 0.22);
+                border-radius: 0.72rem;
+                box-shadow: 0 12px 28px rgba(47, 53, 255, 0.26);
                 color: #FFFFFF !important;
-                font-weight: 750;
-                min-height: 2.65rem;
+                font-weight: 760;
+                min-height: 2.68rem;
                 transition:
                     background 160ms ease,
                     border-color 160ms ease,
@@ -481,104 +406,61 @@ def inject_global_styles() -> None:
             div[data-testid="stButton"] > button:hover,
             div[data-testid="stFormSubmitButton"] > button:hover {
                 background: #4148FF;
-                border-color: rgba(255, 255, 255, 0.30);
-                box-shadow: 0 12px 30px rgba(47, 53, 255, 0.32);
+                border-color: rgba(255, 255, 255, 0.32);
+                box-shadow: 0 15px 32px rgba(47, 53, 255, 0.34);
                 transform: translateY(-1px);
             }
 
             div[data-testid="stButton"] > button[kind="secondary"] {
-                background: var(--secondary-background-color);
-                border-color: color-mix(
-                    in srgb,
-                    var(--text-color) 15%,
-                    transparent
-                );
+                background: rgba(247, 247, 250, 0.07);
+                border-color: rgba(247, 247, 250, 0.13);
                 box-shadow: none;
-                color: var(--text-color) !important;
+                color: #F7F7FA !important;
             }
 
             div[data-testid="stButton"] > button[kind="secondary"]:hover {
-                background: color-mix(
-                    in srgb,
-                    var(--mmc-blue) 13%,
-                    var(--secondary-background-color)
-                );
-                border-color: rgba(100, 105, 255, 0.48);
+                background: rgba(47, 53, 255, 0.14);
+                border-color: rgba(111, 117, 255, 0.40);
                 box-shadow: none;
             }
 
             [data-testid="stExpander"] {
-                background: var(--secondary-background-color);
-                border: 1px solid color-mix(
-                    in srgb,
-                    var(--text-color) 12%,
-                    transparent
-                );
-                border-radius: 0.82rem;
+                background: rgba(20, 20, 26, 0.84);
+                border: 1px solid rgba(247, 247, 250, 0.13);
+                border-radius: 0.84rem;
                 overflow: hidden;
             }
 
             [data-testid="stExpander"] summary {
-                color: var(--text-color);
-                font-weight: 650;
+                color: #F7F7FA;
+                font-weight: 670;
             }
 
             [data-testid="stAlert"] {
-                border: 1px solid color-mix(
-                    in srgb,
-                    var(--text-color) 12%,
-                    transparent
-                );
+                border: 1px solid rgba(247, 247, 250, 0.13);
                 border-radius: 0.78rem;
             }
 
             [data-testid="stAlert"] * {
-                color: var(--text-color);
-            }
-
-            [data-testid="stDataFrame"] {
-                border: 1px solid color-mix(
-                    in srgb,
-                    var(--text-color) 12%,
-                    transparent
-                );
-                border-radius: 0.9rem;
-                overflow: hidden;
+                color: #F7F7FA;
             }
 
             blockquote {
-                background: color-mix(
-                    in srgb,
-                    var(--mmc-blue) 10%,
-                    transparent
-                );
-                border-left: 3px solid var(--mmc-blue);
-                border-radius: 0 0.6rem 0.6rem 0;
-                color: color-mix(
-                    in srgb,
-                    var(--text-color) 73%,
-                    var(--background-color)
-                );
+                background: rgba(47, 53, 255, 0.10);
+                border-left: 3px solid #2F35FF;
+                border-radius: 0 0.62rem 0.62rem 0;
+                color: #C5C5D3;
                 line-height: 1.65;
                 margin: 0.8rem 0 1rem;
-                padding: 0.8rem 1rem;
+                padding: 0.82rem 1rem;
             }
 
             button:focus-visible,
             input:focus-visible,
             textarea:focus-visible,
             [data-baseweb="select"] > div:focus-within {
-                box-shadow: 0 0 0 3px rgba(47, 53, 255, 0.34) !important;
+                box-shadow: 0 0 0 3px rgba(100, 105, 255, 0.44) !important;
                 outline: none !important;
-            }
-
-            @media (prefers-reduced-motion: reduce) {
-                *,
-                *::before,
-                *::after {
-                    scroll-behavior: auto !important;
-                    transition-duration: 0.01ms !important;
-                }
             }
 
             @media (max-width: 900px) {
