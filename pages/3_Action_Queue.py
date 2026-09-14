@@ -131,13 +131,14 @@ def render_action_detail(signal: dict[str, str], action: Action) -> None:
     render_badges(
         [
             signal["type"],
+            signal["area"],
             f"{signal['impact']} impact",
             f"{signal['confidence']} confidence",
             action.status,
         ]
     )
 
-    st.markdown("### Evidence")
+    st.markdown("### What the evidence says")
     st.markdown(f"> {signal['evidence']}")
 
     st.markdown("### Proposed route")
@@ -149,19 +150,24 @@ def render_action_detail(signal: dict[str, str], action: Action) -> None:
         st.write(action.destination)
 
     with route_columns[1]:
-        st.caption("Owner")
+        st.caption("Accountable owner")
         st.write(action.owner)
 
     with route_columns[2]:
         st.caption("Due date")
         st.write(action.due_date)
 
-    st.markdown("### Action")
+    st.markdown("### What this action means")
     st.write(action.description)
+
+    st.caption(
+        "Before recording a decision, use Pattern Library to check whether "
+        "related evidence has already revealed a broader organizational pattern."
+    )
 
 
 def render_action_form(signal: dict[str, str], action: Action) -> None:
-    st.markdown("### Review and decide")
+    st.markdown("### Confirm the next move")
 
     with st.form(f"action_form_{signal['id']}"):
         decision = st.selectbox(
@@ -172,6 +178,10 @@ def render_action_form(signal: dict[str, str], action: Action) -> None:
                 "Mark completed",
                 "Return for review",
             ],
+            help=(
+                "A decision records accountable human judgment. It does not "
+                "automatically assign work or draw conclusions from evidence."
+            ),
         )
 
         owner = st.text_input(
@@ -195,11 +205,12 @@ def render_action_form(signal: dict[str, str], action: Action) -> None:
         note = st.text_area(
             "Decision note",
             placeholder=(
-                "Record why this route was chosen, changed, or returned for review."
+                "Capture why this route was chosen, changed, completed, or "
+                "returned for review."
             ),
         )
 
-        submitted = st.form_submit_button("Record decision")
+        submitted = st.form_submit_button("Record accountable decision")
 
     if submitted:
         saved = apply_decision(
@@ -212,11 +223,14 @@ def render_action_form(signal: dict[str, str], action: Action) -> None:
         )
 
         if saved:
-            st.success(f"{signal['id']} was updated to '{decision}' and saved.")
+            st.success(
+                f"{signal['id']} is now recorded as '{decision}'. The "
+                "decision is available for this workflow."
+            )
         else:
             st.warning(
-                f"{signal['id']} was updated for this session, but the "
-                "host could not save it permanently."
+                f"{signal['id']} was updated for this session, but the host "
+                "could not save it permanently."
             )
 
         st.rerun()
@@ -226,12 +240,18 @@ def render_history() -> None:
     st.markdown("## Decision history")
 
     if not st.session_state.action_history:
-        st.caption("No decisions have been recorded in this browser session yet.")
+        st.caption(
+            "No decisions have been recorded in this browser session yet. "
+            "The history will make the progression from signal to action visible."
+        )
         return
 
     for event in st.session_state.action_history:
         st.markdown(f"**{event['signal_id']} · {event['decision']}**")
-        st.caption(f"{event['updated_at']} · {event['owner']} → {event['destination']}")
+        st.caption(
+            f"{event['updated_at']} · {event['owner']} → "
+            f"{event['destination']}"
+        )
 
         if event["note"]:
             st.write(event["note"])
@@ -249,24 +269,26 @@ render_page_header(
     eyebrow="Action Queue",
     title="Who owns the next move",
     description=(
-        "Review suggested routes, inspect the supporting evidence, and record "
-        "a human decision before a signal progresses through the workflow."
+        "Turn reviewed evidence into a clear human decision. Confirm who is "
+        "responsible, where the work belongs, and what should happen next."
     ),
 )
 
 render_notice(
-    "Suggested routes are not automatic conclusions. A person reviews the "
-    "evidence, confirms or changes the proposed route, and records why."
+    "Action Queue is intentionally human controlled. Suggestions may guide "
+    "review, but a person must confirm ownership, destination, and the "
+    "decision before work progresses."
 )
 
-# Demo banner for medium-build walkthrough
 st.info(
-    "Demo mode: For the walkthrough, choose **SIG-001**. "
-    "Use Start work → Mark completed, then record a "
-    "reflection in Learning Loop."
+    "Demo journey: Choose **SIG-001**, confirm the proposed route, then use "
+    "**Start work** followed by **Mark completed**. Learning Loop will then "
+    "let you record what the organization learned."
 )
 
-actions_by_signal = {action.signal_id: action for action in st.session_state.actions}
+actions_by_signal = {
+    action.signal_id: action for action in st.session_state.actions
+}
 
 metric_columns = st.columns(4)
 
@@ -275,7 +297,7 @@ with metric_columns[0]:
 
 with metric_columns[1]:
     render_metric(
-        "Needs review",
+        "Need decision",
         sum(
             (
                 actions_by_signal.get(signal["id"]).status
@@ -289,7 +311,7 @@ with metric_columns[1]:
 
 with metric_columns[2]:
     render_metric(
-        "In progress",
+        "Work in progress",
         sum(action.status == "In progress" for action in st.session_state.actions),
     )
 
@@ -301,7 +323,7 @@ with metric_columns[3]:
 
 render_divider()
 
-st.markdown("## Signals awaiting a decision")
+st.markdown("## What needs a decision")
 
 for signal in signals:
     action = get_action_for_signal(signal["id"])
@@ -314,18 +336,19 @@ for signal in signals:
         render_badges(
             [
                 signal["type"],
+                signal["area"],
                 f"{signal['impact']} impact",
                 f"{signal['confidence']} confidence",
                 status,
             ]
         )
         st.write(
-            "Select this signal below to review the evidence and record "
-            "an accountable action."
+            "Select this signal below to review the evidence and record an "
+            "accountable decision."
         )
         st.caption(
-            f"Owner: {action.owner if action else signal['owner']} · "
-            f"Destination: "
+            f"Proposed owner: {action.owner if action else signal['owner']} · "
+            f"Proposed destination: "
             f"{action.destination if action else signal['destination']}"
         )
 
@@ -339,7 +362,9 @@ else:
     selected_signal_id = st.selectbox(
         "Choose a signal to review",
         options=[signal["id"] for signal in signals],
-        format_func=lambda signal_id: f"{signal_id} · {get_signal(signal_id)['title']}",
+        format_func=lambda signal_id: (
+            f"{signal_id} · {get_signal(signal_id)['title']}"
+        ),
     )
 
     selected_signal = get_signal(selected_signal_id)
@@ -351,10 +376,11 @@ else:
     render_divider()
     render_history()
 
-st.markdown("## Next layer")
+st.markdown("## The learning layer")
 
 render_card(
-    "From action to learning",
-    "The next workspace will show completed work, observed outcomes, and the "
-    "learning the organization has chosen to carry forward.",
+    "From action to organizational memory",
+    "Completion is not the end of the workflow. Learning Loop captures what "
+    "happened after the work, what the organization should remember, and any "
+    "next step that remains. That learning makes future pattern review stronger.",
 )
