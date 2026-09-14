@@ -352,6 +352,12 @@ render_notice(
     "individual performance judgments."
 )
 
+# Demo banner for medium-build walkthrough
+st.info(
+    "Demo mode: After completing your action for **SIG-001** in Action Queue, "
+    "choose it below and record a reflection. This completes the Signal → Action → Reflection demo."
+)
+
 render_reflection_form()
 
 connected_records = [
