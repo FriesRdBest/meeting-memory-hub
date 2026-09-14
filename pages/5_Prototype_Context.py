@@ -28,6 +28,12 @@ render_notice(
     "and how the design could evolve toward production use."
 )
 
+# Demo banner for medium-build walkthrough
+st.info(
+    "Demo mode: After walking through Signal Desk → Action Queue → Learning Loop, "
+    "use this page to explain the prototype's scope and next steps to stakeholders."
+)
+
 st.markdown("## What this prototype demonstrates")
 
 st.write(
