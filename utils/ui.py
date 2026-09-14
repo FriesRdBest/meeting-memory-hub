@@ -3,8 +3,8 @@ from __future__ import annotations
 from html import escape
 
 import streamlit as st
-from config import APP_ICON, PROJECT_NAME, PROJECT_TAGLINE
 
+from config import APP_ICON, PROJECT_NAME, PROJECT_TAGLINE
 
 DREAM = "Dream"
 REALITY = "Reality"
