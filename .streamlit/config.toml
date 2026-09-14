@@ -15,6 +15,20 @@ secondaryBackgroundColor = "#15151A"
 textColor = "#F7F7FA"
 font = "sans serif"
 
+[theme.light]
+primaryColor = "#2F35FF"
+backgroundColor = "#F7F7FF"
+secondaryBackgroundColor = "#FFFFFF"
+textColor = "#15151A"
+font = "sans serif"
+
+[theme.dark]
+primaryColor = "#2F35FF"
+backgroundColor = "#0B0B0D"
+secondaryBackgroundColor = "#15151A"
+textColor = "#F7F7FA"
+font = "sans serif"
+
 [client]
 showErrorDetails = false
 toolbarMode = "minimal"
