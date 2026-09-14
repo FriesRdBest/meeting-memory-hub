@@ -7,6 +7,7 @@ from utils.ui import (
     configure_page,
     render_card,
     render_divider,
+    render_metric,
     render_notice,
     render_page_header,
     render_sidebar_identity,
@@ -27,132 +28,134 @@ def initialise_workflow_state() -> None:
 def render_overview() -> None:
     render_sidebar_identity()
 
+    signals = st.session_state.get("signals", [])
+    actions = st.session_state.get("actions", [])
+    reflections = st.session_state.get("reflections", [])
+
+    signals_needing_review = sum(
+        signal["status"] == "Needs review" for signal in signals
+    )
+    patterns_in_motion = sum(
+        signal["status"] in {"Needs review", "Watching"} for signal in signals
+    )
+    actions_in_progress = sum(
+        action.status == "In progress" for action in actions
+    )
+
     render_page_header(
         eyebrow="Meeting Memory Console",
         title="From conversation to consequence",
         description=(
-            "A working prototype for turning meeting signals into trusted "
-            "memory, accountable action, and visible learning."
+            "A working organizational intelligence system that makes important "
+            "signals visible, checks what the organization already knows, "
+            "creates accountable action, and preserves learning."
         ),
     )
 
     render_notice(
-        "This medium-build deployment uses fictional demonstration data. "
-        "It now connects a signal to an accountable action and a recorded "
-        "learning outcome within the current workspace session."
+        "This demonstration uses fictional data. It proves the operating "
+        "model: a useful signal can become an accountable action and a "
+        "recorded learning outcome within one workspace session."
     )
 
-    st.markdown("## Start here")
+    st.markdown("## The organization at a glance")
 
-    st.write(
-        "You can explore the prototype in either direction. Start with the "
-        "workflow if you want to see the product in action, or start with "
-        "Prototype Context if you want to understand the intended scope, "
-        "boundaries, and operating model first."
-    )
+    metric_columns = st.columns(4)
 
-    review_columns = st.columns(2)
+    with metric_columns[0]:
+        render_metric("Signals needing review", signals_needing_review)
 
-    with review_columns[0]:
-        render_card(
-            "Explore the workflow",
-            "Open Signal Desk, then Pattern Library, Action Queue, and "
-            "Learning Loop to follow the journey from evidence to action "
-            "and retained organizational learning.",
-        )
+    with metric_columns[1]:
+        render_metric("Patterns in motion", patterns_in_motion)
 
-    with review_columns[1]:
-        render_card(
-            "Understand the concept",
-            "Open Prototype Context first to review the demonstration scope, "
-            "privacy boundaries, limitations, and production considerations "
-            "before exploring the workspaces.",
-        )
+    with metric_columns[2]:
+        render_metric("Work in progress", actions_in_progress)
+
+    with metric_columns[3]:
+        render_metric("Learning retained", len(reflections))
 
     render_divider()
 
-    st.markdown("## What this prototype is designed to do")
+    st.markdown("## How the system works")
 
-    st.write(
-        "Meeting Memory Console focuses on what happens after a useful signal "
-        "appears in a meeting. It makes the signal visible, preserves the "
-        "evidence behind it, proposes an accountable route, and creates a "
-        "clear path toward action and learning."
-    )
+    workflow_columns = st.columns(4)
 
-    render_divider()
-
-    columns = st.columns(3)
-
-    with columns[0]:
-        render_card(
-            "Preserve the signal",
-            "Make meaningful observations visible instead of allowing them "
-            "to disappear when the meeting ends.",
-        )
-
-    with columns[1]:
-        render_card(
-            "Create accountability",
-            "Give each useful signal a proposed destination, owner, and next "
-            "step for human review.",
-        )
-
-    with columns[2]:
-        render_card(
-            "Carry learning forward",
-            "Record outcomes and learning so repeated evidence can improve "
-            "what happens next.",
-        )
-
-    render_divider()
-
-    st.markdown("## Workspace map")
-
-    workspace_columns = st.columns(5)
-
-    workspaces = [
+    workflow = [
         (
-            workspace_columns[0],
-            "Signal Desk",
-            "Review meaningful signals that need attention.",
+            workflow_columns[0],
+            "1. Signal Desk",
+            "Useful observations from conversations become visible with their "
+            "original evidence and a proposed route for human review.",
         ),
         (
-            workspace_columns[1],
-            "Pattern Library",
-            "Discover themes that repeat across conversations.",
+            workflow_columns[1],
+            "2. Pattern Library",
+            "Related signals are examined together so the organization can "
+            "check what keeps happening before it commits resources.",
         ),
         (
-            workspace_columns[2],
-            "Action Queue",
-            "Confirm destination, ownership, action, and status.",
+            workflow_columns[2],
+            "3. Action Queue",
+            "A person confirms ownership, destination, and the next move. "
+            "The system records the decision rather than making it automatically.",
         ),
         (
-            workspace_columns[3],
-            "Learning Loop",
-            "Review outcomes and recorded organizational learning.",
-        ),
-        (
-            workspace_columns[4],
-            "Prototype Context",
-            "Review scope, boundaries, and the path toward production.",
+            workflow_columns[3],
+            "4. Learning Loop",
+            "Completed work is connected to an observed outcome and retained "
+            "learning, making the next decision more informed.",
         ),
     ]
 
-    for column, title, description in workspaces:
+    for column, title, description in workflow:
         with column:
             render_card(title, description)
+
+    render_divider()
+
+    st.markdown("## Start with one complete journey")
+
+    journey_columns = st.columns(2)
+
+    with journey_columns[0]:
+        render_card(
+            "Explore the workflow",
+            "Begin in Signal Desk with SIG-001, the onboarding friction signal. "
+            "Review the evidence, inspect Pattern Library for repeated context, "
+            "then move to Action Queue to start and complete the work. Finish "
+            "in Learning Loop by recording what the organization learned.",
+        )
+
+    with journey_columns[1]:
+        render_card(
+            "Understand the concept",
+            "Open Prototype Context to understand the product philosophy, "
+            "boundaries, privacy principles, and what a production "
+            "implementation would require.",
+        )
+
+    render_divider()
+
+    st.markdown("## Why Pattern Library comes before action")
+
+    render_card(
+        "Memory before momentum",
+        "Organizations often repeat work because important context stays inside "
+        "individual meetings, teams, or people. Pattern Library sits between "
+        "Signal Desk and Action Queue so a human can see whether the company "
+        "has encountered the issue before deciding what to do next.",
+    )
 
     render_divider()
 
     st.markdown("## Current scope")
 
     st.write(
-        "This deployment uses fictional demonstration data and focuses on "
-        "proving the workflow concept. The shared prototype session connects "
-        "signals, accountable actions, and learning records. Authentication, "
-        "live integrations, multi-user collaboration, production security, "
-        "and durable cloud storage remain future work."
+        "This prototype focuses on the workflow from signal to action to "
+        "learning. It uses fictional demonstration data and session based "
+        "records. Authentication, live integrations, multi user collaboration, "
+        "production security, durable cloud storage, and advanced intelligence "
+        "features remain future work."
     )
 
 
