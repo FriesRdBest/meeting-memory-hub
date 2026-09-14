@@ -212,7 +212,7 @@ def render_action_form(signal: dict[str, str], action: Action) -> None:
         )
 
         if saved:
-            st.success(f"{signal['id']} was updated to "{decision}" and saved.")
+            st.success(f"{signal['id']} was updated to '{decision}' and saved.")
         else:
             st.warning(
                 f"{signal['id']} was updated for this session, but the "
