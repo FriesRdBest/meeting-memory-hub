@@ -78,9 +78,9 @@ render_notice(
 
 # Demo banner for medium-build walkthrough
 st.info(
-    "Demo mode: For a quick end-to-end walkthrough, start with **SIG-001** "
-    "“Repeated onboarding friction is slowing adoption”. "
-    "Create an action for it in Action Queue, then record a reflection in Learning Loop."
+    "Demo mode: For a quick end-to-end walkthrough, start with **SIG-001**. "
+    "Create an action for it in Action Queue, then record a reflection in "
+    "Learning Loop."
 )
 
 signals = st.session_state.get("signals", [])
