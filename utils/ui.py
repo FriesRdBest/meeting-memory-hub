@@ -618,10 +618,7 @@ def get_badge_class(label: str) -> str:
 
 def render_badges(labels: list[str]) -> None:
     badge_markup = "".join(
-        (
-            f'<span class="{get_badge_class(label)}">'
-            f"{escape(label)}</span>"
-        )
+        (f'<span class="{get_badge_class(label)}">{escape(label)}</span>')
         for label in labels
         if label
     )

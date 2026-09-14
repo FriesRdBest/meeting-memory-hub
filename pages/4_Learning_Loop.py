@@ -292,8 +292,7 @@ def render_reflection_form() -> None:
             ]
         )
         st.caption(
-            f"Original signal: {selected_signal['id']} · "
-            f"{selected_signal['title']}"
+            f"Original signal: {selected_signal['id']} · {selected_signal['title']}"
         )
 
     if existing_reflection:
@@ -306,9 +305,7 @@ def render_reflection_form() -> None:
         outcome = st.text_area(
             "What happened?",
             value=(existing_reflection.outcome if existing_reflection else ""),
-            placeholder=(
-                "Describe the observed result after this work was completed."
-            ),
+            placeholder=("Describe the observed result after this work was completed."),
         )
 
         learning = st.text_area(

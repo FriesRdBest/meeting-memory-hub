@@ -38,9 +38,7 @@ def render_overview() -> None:
     patterns_in_motion = sum(
         signal["status"] in {"Needs review", "Watching"} for signal in signals
     )
-    actions_in_progress = sum(
-        action.status == "In progress" for action in actions
-    )
+    actions_in_progress = sum(action.status == "In progress" for action in actions)
 
     render_page_header(
         eyebrow="Meeting Memory Console",

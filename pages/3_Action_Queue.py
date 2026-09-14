@@ -248,10 +248,7 @@ def render_history() -> None:
 
     for event in st.session_state.action_history:
         st.markdown(f"**{event['signal_id']} · {event['decision']}**")
-        st.caption(
-            f"{event['updated_at']} · {event['owner']} → "
-            f"{event['destination']}"
-        )
+        st.caption(f"{event['updated_at']} · {event['owner']} → {event['destination']}")
 
         if event["note"]:
             st.write(event["note"])
@@ -286,9 +283,7 @@ st.info(
     "let you record what the organization learned."
 )
 
-actions_by_signal = {
-    action.signal_id: action for action in st.session_state.actions
-}
+actions_by_signal = {action.signal_id: action for action in st.session_state.actions}
 
 metric_columns = st.columns(4)
 
@@ -362,9 +357,7 @@ else:
     selected_signal_id = st.selectbox(
         "Choose a signal to review",
         options=[signal["id"] for signal in signals],
-        format_func=lambda signal_id: (
-            f"{signal_id} · {get_signal(signal_id)['title']}"
-        ),
+        format_func=lambda signal_id: f"{signal_id} · {get_signal(signal_id)['title']}",
     )
 
     selected_signal = get_signal(selected_signal_id)
