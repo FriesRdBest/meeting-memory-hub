@@ -37,9 +37,7 @@ def configure_page(page_title: str | None = None) -> None:
 
 
 def inject_global_styles(appearance: str) -> None:
-    is_reality = appearance == REALITY
-
-    if is_reality:
+    if appearance == REALITY:
         theme_variables = """
             --mmc-blue: #2F35FF;
             --mmc-blue-deep: #1D239D;
@@ -59,7 +57,6 @@ def inject_global_styles(appearance: str) -> None:
             --mmc-warning-soft: #FFF2DA;
             --mmc-danger: #BD3030;
             --mmc-danger-soft: #FDE9E9;
-            --mmc-shadow: 0 16px 42px rgba(30, 30, 75, 0.10);
             --mmc-shadow-soft: 0 8px 24px rgba(30, 30, 75, 0.07);
             --mmc-focus: rgba(47, 53, 255, 0.34);
             --mmc-app-background:
@@ -95,7 +92,6 @@ def inject_global_styles(appearance: str) -> None:
             --mmc-warning-soft: rgba(245, 190, 98, 0.12);
             --mmc-danger: #F17B7B;
             --mmc-danger-soft: rgba(241, 123, 123, 0.12);
-            --mmc-shadow: 0 18px 48px rgba(0, 0, 0, 0.26);
             --mmc-shadow-soft: 0 9px 26px rgba(0, 0, 0, 0.16);
             --mmc-focus: rgba(123, 128, 255, 0.48);
             --mmc-app-background:
@@ -146,7 +142,7 @@ def inject_global_styles(appearance: str) -> None:
             }}
 
             [data-testid="stSidebar"] {{
-                background: color-mix(in srgb, var(--mmc-black) 94%, transparent);
+                background: var(--mmc-black);
                 border-right: 1px solid var(--mmc-border);
             }}
 
@@ -269,8 +265,8 @@ def inject_global_styles(appearance: str) -> None:
                 background:
                     linear-gradient(
                         145deg,
-                        color-mix(in srgb, var(--mmc-surface) 96%, transparent),
-                        color-mix(in srgb, var(--mmc-surface-raised) 58%, transparent)
+                        var(--mmc-surface),
+                        var(--mmc-surface-raised)
                     );
                 border: 1px solid var(--mmc-border);
                 border-radius: 1rem;
@@ -299,7 +295,7 @@ def inject_global_styles(appearance: str) -> None:
                     linear-gradient(
                         135deg,
                         rgba(47, 53, 255, 0.30),
-                        color-mix(in srgb, var(--mmc-surface) 88%, transparent)
+                        var(--mmc-surface)
                     );
                 border: 1px solid rgba(104, 109, 255, 0.42);
                 border-radius: 1rem;
@@ -357,19 +353,19 @@ def inject_global_styles(appearance: str) -> None:
 
             .mmc-badge--success {{
                 background: var(--mmc-success-soft);
-                border-color: color-mix(in srgb, var(--mmc-success) 52%, transparent);
+                border-color: var(--mmc-success);
                 color: var(--mmc-success);
             }}
 
             .mmc-badge--warning {{
                 background: var(--mmc-warning-soft);
-                border-color: color-mix(in srgb, var(--mmc-warning) 52%, transparent);
+                border-color: var(--mmc-warning);
                 color: var(--mmc-warning);
             }}
 
             .mmc-badge--danger {{
                 background: var(--mmc-danger-soft);
-                border-color: color-mix(in srgb, var(--mmc-danger) 52%, transparent);
+                border-color: var(--mmc-danger);
                 color: var(--mmc-danger);
             }}
 
@@ -379,7 +375,7 @@ def inject_global_styles(appearance: str) -> None:
             }}
 
             .mmc-notice {{
-                background: color-mix(in srgb, var(--mmc-blue-soft) 72%, transparent);
+                background: var(--mmc-blue-soft);
                 border: 1px solid rgba(100, 105, 255, 0.28);
                 border-left: 3px solid var(--mmc-blue);
                 border-radius: 0.75rem;
@@ -442,10 +438,7 @@ def inject_global_styles(appearance: str) -> None:
                 color: var(--mmc-text) !important;
             }}
 
-            div[data-baseweb="popover"] {{
-                background: var(--mmc-surface-raised) !important;
-            }}
-
+            div[data-baseweb="popover"],
             [data-baseweb="menu"] {{
                 background: var(--mmc-surface-raised) !important;
             }}
@@ -496,7 +489,7 @@ def inject_global_styles(appearance: str) -> None:
             }}
 
             [data-testid="stExpander"] {{
-                background: color-mix(in srgb, var(--mmc-surface) 82%, transparent);
+                background: var(--mmc-surface);
                 border: 1px solid var(--mmc-border);
                 border-radius: 0.82rem;
                 overflow: hidden;
@@ -652,25 +645,29 @@ def render_card(title: str, copy: str) -> None:
 def get_badge_class(label: str) -> str:
     normalized = label.lower()
 
-    if any(
-        keyword in normalized
-        for keyword in ("completed", "ready", "stable", "high confidence", "success")
-    ):
+    success_keywords = (
+        "completed",
+        "ready",
+        "stable",
+        "high confidence",
+        "success",
+    )
+    warning_keywords = (
+        "needs attention",
+        "needs review",
+        "increasing",
+        "high impact",
+        "watching",
+    )
+    danger_keywords = ("declined", "blocked", "risk", "error")
+
+    if any(keyword in normalized for keyword in success_keywords):
         return "mmc-badge mmc-badge--success"
 
-    if any(
-        keyword in normalized
-        for keyword in (
-            "needs attention",
-            "needs review",
-            "increasing",
-            "high impact",
-            "watching",
-        )
-    ):
+    if any(keyword in normalized for keyword in warning_keywords):
         return "mmc-badge mmc-badge--warning"
 
-    if any(keyword in normalized for keyword in ("declined", "blocked", "risk", "error")):
+    if any(keyword in normalized for keyword in danger_keywords):
         return "mmc-badge mmc-badge--danger"
 
     return "mmc-badge"
@@ -716,14 +713,12 @@ def render_sidebar_identity() -> None:
             unsafe_allow_html=True,
         )
 
-        previous_appearance = st.session_state.appearance
-        appearance = st.selectbox(
+        if "appearance" not in st.session_state:
+            st.session_state.appearance = DREAM
+
+        st.selectbox(
             "Appearance",
             options=[DREAM, REALITY],
-            key="appearance_selector",
+            key="appearance",
             label_visibility="collapsed",
         )
-
-        if appearance != previous_appearance:
-            st.session_state.appearance = appearance
-            st.rerun()
