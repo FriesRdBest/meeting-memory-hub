@@ -262,8 +262,8 @@ render_notice(
 # Demo banner for medium-build walkthrough
 st.info(
     "Demo mode: For the walkthrough, choose **SIG-001**. "
-    "Use Start work → Mark completed, then record a reflection "
-    "in Learning Loop."
+    "Use Start work → Mark completed, then record a "
+    "reflection in Learning Loop."
 )
 
 actions_by_signal = {action.signal_id: action for action in st.session_state.actions}
