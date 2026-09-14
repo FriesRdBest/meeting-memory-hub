@@ -76,6 +76,13 @@ render_notice(
     "destination and owner are suggestions for review, not automated decisions."
 )
 
+# Demo banner for medium-build walkthrough
+st.info(
+    "Demo mode: For a quick end-to-end walkthrough, start with **SIG-001**. "
+    "Create an action for it in Action Queue, then record a reflection in "
+    "Learning Loop."
+)
+
 signals = st.session_state.get("signals", [])
 
 st.markdown("## Filter signals")
