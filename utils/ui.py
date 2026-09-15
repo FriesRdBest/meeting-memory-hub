@@ -98,45 +98,300 @@ def inject_global_styles() -> None:
             }
 
             [data-testid="stSidebarContent"] {
+                display: flex;
+                flex-direction: column;
+                min-height: 100%;
                 padding-top: 0.7rem;
             }
 
+            /*
+             * Sidebar workflow narrative
+             *
+             * Page sequence:
+             * 1. Overview
+             * 2. Signal Desk
+             * 3. Pattern Library
+             * 4. Action Queue
+             * 5. Learning Loop
+             * 6. Prototype Context
+             *
+             * Overview and Prototype Context are bookends.
+             * Items 2–5 are the working intelligence flow.
+             */
             [data-testid="stSidebarNav"] {
-                padding-top: 1.15rem;
+                flex: 1;
+                padding-top: 0.55rem;
             }
 
             [data-testid="stSidebarNav"] ul {
-                gap: 0.22rem;
+                display: flex;
+                flex-direction: column;
+                gap: 0.3rem;
+                min-height: calc(100vh - 11.5rem);
+                padding-bottom: 0.75rem;
+            }
+
+            [data-testid="stSidebarNav"] li {
+                position: relative;
             }
 
             [data-testid="stSidebarNav"] a {
+                position: relative;
+                z-index: 2;
+                display: flex;
+                align-items: center;
+                min-height: 2.85rem;
+                margin: 0;
+                padding: 0.65rem 0.78rem;
                 border: 1px solid transparent;
                 border-radius: 0.8rem;
-                margin: 0.08rem 0.6rem;
-                padding: 0.62rem 0.75rem;
+                color: var(--mmc-muted);
                 transition:
                     background 160ms ease,
                     border-color 160ms ease,
+                    box-shadow 160ms ease,
+                    color 160ms ease,
                     transform 160ms ease;
             }
 
             [data-testid="stSidebarNav"] a:hover {
-                background: rgba(47, 53, 255, 0.16);
-                border-color: rgba(117, 122, 255, 0.22);
+                background: rgba(47, 53, 255, 0.13);
+                border-color: rgba(117, 122, 255, 0.23);
+                color: var(--mmc-text);
                 transform: translateX(2px);
             }
 
-            [data-testid="stSidebarNav"] a[aria-current="page"] {
+            /*
+             * Overview: neutral top bookend with complementary padding.
+             */
+            [data-testid="stSidebarNav"] li:first-child {
+                margin: 0 0.6rem 1.2rem;
+            }
+
+            [data-testid="stSidebarNav"] li:first-child a {
+                background: rgba(247, 247, 250, 0.025);
+                border-color: rgba(247, 247, 250, 0.07);
+                color: var(--mmc-text);
+            }
+
+            /*
+             * The middle workflow rail spans Signal Desk through Learning Loop.
+             * The line begins below Signal Desk and ends above Learning Loop.
+             */
+            [data-testid="stSidebarNav"] li:nth-child(2),
+            [data-testid="stSidebarNav"] li:nth-child(3),
+            [data-testid="stSidebarNav"] li:nth-child(4),
+            [data-testid="stSidebarNav"] li:nth-child(5) {
+                margin: 0 0.6rem;
+                padding-left: 0.82rem;
+            }
+
+            [data-testid="stSidebarNav"] li:nth-child(2)::after,
+            [data-testid="stSidebarNav"] li:nth-child(3)::after,
+            [data-testid="stSidebarNav"] li:nth-child(4)::after {
+                position: absolute;
+                top: 2.7rem;
+                bottom: -0.5rem;
+                left: 1.12rem;
+                z-index: 0;
+                width: 1px;
+                content: "";
+                background:
+                    repeating-linear-gradient(
+                        to bottom,
+                        rgba(99, 105, 255, 0.68) 0 3px,
+                        rgba(99, 105, 255, 0) 3px 8px
+                    );
+                opacity: 0.62;
+            }
+
+            /*
+             * Workflow nodes: small circles to the left of the page label.
+             * They replace the earlier pill idea and better suit vertical nav.
+             */
+            [data-testid="stSidebarNav"] li:nth-child(2) a::before,
+            [data-testid="stSidebarNav"] li:nth-child(3) a::before,
+            [data-testid="stSidebarNav"] li:nth-child(4) a::before,
+            [data-testid="stSidebarNav"] li:nth-child(5) a::before {
+                position: absolute;
+                top: 50%;
+                left: 0.12rem;
+                z-index: 3;
+                width: 0.62rem;
+                height: 0.62rem;
+                border: 2px solid rgba(154, 158, 255, 0.7);
+                border-radius: 50%;
+                content: "";
+                background: var(--mmc-surface);
+                box-shadow: 0 0 0 3px rgba(15, 15, 19, 0.96);
+                transform: translateY(-50%);
+                transition:
+                    background 160ms ease,
+                    border-color 160ms ease,
+                    box-shadow 160ms ease,
+                    transform 160ms ease;
+            }
+
+            /*
+             * Completed / signal-passed stages:
+             * Applies to pages before the current active workflow page.
+             */
+            [data-testid="stSidebarNav"] li:nth-child(2):has(
+                ~ li:nth-child(3) a[aria-current="page"]
+            ) a,
+            [data-testid="stSidebarNav"] li:nth-child(2):has(
+                ~ li:nth-child(4) a[aria-current="page"]
+            ) a,
+            [data-testid="stSidebarNav"] li:nth-child(2):has(
+                ~ li:nth-child(5) a[aria-current="page"]
+            ) a,
+            [data-testid="stSidebarNav"] li:nth-child(3):has(
+                ~ li:nth-child(4) a[aria-current="page"]
+            ) a,
+            [data-testid="stSidebarNav"] li:nth-child(3):has(
+                ~ li:nth-child(5) a[aria-current="page"]
+            ) a,
+            [data-testid="stSidebarNav"] li:nth-child(4):has(
+                ~ li:nth-child(5) a[aria-current="page"]
+            ) a {
+                background: rgba(47, 53, 255, 0.10);
+                border-color: rgba(94, 100, 255, 0.19);
+                color: #D9DAFF;
+            }
+
+            [data-testid="stSidebarNav"] li:nth-child(2):has(
+                ~ li:nth-child(3) a[aria-current="page"]
+            ) a::before,
+            [data-testid="stSidebarNav"] li:nth-child(2):has(
+                ~ li:nth-child(4) a[aria-current="page"]
+            ) a::before,
+            [data-testid="stSidebarNav"] li:nth-child(2):has(
+                ~ li:nth-child(5) a[aria-current="page"]
+            ) a::before,
+            [data-testid="stSidebarNav"] li:nth-child(3):has(
+                ~ li:nth-child(4) a[aria-current="page"]
+            ) a::before,
+            [data-testid="stSidebarNav"] li:nth-child(3):has(
+                ~ li:nth-child(5) a[aria-current="page"]
+            ) a::before,
+            [data-testid="stSidebarNav"] li:nth-child(4):has(
+                ~ li:nth-child(5) a[aria-current="page"]
+            ) a::before {
+                border-color: #7880FF;
+                background: #5F66FF;
+                box-shadow:
+                    0 0 0 3px rgba(15, 15, 19, 0.96),
+                    0 0 12px rgba(47, 53, 255, 0.48);
+            }
+
+            /*
+             * Active workflow stage:
+             * stronger visual separation without a large or flashy pill.
+             */
+            [data-testid="stSidebarNav"] li:nth-child(2) a[aria-current="page"],
+            [data-testid="stSidebarNav"] li:nth-child(3) a[aria-current="page"],
+            [data-testid="stSidebarNav"] li:nth-child(4) a[aria-current="page"] {
                 background:
                     linear-gradient(
                         90deg,
-                        rgba(47, 53, 255, 0.38),
-                        rgba(47, 53, 255, 0.18)
+                        rgba(47, 53, 255, 0.39),
+                        rgba(47, 53, 255, 0.14)
                     );
-                border-color: rgba(114, 119, 255, 0.40);
+                border-color: rgba(123, 129, 255, 0.54);
                 box-shadow:
-                    inset 3px 0 0 var(--mmc-blue),
+                    inset 3px 0 0 #8A8FFF,
                     0 8px 24px rgba(19, 25, 182, 0.18);
+                color: #FFFFFF;
+                font-weight: 760;
+            }
+
+            [data-testid="stSidebarNav"] li:nth-child(2) a[aria-current="page"]::before,
+            [data-testid="stSidebarNav"] li:nth-child(3) a[aria-current="page"]::before,
+            [data-testid="stSidebarNav"] li:nth-child(4) a[aria-current="page"]::before {
+                border-color: #D8D9FF;
+                background: var(--mmc-blue);
+                box-shadow:
+                    0 0 0 3px rgba(15, 15, 19, 0.96),
+                    0 0 16px rgba(47, 53, 255, 0.78);
+                transform: translateY(-50%) scale(1.12);
+            }
+
+            /*
+             * Learning Loop: a calm, distinct final state.
+             * It intentionally does not use the "signal in motion" treatment
+             * that connects Signal, Pattern, and Action.
+             */
+            [data-testid="stSidebarNav"] li:nth-child(5) {
+                margin-top: 0.38rem;
+            }
+
+            [data-testid="stSidebarNav"] li:nth-child(5) a {
+                background: rgba(97, 208, 149, 0.035);
+                border-color: rgba(97, 208, 149, 0.12);
+            }
+
+            [data-testid="stSidebarNav"] li:nth-child(5) a::before {
+                border-color: rgba(97, 208, 149, 0.62);
+                background: rgba(97, 208, 149, 0.08);
+            }
+
+            [data-testid="stSidebarNav"] li:nth-child(5) a[aria-current="page"] {
+                background:
+                    linear-gradient(
+                        90deg,
+                        rgba(97, 208, 149, 0.20),
+                        rgba(97, 208, 149, 0.06)
+                    );
+                border-color: rgba(97, 208, 149, 0.48);
+                box-shadow:
+                    inset 3px 0 0 var(--mmc-success),
+                    0 8px 24px rgba(37, 133, 79, 0.14);
+                color: #FFFFFF;
+                font-weight: 760;
+            }
+
+            [data-testid="stSidebarNav"] li:nth-child(5) a[aria-current="page"]::before {
+                border-color: #D6FFE6;
+                background: var(--mmc-success);
+                box-shadow:
+                    0 0 0 3px rgba(15, 15, 19, 0.96),
+                    0 0 14px rgba(97, 208, 149, 0.55);
+                transform: translateY(-50%) scale(1.12);
+            }
+
+            /*
+             * Prototype Context: neutral bottom bookend, held down by the
+             * flexible sidebar list space. No lifecycle line enters this item.
+             */
+            [data-testid="stSidebarNav"] li:last-child {
+                margin: auto 0.6rem 0.3rem;
+                padding-top: 1.15rem;
+            }
+
+            [data-testid="stSidebarNav"] li:last-child::before {
+                position: absolute;
+                top: 0.35rem;
+                right: 0.15rem;
+                left: 0.15rem;
+                height: 1px;
+                content: "";
+                background: var(--mmc-border);
+            }
+
+            [data-testid="stSidebarNav"] li:last-child a {
+                background: rgba(247, 247, 250, 0.025);
+                border-color: rgba(247, 247, 250, 0.07);
+                color: var(--mmc-muted);
+            }
+
+            /*
+             * Standard active style for the two bookend pages.
+             */
+            [data-testid="stSidebarNav"] li:first-child a[aria-current="page"],
+            [data-testid="stSidebarNav"] li:last-child a[aria-current="page"] {
+                background: rgba(247, 247, 250, 0.08);
+                border-color: rgba(247, 247, 250, 0.17);
+                box-shadow: inset 3px 0 0 rgba(247, 247, 250, 0.68);
                 color: #FFFFFF;
                 font-weight: 760;
             }
@@ -379,7 +634,7 @@ def inject_global_styles() -> None:
 
             .mmc-sidebar-identity {
                 border-bottom: 1px solid var(--mmc-border);
-                margin: 0.3rem 0.75rem 1.1rem;
+                margin: 0.3rem 0.75rem 0.8rem;
                 padding: 0.75rem 0 1.3rem;
             }
 
@@ -527,12 +782,12 @@ def inject_global_styles() -> None:
                 outline: none !important;
             }
 
-            /* Subtle fade-in for newly added rows */
             @keyframes mmcFadeInRow {
                 from {
                     opacity: 0;
                     transform: translateY(4px);
                 }
+
                 to {
                     opacity: 1;
                     transform: translateY(0);
@@ -543,11 +798,12 @@ def inject_global_styles() -> None:
                 animation: mmcFadeInRow 0.2s ease-out;
             }
 
-            /* Soft pulse for “new” / “alert” badges only */
             @keyframes mmcSoftPulse {
-                0%, 100% {
+                0%,
+                100% {
                     box-shadow: 0 0 0 0 rgba(47, 53, 255, 0.35);
                 }
+
                 50% {
                     box-shadow: 0 0 0 6px rgba(47, 53, 255, 0);
                 }
@@ -558,11 +814,11 @@ def inject_global_styles() -> None:
                 animation: mmcSoftPulse 1.8s infinite;
             }
 
-            /* Radar-style signal loader */
             @keyframes mmcRadarSpin {
                 0% {
                     transform: rotate(0deg);
                 }
+
                 100% {
                     transform: rotate(360deg);
                 }
@@ -572,9 +828,11 @@ def inject_global_styles() -> None:
                 0% {
                     background-position: -150% center;
                 }
+
                 60% {
                     background-position: 250% center;
                 }
+
                 100% {
                     background-position: 250% center;
                 }
@@ -591,11 +849,11 @@ def inject_global_styles() -> None:
 
             .mmc-radar-container {
                 position: relative;
-                width: 5.5rem;
-                height: 5.5rem;
                 display: flex;
                 align-items: center;
                 justify-content: center;
+                width: 5.5rem;
+                height: 5.5rem;
                 margin-bottom: 1rem;
             }
 
@@ -603,8 +861,8 @@ def inject_global_styles() -> None:
                 position: absolute;
                 width: 100%;
                 height: 100%;
-                border-radius: 50%;
                 border: 2px solid rgba(47, 53, 255, 0.18);
+                border-radius: 50%;
             }
 
             .mmc-radar-ring:nth-child(2) {
@@ -631,10 +889,6 @@ def inject_global_styles() -> None:
 
             .mmc-signal-loader-label {
                 position: relative;
-                color: var(--mmc-muted);
-                font-size: 0.95rem;
-                font-weight: 700;
-                letter-spacing: 0.02em;
                 background: linear-gradient(
                     90deg,
                     var(--mmc-muted) 0%,
@@ -643,21 +897,24 @@ def inject_global_styles() -> None:
                     var(--mmc-muted) 40%,
                     var(--mmc-muted) 100%
                 );
-                background-size: 200% 100%;
-                -webkit-background-clip: text;
                 background-clip: text;
+                background-size: 200% 100%;
                 color: transparent;
+                font-size: 0.95rem;
+                font-weight: 700;
+                letter-spacing: 0.02em;
                 animation: mmcTextShine 2.2s ease-in-out infinite;
                 animation-delay: 0.15s;
+                -webkit-background-clip: text;
             }
 
             @media (prefers-reduced-motion: reduce) {
                 *,
                 *::before,
                 *::after {
+                    animation-duration: 0.01ms !important;
                     scroll-behavior: auto !important;
                     transition-duration: 0.01ms !important;
-                    animation-duration: 0.01ms !important;
                 }
             }
 
@@ -681,6 +938,14 @@ def inject_global_styles() -> None:
             }
 
             @media (max-width: 640px) {
+                [data-testid="stSidebarNav"] ul {
+                    min-height: auto;
+                }
+
+                [data-testid="stSidebarNav"] li:last-child {
+                    margin-top: 1.15rem;
+                }
+
                 .block-container {
                     padding: 1.9rem 1rem 2.75rem;
                 }
@@ -704,8 +969,8 @@ def inject_global_styles() -> None:
                 }
 
                 .mmc-metric {
-                    margin-bottom: 0.75rem;
                     min-height: auto;
+                    margin-bottom: 0.75rem;
                 }
 
                 .mmc-divider {
@@ -794,7 +1059,7 @@ def get_badge_class(label: str) -> str:
 
 def render_badges(labels: list[str]) -> None:
     badge_markup = "".join(
-        (f'<span class="{get_badge_class(label)}">{escape(label)}</span>')
+        f'<span class="{get_badge_class(label)}">{escape(label)}</span>'
         for label in labels
         if label
     )
