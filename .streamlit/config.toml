@@ -1,39 +1,21 @@
+[server]
+headless = true
+enableCORS = false
+enableXsrfProtection = true
+maxUploadSize = 10
+
+[browser]
+gatherUsageStats = false
+
 [theme]
 base = "dark"
-font = "sans serif"
-baseFontSize = 16
-baseFontWeight = 400
-headingFontWeights = [700, 700, 700, 700, 700, 700]
-showSidebarBorder = true
-primaryColor = "#2F35FF"
-borderRadius = "large"
-
-[theme.dark]
 primaryColor = "#2F35FF"
 backgroundColor = "#0B0B0D"
 secondaryBackgroundColor = "#15151A"
 textColor = "#F7F7FA"
-linkColor = "#8A8FFF"
-codeBackgroundColor = "#1D1D24"
-borderColor = "#2E2E38"
+font = "sans serif"
 
-[theme.dark.sidebar]
-backgroundColor = "#0F0F13"
-secondaryBackgroundColor = "#15151A"
-textColor = "#F7F7FA"
-borderColor = "#2E2E38"
+[client]
+showErrorDetails = false
+toolbarMode = "minimal"
 
-[theme.light]
-primaryColor = "#2F35FF"
-backgroundColor = "#F7F7FC"
-secondaryBackgroundColor = "#FFFFFF"
-textColor = "#171722"
-linkColor = "#2F35FF"
-codeBackgroundColor = "#ECECF7"
-borderColor = "#D9DAE8"
-
-[theme.light.sidebar]
-backgroundColor = "#F0F1F8"
-secondaryBackgroundColor = "#FFFFFF"
-textColor = "#171722"
-borderColor = "#D9DAE8"
