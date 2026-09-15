@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from datetime import datetime
 from pathlib import Path
+from time import sleep
 from uuid import uuid4
 
 import streamlit as st
@@ -22,73 +23,6 @@ from utils.ui import (
 
 REFLECTION_FILE_PATH = Path("data/reflections.json")
 
-LEARNING_RECORDS = [
-    {
-        "id": "SIG-014",
-        "title": "Implementation guidance reduced early stage hesitation",
-        "type": "Customer friction",
-        "area": "Customer",
-        "impact": "High",
-        "outcome": (
-            "Customer Success introduced a structured first workflow guide "
-            "and added an implementation checkpoint during onboarding."
-        ),
-        "learning": (
-            "Early product friction was not only a usability issue. Teams "
-            "needed clearer guidance about the first successful outcome."
-        ),
-        "owner": "Customer Success",
-        "completed": "May 14, 2026",
-        "evidence": (
-            "New teams were asking the same setup questions before they "
-            "reached their first useful workflow."
-        ),
-    },
-    {
-        "id": "SIG-018",
-        "title": "A recurring reporting need informed roadmap discovery",
-        "type": "Product insight",
-        "area": "Product",
-        "impact": "Medium",
-        "outcome": (
-            "Product Operations created a discovery brief using repeated "
-            "customer requests and reviewed it during roadmap planning."
-        ),
-        "learning": (
-            "Repeated reporting questions carried more strategic value when "
-            "they were grouped by use case rather than logged as isolated "
-            "feature requests."
-        ),
-        "owner": "Product Operations",
-        "completed": "May 21, 2026",
-        "evidence": (
-            "Several teams wanted the same progress view, but described it "
-            "through different reporting requests."
-        ),
-    },
-    {
-        "id": "SIG-022",
-        "title": "Named ownership made a cross functional commitment visible",
-        "type": "Commitment",
-        "area": "Operations",
-        "impact": "High",
-        "outcome": (
-            "Leadership Operations assigned a named owner, scheduled a "
-            "checkpoint, and made progress visible in the operating review."
-        ),
-        "learning": (
-            "A commitment becomes actionable only when ownership, destination, "
-            "and the next review point are explicit."
-        ),
-        "owner": "Leadership Operations",
-        "completed": "May 28, 2026",
-        "evidence": (
-            "The commitment had appeared in multiple meetings, but no "
-            "accountable owner or checkpoint had been recorded."
-        ),
-    },
-]
-
 
 def get_reflection_service() -> ReflectionService:
     return ReflectionService(ReflectionRepository(REFLECTION_FILE_PATH))
@@ -97,20 +31,28 @@ def get_reflection_service() -> ReflectionService:
 def initialise_state() -> None:
     if "reflections" not in st.session_state:
         try:
-            st.session_state.reflections = get_reflection_service().list_reflections()
+            st.session_state.reflections = (
+                get_reflection_service().list_reflections()
+            )
         except (OSError, ValueError):
             st.session_state.reflections = []
 
-
-def matches_search(record: dict[str, str], search_text: str) -> bool:
-    if not search_text:
-        return True
-
-    searchable_text = " ".join(record.values()).lower()
-    return search_text.lower() in searchable_text
+    if "learning_feedback" not in st.session_state:
+        st.session_state.learning_feedback = None
 
 
-def get_signal(signal_id: str) -> dict[str, str] | None:
+def get_action_for_signal(signal_id: str) -> object | None:
+    return next(
+        (
+            action
+            for action in st.session_state.get("actions", [])
+            if action.signal_id == signal_id
+        ),
+        None,
+    )
+
+
+def get_signal_for_id(signal_id: str) -> dict[str, str] | None:
     return next(
         (
             signal
@@ -121,18 +63,7 @@ def get_signal(signal_id: str) -> dict[str, str] | None:
     )
 
 
-def get_action(action_id: str):
-    return next(
-        (
-            action
-            for action in st.session_state.get("actions", [])
-            if action.id == action_id
-        ),
-        None,
-    )
-
-
-def get_completed_actions():
+def get_completed_actions() -> list[object]:
     return [
         action
         for action in st.session_state.get("actions", [])
@@ -159,328 +90,285 @@ def save_reflections() -> bool:
         return False
 
 
-def create_reflection(
-    action_id: str,
+def format_relative_time(timestamp: str) -> str:
+    try:
+        recorded_at = datetime.strptime(
+            timestamp,
+            "%b %d, %Y at %I:%M %p",
+        )
+    except (TypeError, ValueError):
+        return "Recorded recently"
+
+    now = datetime.now()
+    elapsed_seconds = max(0, int((now - recorded_at).total_seconds()))
+
+    if elapsed_seconds < 60:
+        return "Recorded just now"
+
+    elapsed_minutes = elapsed_seconds // 60
+
+    if elapsed_minutes < 60:
+        unit = "minute" if elapsed_minutes == 1 else "minutes"
+        return f"Recorded {elapsed_minutes} {unit} ago"
+
+    elapsed_hours = elapsed_minutes // 60
+
+    if elapsed_hours < 24:
+        unit = "hour" if elapsed_hours == 1 else "hours"
+        return f"Recorded {elapsed_hours} {unit} ago"
+
+    elapsed_days = elapsed_hours // 24
+
+    if elapsed_days == 1:
+        return "Recorded yesterday"
+
+    if elapsed_days < 7:
+        return f"Recorded {elapsed_days} days ago"
+
+    return f"Recorded {recorded_at.strftime('%b %d, %Y')}"
+
+
+def add_reflection(
+    action: object,
     outcome: str,
     learning: str,
     next_step: str,
-) -> bool:
-    existing_reflection = get_reflection_for_action(action_id)
+) -> Reflection:
+    signal = get_signal_for_id(action.signal_id)
 
-    if existing_reflection:
-        existing_reflection.outcome = outcome.strip()
-        existing_reflection.learning = learning.strip()
-        existing_reflection.next_step = next_step.strip()
-        existing_reflection.recorded_at = datetime.now().strftime(
-            "%b %d, %Y at %I:%M %p"
-        )
-    else:
-        reflection = Reflection(
-            id=f"LRN-{uuid4().hex[:8].upper()}",
-            action_id=action_id,
-            outcome=outcome.strip(),
-            learning=learning.strip(),
-            next_step=next_step.strip(),
-            recorded_at=datetime.now().strftime("%b %d, %Y at %I:%M %p"),
-        )
-        st.session_state.reflections.append(reflection)
-
-    return save_reflections()
-
-
-def build_reflection_record(reflection: Reflection) -> dict[str, str] | None:
-    action = get_action(reflection.action_id)
-
-    if action is None:
-        return None
-
-    signal = get_signal(action.signal_id)
-
-    if signal is None:
-        return None
-
-    return {
-        "id": signal["id"],
-        "title": signal["title"],
-        "type": signal["type"],
-        "area": signal["area"],
-        "impact": signal["impact"],
-        "outcome": reflection.outcome,
-        "learning": reflection.learning,
-        "owner": action.owner,
-        "completed": reflection.recorded_at,
-        "evidence": signal["evidence"],
-        "next_step": reflection.next_step,
-    }
-
-
-def render_learning_record(record: dict[str, str]) -> None:
-    st.markdown(f"### {record['id']} · {record['title']}")
-
-    render_badges(
-        [
-            record["type"],
-            record["area"],
-            f"{record['impact']} impact",
-            "Completed",
-        ]
+    reflection = Reflection(
+        id=f"LRN-{uuid4().hex[:8].upper()}",
+        action_id=action.id,
+        signal_id=action.signal_id,
+        title=signal["title"] if signal else action.title,
+        outcome=outcome.strip(),
+        learning=learning.strip(),
+        next_step=next_step.strip() or "No further step recorded",
+        recorded_at=datetime.now().strftime("%b %d, %Y at %I:%M %p"),
     )
 
-    columns = st.columns(2)
-
-    with columns[0]:
-        st.markdown("#### What happened")
-        st.write(record["outcome"])
-
-    with columns[1]:
-        st.markdown("#### What the organization retained")
-        st.write(record["learning"])
-
-    detail_columns = st.columns(2)
-
-    with detail_columns[0]:
-        st.caption("Accountable owner")
-        st.write(record["owner"])
-
-    with detail_columns[1]:
-        st.caption("Learning recorded")
-        st.write(record["completed"])
-
-    if record.get("next_step"):
-        st.caption(f"Next step: {record['next_step']}")
-
-    with st.expander("Open original evidence"):
-        st.markdown(f"> {record['evidence']}")
-        st.caption(
-            "The original observation remains connected to the completed work "
-            "and the retained learning."
-        )
+    st.session_state.reflections.insert(0, reflection)
+    return reflection
 
 
-def render_reflection_form() -> None:
-    completed_actions = get_completed_actions()
+def render_learning_feedback() -> None:
+    feedback = st.session_state.get("learning_feedback")
 
-    st.markdown("## Record what the organization should remember")
+    if not feedback:
+        return
 
-    if not completed_actions:
-        st.caption(
-            "Complete an action in Action Queue first. Once work is complete, "
-            "record what happened and what future decisions should begin with."
+    if feedback["saved"]:
+        st.markdown(
+            f"""
+            <div class="mmc-action-feedback">
+                <span class="mmc-action-feedback-check">✓</span>
+                <span>
+                    Learning recorded for {feedback["signal_id"]}.
+                </span>
+            </div>
+            """,
+            unsafe_allow_html=True,
         )
         return
 
-    selected_action_id = st.selectbox(
-        "Choose completed work",
-        options=[action.id for action in completed_actions],
-        format_func=lambda action_id: (
-            f"{get_signal(get_action(action_id).signal_id)['id']} · "
-            f"{get_action(action_id).title}"
-        ),
+    st.markdown(
+        f"""
+        <div class="mmc-action-feedback mmc-action-feedback--warning">
+            <span class="mmc-action-feedback-check">!</span>
+            <span>
+                Learning for {feedback["signal_id"]} was recorded for this
+                session, but could not be saved permanently.
+            </span>
+        </div>
+        """,
+        unsafe_allow_html=True,
     )
 
-    selected_action = get_action(selected_action_id)
-    selected_signal = get_signal(selected_action.signal_id)
-    existing_reflection = get_reflection_for_action(selected_action_id)
 
-    if selected_signal:
-        render_badges(
-            [
-                selected_signal["type"],
-                selected_signal["area"],
-                f"{selected_signal['impact']} impact",
-                "Completed work",
-            ]
-        )
-        st.caption(
-            f"Original signal: {selected_signal['id']} · {selected_signal['title']}"
-        )
+def render_completed_action_card(action: object) -> None:
+    signal = get_signal_for_id(action.signal_id)
+    reflection = get_reflection_for_action(action.id)
 
-    if existing_reflection:
-        st.caption(
-            "A learning record already exists for this work. Saving the form "
-            "will update the retained organizational memory."
-        )
+    signal_title = signal["title"] if signal else action.title
 
-    with st.form(f"reflection_form_{selected_action_id}"):
+    st.markdown(f"### {action.signal_id} · {signal_title}")
+
+    render_badges(
+        [
+            "Completed",
+            action.destination,
+        ]
+    )
+
+    st.caption(
+        f"Last activity: {format_relative_time(action.created_at)} · "
+        f"Owner: {action.owner}"
+    )
+
+    if reflection:
+        st.success("Learning has been recorded for this completed action.")
+        st.caption(format_relative_time(reflection.recorded_at))
+
+        st.markdown("**Observed outcome**")
+        st.write(reflection.outcome)
+
+        st.markdown("**What the organization should remember**")
+        st.write(reflection.learning)
+
+        st.markdown("**Next step**")
+        st.write(reflection.next_step)
+
+        return
+
+    st.markdown(
+        "### Record what the organization learned"
+    )
+
+    with st.form(f"reflection_form_{action.id}"):
         outcome = st.text_area(
-            "What happened?",
-            value=(existing_reflection.outcome if existing_reflection else ""),
-            placeholder=("Describe the observed result after this work was completed."),
+            "Observed outcome",
+            placeholder=(
+                "What happened after the work was completed? Keep this "
+                "specific and observable."
+            ),
         )
 
         learning = st.text_area(
             "What should the organization remember?",
-            value=(existing_reflection.learning if existing_reflection else ""),
             placeholder=(
-                "Capture the lesson that should inform future signals, "
-                "patterns, and decisions."
+                "Capture the reusable lesson that should inform similar "
+                "situations in the future."
             ),
         )
 
         next_step = st.text_input(
-            "What happens next? Optional",
-            value=(existing_reflection.next_step if existing_reflection else ""),
-            placeholder="Record any follow up that remains.",
+            "Remaining next step",
+            placeholder=(
+                "Optional. Record anything that still needs to happen."
+            ),
         )
 
-        submitted = st.form_submit_button("Save organizational learning")
+        submitted = st.form_submit_button("Save Learning")
 
     if submitted:
         if not outcome.strip() or not learning.strip():
-            st.error(
-                "Add both what happened and what the organization should "
-                "remember before saving."
+            st.warning(
+                "Observed outcome and organizational learning are required."
             )
             return
 
-        saved = create_reflection(
-            action_id=selected_action_id,
+        reflection = add_reflection(
+            action=action,
             outcome=outcome,
             learning=learning,
             next_step=next_step,
         )
 
-        if saved:
-            st.success(
-                "Learning saved. This completed work is now connected to its "
-                "outcome and retained organizational memory."
-            )
-        else:
-            st.warning(
-                "The learning is available in this session, but the host "
-                "could not save it permanently."
-            )
+        saved = save_reflections()
+
+        st.session_state.learning_feedback = {
+            "signal_id": reflection.signal_id,
+            "saved": saved,
+        }
 
         st.rerun()
+
+
+def render_learning_history() -> None:
+    st.markdown("## Learning retained")
+
+    if not st.session_state.reflections:
+        st.caption(
+            "No learnings have been retained yet. Complete an action in "
+            "Action Queue, then use this page to record what happened."
+        )
+        return
+
+    for reflection in st.session_state.reflections:
+        st.markdown(f"**{reflection.signal_id} · {reflection.title}**")
+        render_badges(["Learning retained"])
+        st.caption(format_relative_time(reflection.recorded_at))
+
+        st.write(reflection.learning)
+
+        if reflection.next_step:
+            st.caption(f"Next step: {reflection.next_step}")
+
+        render_divider()
 
 
 configure_page("Learning Loop | Meeting Memory Console")
 render_sidebar_identity()
 initialise_state()
 
+completed_actions = get_completed_actions()
+retained_learning = st.session_state.reflections
+
 render_page_header(
     eyebrow="Learning Loop",
-    title="What the organization carries forward",
+    title="What should the organization remember",
     description=(
-        "Completion is not the end of the workflow. Record what happened, "
-        "what was learned, and what future decisions should begin with."
+        "Learning Loop makes completed work useful beyond one task. Record "
+        "what happened, what the organization learned, and what should inform "
+        "future decisions."
     ),
 )
 
 render_notice(
-    "Learning is recorded after human review and an observed outcome. These "
-    "records preserve organizational memory, not automated conclusions or "
-    "individual performance judgments."
+    "Learning is human-authored and evidence-aware. The system preserves what "
+    "you record; it does not infer organizational conclusions automatically."
 )
 
-st.info(
-    "Demo journey: After completing **SIG-001** in Action Queue, choose the "
-    "completed work below. Record what happened and what the organization "
-    "should remember to complete the full workflow."
-)
-
-render_reflection_form()
-
-connected_records = [
-    record
-    for reflection in st.session_state.reflections
-    if (record := build_reflection_record(reflection)) is not None
-]
-
-all_records = LEARNING_RECORDS + connected_records
-
-render_divider()
-
-st.markdown("## Find retained learning")
-
-filter_columns = st.columns(3)
-
-with filter_columns[0]:
-    selected_area = st.selectbox(
-        "Business area",
-        ["All"] + sorted({record["area"] for record in all_records}),
-    )
-
-with filter_columns[1]:
-    selected_impact = st.selectbox(
-        "Impact",
-        ["All"] + sorted({record["impact"] for record in all_records}),
-    )
-
-with filter_columns[2]:
-    search_text = st.text_input(
-        "Search",
-        placeholder="Search outcomes, learning, owners, or evidence",
-    )
-
-filtered_records = [
-    record
-    for record in all_records
-    if (selected_area == "All" or record["area"] == selected_area)
-    and (selected_impact == "All" or record["impact"] == selected_impact)
-    and matches_search(record, search_text)
-]
-
-render_divider()
-
-metric_columns = st.columns(4)
+metric_columns = st.columns(3)
 
 with metric_columns[0]:
-    render_metric("Learning records", len(filtered_records))
+    render_metric("Completed actions", len(completed_actions))
 
 with metric_columns[1]:
-    render_metric(
-        "High impact learning",
-        sum(record["impact"] == "High" for record in filtered_records),
-    )
+    render_metric("Learning retained", len(retained_learning))
 
 with metric_columns[2]:
     render_metric(
-        "Business areas",
-        len({record["area"] for record in filtered_records}),
-    )
-
-with metric_columns[3]:
-    render_metric(
-        "Owners represented",
-        len({record["owner"] for record in filtered_records}),
+        "Awaiting learning",
+        sum(
+            get_reflection_for_action(action.id) is None
+            for action in completed_actions
+        ),
     )
 
 render_divider()
 
-st.markdown(f"## {len(filtered_records)} learning records in view")
+render_learning_feedback()
 
-if not filtered_records:
+st.markdown("## Complete the loop")
+
+if not completed_actions:
     st.info(
-        "No learning records match the current filters. Adjust the filters or "
-        "search terms and try again."
+        "No completed actions are available yet. Go to Action Queue, choose "
+        "SIG-001, and use **Start work** followed by **Mark completed**."
     )
 else:
-    for record in filtered_records:
-        render_learning_record(record)
+    for action in completed_actions:
+        render_completed_action_card(action)
         render_divider()
 
-st.markdown("## What this makes possible")
+render_learning_history()
 
-proof_columns = st.columns(3)
+render_divider()
 
-with proof_columns[0]:
-    render_card(
-        "Evidence remains connected",
-        "The original meeting observation stays linked to the completed work, "
-        "its observed outcome, and the lesson that was retained.",
-    )
+st.markdown("## Why this matters")
 
-with proof_columns[1]:
-    render_card(
-        "Accountability becomes visible",
-        "Each completed record shows who owned the work and how the "
-        "organization moved from signal to outcome.",
-    )
+render_card(
+    "Learning makes the next decision stronger",
+    "A completed task only becomes organizational memory when someone records "
+    "the observed result and the reusable lesson. The next person reviewing a "
+    "similar signal can then start with context rather than rebuilding it "
+    "from individual meetings.",
+)
 
-with proof_columns[2]:
-    render_card(
-        "The next decision improves",
-        "Retained learning strengthens Pattern Library, helping people begin "
-        "future decisions with organizational context rather than memory alone.",
-    )
+feedback = st.session_state.get("learning_feedback")
+
+if feedback:
+    sleep(0.8)
+    st.session_state.learning_feedback = None
+    st.rerun()
