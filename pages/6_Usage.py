@@ -4,13 +4,22 @@ from datetime import datetime, timezone
 
 import streamlit as st
 
-from config import PAGE_PREFIX
 from utils.ui import configure_page, render_divider
 
-configure_page(f"{PAGE_PREFIX} · Usage")
+configure_page("Usage · admin only")
+
+# Simple admin gate: only show if ?admin=1 is present in the URL
+params = st.experimental_get_query_params()
+admin_flag = params.get("admin", ["0"])[0]
+
+if admin_flag != "1":
+    st.markdown(
+        "This page is admin-only. To view it, open the URL with `?admin=1`."
+    )
+    st.stop()
 
 st.markdown(
-    f'<div class="mmc-eyebrow">{PAGE_PREFIX} · Usage (admin only)</div>',
+    '<div class="mmc-eyebrow">Usage · admin only</div>',
     unsafe_allow_html=True,
 )
 st.title("Usage (admin only)")
@@ -20,11 +29,8 @@ st.caption(
     "not visible to end users in normal navigation."
 )
 
-from stores import get_json_store
-
-store = get_json_store()
-sessions = store.get("sessions", [])
-usage_events = store.get("usage_events", [])
+sessions = st.session_state.get("sessions", [])
+usage_events = st.session_state.get("usage_events", [])
 
 if not sessions:
     st.caption("No usage data yet. Interact with the app to generate sessions.")
