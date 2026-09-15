@@ -201,7 +201,7 @@ pages = [
         icon=":material/info:",
         url_path="prototype-context",
     ),
-    # Admin-only usage page
+    # Admin-only usage page (hidden behind ?admin=1 query param)
     st.Page(
         "pages/6_Usage.py",
         title="Usage",
