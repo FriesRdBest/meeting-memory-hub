@@ -558,65 +558,97 @@ def inject_global_styles() -> None:
                 animation: mmcSoftPulse 1.8s infinite;
             }
 
-            /* Pulsing signal rings loader */
-            @keyframes mmcSignalRingPulse {
+            /* Radar-style signal loader */
+            @keyframes mmcRadarSpin {
                 0% {
-                    transform: scale(0.6);
-                    opacity: 0.9;
-                }
-                70% {
-                    opacity: 0.25;
+                    transform: rotate(0deg);
                 }
                 100% {
-                    transform: scale(1.6);
-                    opacity: 0;
+                    transform: rotate(360deg);
+                }
+            }
+
+            @keyframes mmcTextShine {
+                0% {
+                    background-position: -150% center;
+                }
+                60% {
+                    background-position: 250% center;
+                }
+                100% {
+                    background-position: 250% center;
                 }
             }
 
             .mmc-signal-loader {
                 display: flex;
+                flex-direction: column;
                 align-items: center;
                 justify-content: center;
-                gap: 0.75rem;
-                padding: 2.5rem 1rem;
+                min-height: 40vh;
                 position: relative;
             }
 
-            .mmc-signal-ring {
+            .mmc-radar-container {
+                position: relative;
+                width: 5.5rem;
+                height: 5.5rem;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                margin-bottom: 1rem;
+            }
+
+            .mmc-radar-ring {
                 position: absolute;
-                width: 3.2rem;
-                height: 3.2rem;
+                width: 100%;
+                height: 100%;
                 border-radius: 50%;
-                border: 2px solid rgba(47, 53, 255, 0.9);
-                box-shadow: 0 0 10px rgba(47, 53, 255, 0.5);
-                animation: mmcSignalRingPulse 1.6s ease-out infinite;
+                border: 2px solid rgba(47, 53, 255, 0.18);
             }
 
-            .mmc-signal-ring:nth-child(2) {
-                animation-delay: 0.25s;
+            .mmc-radar-ring:nth-child(2) {
+                width: 70%;
+                height: 70%;
+                border-color: rgba(47, 53, 255, 0.28);
             }
 
-            .mmc-signal-ring:nth-child(3) {
-                animation-delay: 0.5s;
-            }
-
-            .mmc-signal-center {
-                position: relative;
-                width: 0.7rem;
-                height: 0.7rem;
+            .mmc-radar-sweep {
+                position: absolute;
+                width: 100%;
+                height: 100%;
                 border-radius: 50%;
-                background: rgba(47, 53, 255, 0.95);
-                box-shadow: 0 0 12px rgba(47, 53, 255, 0.7);
-                z-index: 1;
+                background: conic-gradient(
+                    from 0deg,
+                    rgba(47, 53, 255, 0) 0deg,
+                    rgba(47, 53, 255, 0) 260deg,
+                    rgba(47, 53, 255, 0.9) 300deg,
+                    rgba(47, 53, 255, 0) 360deg
+                );
+                animation: mmcRadarSpin 2.2s linear infinite;
+                filter: blur(1px);
             }
 
             .mmc-signal-loader-label {
                 position: relative;
                 color: var(--mmc-muted);
-                font-size: 0.9rem;
-                font-weight: 600;
-                margin-left: 2.6rem;
-                z-index: 1;
+                font-size: 0.95rem;
+                font-weight: 700;
+                letter-spacing: 0.02em;
+                background: linear-gradient(
+                    90deg,
+                    var(--mmc-muted) 0%,
+                    var(--mmc-muted) 10%,
+                    rgba(47, 53, 255, 0.95) 25%,
+                    var(--mmc-muted) 40%,
+                    var(--mmc-muted) 100%
+                );
+                background-size: 200% 100%;
+                -webkit-background-clip: text;
+                background-clip: text;
+                color: transparent;
+                animation: mmcTextShine 2.2s ease-in-out infinite;
+                animation-delay: 0.15s;
             }
 
             @media (prefers-reduced-motion: reduce) {
@@ -793,14 +825,15 @@ def render_sidebar_identity() -> None:
         )
 
 
-def render_signal_loader(label: str = "Tuning into signals...") -> None:
+def render_signal_loader(label: str = "Signals incoming…") -> None:
     st.markdown(
         f"""
         <div class="mmc-signal-loader">
-            <div class="mmc-signal-ring"></div>
-            <div class="mmc-signal-ring"></div>
-            <div class="mmc-signal-ring"></div>
-            <div class="mmc-signal-center"></div>
+            <div class="mmc-radar-container">
+                <div class="mmc-radar-ring"></div>
+                <div class="mmc-radar-ring"></div>
+                <div class="mmc-radar-sweep"></div>
+            </div>
             <div class="mmc-signal-loader-label">{escape(label)}</div>
         </div>
         """,
