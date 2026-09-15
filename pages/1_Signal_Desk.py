@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import time
+
 import streamlit as st
 
 from utils.ui import (
@@ -11,6 +13,7 @@ from utils.ui import (
     render_notice,
     render_page_header,
     render_sidebar_identity,
+    render_signal_loader,
 )
 
 
@@ -63,6 +66,13 @@ configure_page("Signal Desk | Meeting Memory Console")
 render_sidebar_identity()
 
 signals = st.session_state.get("signals", [])
+
+# Artificial delay to make the loader visible (for demo / polish)
+if "signals_loaded" not in st.session_state:
+    render_signal_loader("Tuning into signals...")
+    time.sleep(0.7)
+    st.session_state.signals_loaded = True
+    st.rerun()
 
 render_page_header(
     eyebrow="Signal Desk",
