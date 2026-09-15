@@ -15,6 +15,7 @@ from utils.ui import (
     render_badges,
     render_card,
     render_divider,
+    render_empty_state,
     render_metric,
     render_notice,
     render_page_header,
@@ -31,7 +32,9 @@ def get_reflection_service() -> ReflectionService:
 def initialise_state() -> None:
     if "reflections" not in st.session_state:
         try:
-            st.session_state.reflections = get_reflection_service().list_reflections()
+            st.session_state.reflections = (
+                get_reflection_service().list_reflections()
+            )
         except (OSError, ValueError):
             st.session_state.reflections = []
 
@@ -132,13 +135,9 @@ def add_reflection(
     learning: str,
     next_step: str,
 ) -> Reflection:
-    signal = get_signal_for_id(action.signal_id)
-
     reflection = Reflection(
         id=f"LRN-{uuid4().hex[:8].upper()}",
         action_id=action.id,
-        signal_id=action.signal_id,
-        title=signal["title"] if signal else action.title,
         outcome=outcome.strip(),
         learning=learning.strip(),
         next_step=next_step.strip() or "No further step recorded",
@@ -146,6 +145,7 @@ def add_reflection(
     )
 
     st.session_state.reflections.insert(0, reflection)
+
     return reflection
 
 
@@ -156,36 +156,21 @@ def render_learning_feedback() -> None:
         return
 
     if feedback["saved"]:
-        st.markdown(
-            f"""
-            <div class="mmc-action-feedback">
-                <span class="mmc-action-feedback-check">✓</span>
-                <span>
-                    Learning recorded for {feedback["signal_id"]}.
-                </span>
-            </div>
-            """,
-            unsafe_allow_html=True,
+        st.success(
+            f"Learning recorded for {feedback['signal_id']}. It is now "
+            "available as evidence for future pattern review."
         )
         return
 
-    st.markdown(
-        f"""
-        <div class="mmc-action-feedback mmc-action-feedback--warning">
-            <span class="mmc-action-feedback-check">!</span>
-            <span>
-                Learning for {feedback["signal_id"]} was recorded for this
-                session, but could not be saved permanently.
-            </span>
-        </div>
-        """,
-        unsafe_allow_html=True,
+    st.warning(
+        f"Learning for {feedback['signal_id']} was recorded for this session, "
+        "but could not be saved permanently."
     )
 
 
 def render_completed_action_card(action: object) -> None:
     signal = get_signal_for_id(action.signal_id)
-    reflection = get_reflection_for_action(action.id)
+    existing_reflection = get_reflection_for_action(action.id)
 
     signal_title = signal["title"] if signal else action.title
 
@@ -203,50 +188,65 @@ def render_completed_action_card(action: object) -> None:
         f"Owner: {action.owner}"
     )
 
-    if reflection:
-        st.success("Learning has been recorded for this completed action.")
-        st.caption(format_relative_time(reflection.recorded_at))
+    if signal:
+        st.caption(f"Original signal: {signal['id']} · {signal['title']}")
+
+    if existing_reflection:
+        st.success(
+            "Learning has been retained for this completed action and can "
+            "strengthen related emerging patterns."
+        )
+
+        st.caption(format_relative_time(existing_reflection.recorded_at))
 
         st.markdown("**Observed outcome**")
-        st.write(reflection.outcome)
+        st.write(existing_reflection.outcome)
 
-        st.markdown("**What the organization should remember**")
-        st.write(reflection.learning)
+        st.markdown("**Learning retained**")
+        st.write(existing_reflection.learning)
 
         st.markdown("**Next step**")
-        st.write(reflection.next_step)
+        st.write(existing_reflection.next_step)
 
         return
 
-    st.markdown("### Record what the organization learned")
+    st.markdown("#### Record what the organization learned")
+
+    st.caption(
+        "A retained learning can later support an emerging pattern, but it "
+        "does not automatically create or confirm one."
+    )
 
     with st.form(f"reflection_form_{action.id}"):
         outcome = st.text_area(
             "Observed outcome",
             placeholder=(
-                "What happened after the work was completed? Keep this "
-                "specific and observable."
+                "Describe the observable result after this work was completed."
             ),
         )
 
         learning = st.text_area(
-            "What should the organization remember?",
+            "Learning retained",
             placeholder=(
-                "Capture the reusable lesson that should inform similar "
-                "situations in the future."
+                "Capture the reusable lesson that should inform a similar "
+                "situation in the future."
             ),
         )
 
         next_step = st.text_input(
             "Remaining next step",
-            placeholder=("Optional. Record anything that still needs to happen."),
+            placeholder=(
+                "Optional. Record work that still needs to happen."
+            ),
         )
 
         submitted = st.form_submit_button("Save Learning")
 
     if submitted:
         if not outcome.strip() or not learning.strip():
-            st.warning("Observed outcome and organizational learning are required.")
+            st.warning(
+                "Observed outcome and learning retained are both required."
+            )
             return
 
         reflection = add_reflection(
@@ -259,7 +259,8 @@ def render_completed_action_card(action: object) -> None:
         saved = save_reflections()
 
         st.session_state.learning_feedback = {
-            "signal_id": reflection.signal_id,
+            "signal_id": action.signal_id,
+            "reflection_id": reflection.id,
             "saved": saved,
         }
 
@@ -270,17 +271,51 @@ def render_learning_history() -> None:
     st.markdown("## Learning retained")
 
     if not st.session_state.reflections:
-        st.caption(
-            "No learnings have been retained yet. Complete an action in "
-            "Action Queue, then use this page to record what happened."
+        render_empty_state(
+            title="No learning retained yet",
+            description=(
+                "Complete an action in Action Queue, then record the observed "
+                "outcome and reusable lesson here. Retained learning will "
+                "become visible evidence for future pattern review."
+            ),
+            symbol="·",
         )
         return
 
     for reflection in st.session_state.reflections:
-        st.markdown(f"**{reflection.signal_id} · {reflection.title}**")
-        render_badges(["Learning retained"])
+        action = next(
+            (
+                item
+                for item in st.session_state.get("actions", [])
+                if item.id == reflection.action_id
+            ),
+            None,
+        )
+
+        signal = (
+            get_signal_for_id(action.signal_id)
+            if action
+            else None
+        )
+
+        title = signal["title"] if signal else "Linked completed action"
+        signal_id = signal["id"] if signal else "Signal unavailable"
+
+        st.markdown(f"**{signal_id} · {title}**")
+
+        render_badges(
+            [
+                "Learning retained",
+                "Pattern evidence",
+            ]
+        )
+
         st.caption(format_relative_time(reflection.recorded_at))
 
+        st.markdown("**Observed outcome**")
+        st.write(reflection.outcome)
+
+        st.markdown("**Learning retained**")
         st.write(reflection.learning)
 
         if reflection.next_step:
@@ -300,15 +335,16 @@ render_page_header(
     eyebrow="Learning Loop",
     title="What should the organization remember",
     description=(
-        "Learning Loop makes completed work useful beyond one task. Record "
-        "what happened, what the organization learned, and what should inform "
-        "future decisions."
+        "Capture the observed outcome after work is completed and retain the "
+        "reusable lesson. Learning strengthens future review without allowing "
+        "the system to draw conclusions on its own."
     ),
 )
 
 render_notice(
-    "Learning is human-authored and evidence-aware. The system preserves what "
-    "you record; it does not infer organizational conclusions automatically."
+    "Learning is human authored and evidence aware. Retained records can "
+    "support emerging patterns, but a person must still review and confirm "
+    "whether a pattern should become organizational memory."
 )
 
 metric_columns = st.columns(3)
@@ -323,7 +359,8 @@ with metric_columns[2]:
     render_metric(
         "Awaiting learning",
         sum(
-            get_reflection_for_action(action.id) is None for action in completed_actions
+            get_reflection_for_action(action.id) is None
+            for action in completed_actions
         ),
     )
 
@@ -334,9 +371,13 @@ render_learning_feedback()
 st.markdown("## Complete the loop")
 
 if not completed_actions:
-    st.info(
-        "No completed actions are available yet. Go to Action Queue, choose "
-        "SIG-001, and use **Start work** followed by **Mark completed**."
+    render_empty_state(
+        title="No completed actions yet",
+        description=(
+            "When work is marked completed in Action Queue, it will appear "
+            "here for outcome and learning capture."
+        ),
+        symbol="✓",
     )
 else:
     for action in completed_actions:
@@ -350,11 +391,11 @@ render_divider()
 st.markdown("## Why this matters")
 
 render_card(
-    "Learning makes the next decision stronger",
-    "A completed task only becomes organizational memory when someone records "
-    "the observed result and the reusable lesson. The next person reviewing a "
-    "similar signal can then start with context rather than rebuilding it "
-    "from individual meetings.",
+    "Learning makes pattern review stronger",
+    "A completed task becomes organizational memory when a person records "
+    "what happened and what should be reused. Pattern Library can then show "
+    "that retained learning as traceable evidence when a similar issue begins "
+    "to emerge.",
 )
 
 feedback = st.session_state.get("learning_feedback")
