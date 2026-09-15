@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from datetime import datetime
+from datetime import date, datetime
 from pathlib import Path
 from time import sleep
 from uuid import uuid4
@@ -22,6 +22,7 @@ from utils.ui import (
 )
 
 ACTION_FILE_PATH = Path("data/actions.json")
+DATE_STORAGE_FORMAT = "%b %d, %Y"
 
 
 def get_action_service() -> ActionService:
@@ -44,7 +45,12 @@ def initialise_state() -> None:
 
 def get_signal(signal_id: str) -> dict[str, str]:
     signals = st.session_state.get("signals", [])
-    return next(signal for signal in signals if signal["id"] == signal_id)
+
+    return next(
+        signal
+        for signal in signals
+        if signal["id"] == signal_id
+    )
 
 
 def get_action_for_signal(signal_id: str) -> Action | None:
@@ -80,6 +86,7 @@ def get_or_create_action(signal: dict[str, str]) -> Action:
     )
 
     st.session_state.actions.append(action)
+
     return action
 
 
@@ -91,12 +98,32 @@ def save_actions() -> bool:
         return False
 
 
+def parse_due_date(due_date: str) -> date | None:
+    if not due_date or due_date == "Not set":
+        return None
+
+    try:
+        return datetime.strptime(
+            due_date,
+            DATE_STORAGE_FORMAT,
+        ).date()
+    except ValueError:
+        return None
+
+
+def format_due_date(due_date: date | None) -> str:
+    if due_date is None:
+        return "Not set"
+
+    return due_date.strftime(DATE_STORAGE_FORMAT)
+
+
 def apply_decision(
     action: Action,
     decision: str,
     owner: str,
     destination: str,
-    due_date: str,
+    due_date: date | None,
     note: str,
 ) -> bool:
     status_by_decision = {
@@ -109,7 +136,7 @@ def apply_decision(
     action.status = status_by_decision[decision]
     action.owner = owner.strip() or "Unassigned"
     action.destination = destination.strip() or "Unassigned"
-    action.due_date = due_date.strip() or "Not set"
+    action.due_date = format_due_date(due_date)
 
     updated_at = datetime.now().strftime("%b %d, %Y at %I:%M %p")
 
@@ -121,6 +148,7 @@ def apply_decision(
             "decision": decision,
             "owner": action.owner,
             "destination": action.destination,
+            "due_date": action.due_date,
             "note": note.strip() or None,
             "updated_at": updated_at,
         },
@@ -181,35 +209,21 @@ def render_action_feedback() -> None:
     feedback_saved = feedback["saved"]
 
     if feedback_saved:
-        st.markdown(
-            f"""
-            <div class="mmc-action-feedback">
-                <span class="mmc-action-feedback-check">✓</span>
-                <span>
-                    {feedback_signal_id} decision recorded:
-                    <strong>{feedback_decision}</strong>
-                </span>
-            </div>
-            """,
-            unsafe_allow_html=True,
+        st.success(
+            f"{feedback_signal_id} decision recorded: {feedback_decision}."
         )
-    else:
-        st.markdown(
-            f"""
-            <div class="mmc-action-feedback mmc-action-feedback--warning">
-                <span class="mmc-action-feedback-check">!</span>
-                <span>
-                    {feedback_signal_id} was updated for this session, but it
-                    could not be saved permanently.
-                </span>
-            </div>
-            """,
-            unsafe_allow_html=True,
-        )
+        return
+
+    st.warning(
+        f"{feedback_signal_id} was updated for this session, but it could not "
+        "be saved permanently."
+    )
 
 
 def render_action_form(signal: dict[str, str], action: Action) -> None:
     st.markdown("### Confirm the next move")
+
+    existing_due_date = parse_due_date(action.due_date)
 
     with st.form(f"action_form_{signal['id']}"):
         decision = st.selectbox(
@@ -238,10 +252,15 @@ def render_action_form(signal: dict[str, str], action: Action) -> None:
             placeholder="Choose where the work should be handled",
         )
 
-        due_date = st.text_input(
+        due_date = st.date_input(
             "Due date",
-            value=action.due_date,
-            placeholder="For example, Oct 15, 2026",
+            value=existing_due_date,
+            min_value=date.today(),
+            format="MM/DD/YYYY",
+            help=(
+                "Select a due date from the calendar. Leave it blank when "
+                "the action does not have a confirmed date yet."
+            ),
         )
 
         note = st.text_area(
@@ -285,9 +304,10 @@ def render_history() -> None:
 
     for event in st.session_state.action_history:
         st.markdown(f"**{event['signal_id']} · {event['decision']}**")
+
         st.caption(
             f"{event['updated_at']} · {event['owner']} → "
-            f"{event['destination']}"
+            f"{event['destination']} · Due: {event['due_date']}"
         )
 
         if event["note"]:
@@ -388,10 +408,12 @@ for signal in signals:
                 status,
             ]
         )
+
         st.write(
             "Select this signal below to review the evidence and record an "
             "accountable decision."
         )
+
         st.caption(
             f"Proposed owner: {action.owner if action else signal['owner']} · "
             f"Proposed destination: "
@@ -417,9 +439,13 @@ else:
     selected_action = get_or_create_action(selected_signal)
 
     render_action_detail(selected_signal, selected_action)
+
     render_divider()
+
     render_action_form(selected_signal, selected_action)
+
     render_divider()
+
     render_history()
 
 st.markdown("## The learning layer")
