@@ -361,8 +361,38 @@ def inject_global_styles() -> None:
             }
 
             .block-container {
-                max-width: 1440px;
+                width: 100%;
+                max-width: 1360px;
+                margin: 0 auto;
                 padding: 3.25rem 2.75rem 4.75rem;
+            }
+
+            /*
+             * Shared layout normalization.
+             *
+             * Streamlit columns can grow to different heights when their
+             * contents differ. These rules make column wrappers stretch and
+             * make shared cards fill the available row height.
+             */
+            [data-testid="stHorizontalBlock"] {
+                align-items: stretch !important;
+                gap: 1.15rem !important;
+            }
+
+            [data-testid="stHorizontalBlock"] > [data-testid="column"] {
+                display: flex;
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            [data-testid="stHorizontalBlock"] > [data-testid="column"] > div {
+                display: flex;
+                flex: 1;
+                flex-direction: column;
+            }
+
+            [data-testid="stHorizontalBlock"] .mmc-card {
+                flex: 1;
             }
 
             h1,
@@ -430,19 +460,24 @@ def inject_global_styles() -> None:
             }
 
             .mmc-card {
+                display: flex;
+                flex: 1;
+                flex-direction: column;
+                width: 100%;
+                min-height: 100%;
+                padding: 1.42rem;
+                overflow: hidden;
+                border: 1px solid var(--mmc-border);
+                border-radius: var(--mmc-radius);
                 background:
                     linear-gradient(
                         145deg,
                         rgba(28, 28, 35, 0.96),
                         rgba(18, 18, 23, 0.92)
                     );
-                border: 1px solid var(--mmc-border);
-                border-radius: var(--mmc-radius);
                 box-shadow:
                     0 18px 46px rgba(0, 0, 0, 0.20),
                     inset 0 1px 0 rgba(255, 255, 255, 0.025);
-                min-height: 100%;
-                padding: 1.42rem;
                 transition:
                     transform 0.15s ease,
                     box-shadow 0.15s ease;
@@ -456,36 +491,37 @@ def inject_global_styles() -> None:
             }
 
             .mmc-card-title {
+                margin-bottom: 0.55rem;
                 color: var(--mmc-text);
                 font-size: 1.03rem;
                 font-weight: 760;
                 letter-spacing: -0.022em;
-                margin-bottom: 0.55rem;
             }
 
             .mmc-card-copy {
+                flex: 1;
+                margin: 0;
                 color: var(--mmc-muted);
                 font-size: 0.95rem;
                 line-height: 1.64;
-                margin: 0;
             }
 
             .mmc-metric {
+                position: relative;
+                min-height: 9.2rem;
+                overflow: hidden;
+                padding: 1.32rem;
+                border: 1px solid rgba(111, 117, 255, 0.48);
+                border-radius: var(--mmc-radius);
                 background:
                     linear-gradient(
                         135deg,
                         rgba(47, 53, 255, 0.34),
                         rgba(25, 25, 34, 0.96)
                     );
-                border: 1px solid rgba(111, 117, 255, 0.48);
-                border-radius: var(--mmc-radius);
                 box-shadow:
                     0 18px 46px rgba(0, 0, 0, 0.22),
                     inset 0 1px 0 rgba(255, 255, 255, 0.06);
-                min-height: 9.2rem;
-                overflow: hidden;
-                padding: 1.32rem;
-                position: relative;
                 transition:
                     transform 0.15s ease,
                     box-shadow 0.15s ease;
@@ -499,53 +535,53 @@ def inject_global_styles() -> None:
             }
 
             .mmc-metric::after {
+                position: absolute;
+                top: -6.5rem;
+                right: -4.5rem;
+                width: 12rem;
+                height: 12rem;
+                border-radius: 50%;
                 background:
                     radial-gradient(
                         circle,
                         rgba(255, 255, 255, 0.14),
                         transparent 68%
                     );
-                border-radius: 50%;
                 content: "";
-                height: 12rem;
-                position: absolute;
-                right: -4.5rem;
-                top: -6.5rem;
-                width: 12rem;
             }
 
             .mmc-metric-label {
+                position: relative;
+                z-index: 1;
                 color: var(--mmc-muted);
                 font-size: 0.74rem;
                 font-weight: 760;
                 letter-spacing: 0.08em;
-                position: relative;
                 text-transform: uppercase;
-                z-index: 1;
             }
 
             .mmc-metric-value {
+                position: relative;
+                z-index: 1;
+                margin-top: 0.66rem;
                 color: #FFFFFF;
                 font-size: 2.6rem;
                 font-weight: 820;
                 letter-spacing: -0.065em;
                 line-height: 1.05;
-                margin-top: 0.66rem;
-                position: relative;
-                z-index: 1;
             }
 
             .mmc-badge {
-                background: rgba(47, 53, 255, 0.16);
+                display: inline-block;
+                margin: 0 0.34rem 0.46rem 0;
+                padding: 0.3rem 0.65rem;
                 border: 1px solid rgba(105, 110, 255, 0.42);
                 border-radius: 999px;
+                background: rgba(47, 53, 255, 0.16);
                 color: #E9E9FF;
-                display: inline-block;
                 font-size: 0.73rem;
                 font-weight: 720;
                 letter-spacing: -0.01em;
-                margin: 0 0.34rem 0.46rem 0;
-                padding: 0.3rem 0.65rem;
                 transition:
                     transform 0.12s ease,
                     box-shadow 0.12s ease;
@@ -557,49 +593,45 @@ def inject_global_styles() -> None:
             }
 
             .mmc-badge--success {
-                background: rgba(97, 208, 149, 0.14);
                 border-color: rgba(97, 208, 149, 0.52);
+                background: rgba(97, 208, 149, 0.14);
                 color: #7AE4A9;
             }
 
             .mmc-badge--warning {
-                background: rgba(245, 190, 98, 0.15);
                 border-color: rgba(245, 190, 98, 0.54);
+                background: rgba(245, 190, 98, 0.15);
                 color: #FFD183;
             }
 
             .mmc-badge--danger {
-                background: rgba(241, 123, 123, 0.14);
                 border-color: rgba(241, 123, 123, 0.54);
+                background: rgba(241, 123, 123, 0.14);
                 color: #FFAAAA;
             }
 
             .mmc-divider {
-                border-top: 1px solid var(--mmc-border);
                 margin: 2.4rem 0;
+                border-top: 1px solid var(--mmc-border);
             }
 
             .mmc-notice {
+                max-width: 100%;
+                padding: 0.96rem 1.04rem;
+                border: 1px solid rgba(101, 106, 255, 0.26);
+                border-left: 3px solid var(--mmc-blue);
+                border-radius: 0.76rem;
                 background:
                     linear-gradient(
                         90deg,
                         rgba(47, 53, 255, 0.16),
                         rgba(47, 53, 255, 0.08)
                     );
-                border: 1px solid rgba(101, 106, 255, 0.26);
-                border-left: 3px solid var(--mmc-blue);
-                border-radius: 0.76rem;
                 color: #C5C5D3;
                 font-size: 0.94rem;
                 line-height: 1.58;
-                max-width: 100%;
-                padding: 0.96rem 1.04rem;
             }
 
-            /*
-             * Premium empty state:
-             * used when a workflow view has no records to show.
-             */
             .mmc-empty-state {
                 display: flex;
                 flex-direction: column;
@@ -707,13 +739,13 @@ def inject_global_styles() -> None:
 
             div[data-testid="stButton"] > button,
             div[data-testid="stFormSubmitButton"] > button {
-                background: var(--mmc-blue);
+                min-height: 2.68rem;
                 border: 1px solid rgba(255, 255, 255, 0.16);
                 border-radius: 0.72rem;
+                background: var(--mmc-blue);
                 box-shadow: 0 12px 28px rgba(47, 53, 255, 0.26);
                 color: #FFFFFF !important;
                 font-weight: 760;
-                min-height: 2.68rem;
                 transition:
                     background 160ms ease,
                     border-color 160ms ease,
@@ -730,14 +762,10 @@ def inject_global_styles() -> None:
             }
 
             div[data-testid="stButton"] > button[kind="secondary"] {
-                background: rgba(247, 247, 250, 0.07);
                 border-color: rgba(247, 247, 250, 0.13);
+                background: rgba(247, 247, 250, 0.07);
                 box-shadow: none;
                 color: var(--mmc-text) !important;
-                transition:
-                    background 160ms ease,
-                    border-color 160ms ease,
-                    transform 160ms ease;
             }
 
             div[data-testid="stButton"] > button[kind="secondary"]:hover {
@@ -747,10 +775,10 @@ def inject_global_styles() -> None:
             }
 
             [data-testid="stExpander"] {
-                background: rgba(20, 20, 26, 0.84);
+                overflow: hidden;
                 border: 1px solid rgba(247, 247, 250, 0.13);
                 border-radius: 0.84rem;
-                overflow: hidden;
+                background: rgba(20, 20, 26, 0.84);
                 transition:
                     border-color 160ms ease,
                     box-shadow 160ms ease;
@@ -784,27 +812,27 @@ def inject_global_styles() -> None:
             }
 
             [data-testid="stDataFrame"] {
+                overflow: hidden;
                 border: 1px solid var(--mmc-border);
                 border-radius: 0.9rem;
-                overflow: hidden;
             }
 
             blockquote {
-                background: rgba(47, 53, 255, 0.10);
-                border-left: 3px solid var(--mmc-blue);
-                border-radius: 0 0.62rem 0.62rem 0;
-                color: #C5C5D3;
-                line-height: 1.65;
                 margin: 0.8rem 0 1rem;
                 padding: 0.82rem 1rem;
+                border-left: 3px solid var(--mmc-blue);
+                border-radius: 0 0.62rem 0.62rem 0;
+                background: rgba(47, 53, 255, 0.10);
+                color: #C5C5D3;
+                line-height: 1.65;
             }
 
             button:focus-visible,
             input:focus-visible,
             textarea:focus-visible,
             [data-baseweb="select"] > div:focus-within {
-                box-shadow: 0 0 0 3px rgba(100, 105, 255, 0.44) !important;
                 outline: none !important;
+                box-shadow: 0 0 0 3px rgba(100, 105, 255, 0.44) !important;
             }
 
             @keyframes mmcFadeInRow {
@@ -948,6 +976,10 @@ def inject_global_styles() -> None:
                     padding: 2.5rem 1.6rem 3.5rem;
                 }
 
+                [data-testid="stHorizontalBlock"] {
+                    gap: 0.85rem !important;
+                }
+
                 .mmc-card {
                     padding: 1.15rem;
                 }
@@ -975,6 +1007,16 @@ def inject_global_styles() -> None:
                     padding: 1.9rem 1rem 2.75rem;
                 }
 
+                [data-testid="stHorizontalBlock"] {
+                    display: block !important;
+                }
+
+                [data-testid="stHorizontalBlock"] > [data-testid="column"] {
+                    display: block;
+                    width: 100% !important;
+                    margin-bottom: 0.85rem;
+                }
+
                 h1 {
                     font-size: 2.35rem;
                 }
@@ -989,6 +1031,7 @@ def inject_global_styles() -> None:
                 }
 
                 .mmc-card {
+                    min-height: 0;
                     margin-bottom: 0.85rem;
                     padding: 1rem;
                 }
@@ -1133,7 +1176,9 @@ def render_sidebar_identity() -> None:
             f"""
             <div class="mmc-sidebar-identity">
                 <div class="mmc-eyebrow">{escape(PROJECT_NAME)}</div>
-                <p class="mmc-sidebar-tagline">{escape(PROJECT_TAGLINE)}</p>
+                <p class="mmc-sidebar-tagline">
+                    {escape(PROJECT_TAGLINE)}
+                </p>
             </div>
             """,
             unsafe_allow_html=True,
