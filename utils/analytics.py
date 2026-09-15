@@ -5,7 +5,7 @@ from datetime import datetime, timezone
 
 import streamlit as st
 
-from stores import get_json_store
+from repositories.json_store import get_json_store
 
 
 def get_or_create_anonymous_user_id() -> str:
