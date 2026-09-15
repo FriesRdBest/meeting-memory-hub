@@ -31,9 +31,7 @@ def get_reflection_service() -> ReflectionService:
 def initialise_state() -> None:
     if "reflections" not in st.session_state:
         try:
-            st.session_state.reflections = (
-                get_reflection_service().list_reflections()
-            )
+            st.session_state.reflections = get_reflection_service().list_reflections()
         except (OSError, ValueError):
             st.session_state.reflections = []
 
@@ -220,9 +218,7 @@ def render_completed_action_card(action: object) -> None:
 
         return
 
-    st.markdown(
-        "### Record what the organization learned"
-    )
+    st.markdown("### Record what the organization learned")
 
     with st.form(f"reflection_form_{action.id}"):
         outcome = st.text_area(
@@ -243,18 +239,14 @@ def render_completed_action_card(action: object) -> None:
 
         next_step = st.text_input(
             "Remaining next step",
-            placeholder=(
-                "Optional. Record anything that still needs to happen."
-            ),
+            placeholder=("Optional. Record anything that still needs to happen."),
         )
 
         submitted = st.form_submit_button("Save Learning")
 
     if submitted:
         if not outcome.strip() or not learning.strip():
-            st.warning(
-                "Observed outcome and organizational learning are required."
-            )
+            st.warning("Observed outcome and organizational learning are required.")
             return
 
         reflection = add_reflection(
@@ -331,8 +323,7 @@ with metric_columns[2]:
     render_metric(
         "Awaiting learning",
         sum(
-            get_reflection_for_action(action.id) is None
-            for action in completed_actions
+            get_reflection_for_action(action.id) is None for action in completed_actions
         ),
     )
 
