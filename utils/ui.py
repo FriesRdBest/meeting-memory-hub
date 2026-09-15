@@ -97,6 +97,14 @@ def inject_global_styles() -> None:
                 color: var(--mmc-text);
             }
 
+            /*
+             * The sidebar has three visual groups:
+             *
+             * 1. Overview: neutral entry point.
+             * 2. Signal Desk → Pattern Library → Action Queue → Learning Loop:
+             *    the workflow narrative.
+             * 3. Prototype Context: neutral closing / reference page.
+             */
             [data-testid="stSidebarContent"] {
                 display: flex;
                 flex-direction: column;
@@ -104,20 +112,6 @@ def inject_global_styles() -> None:
                 padding-top: 0.7rem;
             }
 
-            /*
-             * Sidebar workflow narrative
-             *
-             * Page sequence:
-             * 1. Overview
-             * 2. Signal Desk
-             * 3. Pattern Library
-             * 4. Action Queue
-             * 5. Learning Loop
-             * 6. Prototype Context
-             *
-             * Overview and Prototype Context are bookends.
-             * Items 2–5 are the working intelligence flow.
-             */
             [data-testid="stSidebarNav"] {
                 flex: 1;
                 padding-top: 0.55rem;
@@ -126,23 +120,29 @@ def inject_global_styles() -> None:
             [data-testid="stSidebarNav"] ul {
                 display: flex;
                 flex-direction: column;
-                gap: 0.3rem;
-                min-height: calc(100vh - 11.5rem);
-                padding-bottom: 0.75rem;
+                gap: 0.34rem;
+                min-height: calc(100vh - 12.6rem);
+                padding-bottom: 0.85rem;
             }
 
             [data-testid="stSidebarNav"] li {
                 position: relative;
             }
 
+            /*
+             * Base navigation link.
+             *
+             * The left padding reserves intentional space for workflow nodes.
+             * It keeps dots clear of names rather than letting them collide.
+             */
             [data-testid="stSidebarNav"] a {
                 position: relative;
                 z-index: 2;
                 display: flex;
                 align-items: center;
                 min-height: 2.85rem;
-                margin: 0;
-                padding: 0.65rem 0.78rem;
+                margin: 0 0.6rem;
+                padding: 0.7rem 0.8rem 0.7rem 1.72rem;
                 border: 1px solid transparent;
                 border-radius: 0.8rem;
                 color: var(--mmc-muted);
@@ -156,58 +156,30 @@ def inject_global_styles() -> None:
 
             [data-testid="stSidebarNav"] a:hover {
                 background: rgba(47, 53, 255, 0.13);
-                border-color: rgba(117, 122, 255, 0.23);
+                border-color: rgba(117, 122, 255, 0.24);
                 color: var(--mmc-text);
                 transform: translateX(2px);
             }
 
             /*
-             * Overview: neutral top bookend with complementary padding.
+             * Overview is the upper bookend. It intentionally has no workflow
+             * node, no dotted signal line, and extra separation below it.
              */
             [data-testid="stSidebarNav"] li:first-child {
-                margin: 0 0.6rem 1.2rem;
+                margin: 0 0.6rem 1.35rem;
             }
 
             [data-testid="stSidebarNav"] li:first-child a {
+                margin: 0;
+                padding-left: 0.8rem;
                 background: rgba(247, 247, 250, 0.025);
-                border-color: rgba(247, 247, 250, 0.07);
+                border-color: rgba(247, 247, 250, 0.08);
                 color: var(--mmc-text);
             }
 
             /*
-             * The middle workflow rail spans Signal Desk through Learning Loop.
-             * The line begins below Signal Desk and ends above Learning Loop.
-             */
-            [data-testid="stSidebarNav"] li:nth-child(2),
-            [data-testid="stSidebarNav"] li:nth-child(3),
-            [data-testid="stSidebarNav"] li:nth-child(4),
-            [data-testid="stSidebarNav"] li:nth-child(5) {
-                margin: 0 0.6rem;
-                padding-left: 0.82rem;
-            }
-
-            [data-testid="stSidebarNav"] li:nth-child(2)::after,
-            [data-testid="stSidebarNav"] li:nth-child(3)::after,
-            [data-testid="stSidebarNav"] li:nth-child(4)::after {
-                position: absolute;
-                top: 2.7rem;
-                bottom: -0.5rem;
-                left: 1.12rem;
-                z-index: 0;
-                width: 1px;
-                content: "";
-                background:
-                    repeating-linear-gradient(
-                        to bottom,
-                        rgba(99, 105, 255, 0.68) 0 3px,
-                        rgba(99, 105, 255, 0) 3px 8px
-                    );
-                opacity: 0.62;
-            }
-
-            /*
-             * Workflow nodes: small circles to the left of the page label.
-             * They replace the earlier pill idea and better suit vertical nav.
+             * Workflow nodes, used only for Signal Desk, Pattern Library,
+             * Action Queue, and Learning Loop.
              */
             [data-testid="stSidebarNav"] li:nth-child(2) a::before,
             [data-testid="stSidebarNav"] li:nth-child(3) a::before,
@@ -215,11 +187,11 @@ def inject_global_styles() -> None:
             [data-testid="stSidebarNav"] li:nth-child(5) a::before {
                 position: absolute;
                 top: 50%;
-                left: 0.12rem;
+                left: 0.48rem;
                 z-index: 3;
-                width: 0.62rem;
-                height: 0.62rem;
-                border: 2px solid rgba(154, 158, 255, 0.7);
+                width: 0.58rem;
+                height: 0.58rem;
+                border: 2px solid rgba(128, 135, 255, 0.78);
                 border-radius: 50%;
                 content: "";
                 background: var(--mmc-surface);
@@ -233,8 +205,35 @@ def inject_global_styles() -> None:
             }
 
             /*
-             * Completed / signal-passed stages:
-             * Applies to pages before the current active workflow page.
+             * Dotted signal line appears beneath each processing-stage tab.
+             * It does not sit beside the label, and it ends before Learning
+             * Loop so Learning remains visually distinct.
+             */
+            [data-testid="stSidebarNav"] li:nth-child(2)::after,
+            [data-testid="stSidebarNav"] li:nth-child(3)::after,
+            [data-testid="stSidebarNav"] li:nth-child(4)::after {
+                position: absolute;
+                right: 1.55rem;
+                bottom: -0.34rem;
+                left: 1.55rem;
+                z-index: 1;
+                height: 1px;
+                content: "";
+                background:
+                    repeating-linear-gradient(
+                        90deg,
+                        rgba(99, 105, 255, 0.72) 0 3px,
+                        rgba(99, 105, 255, 0) 3px 8px
+                    );
+                opacity: 0.52;
+            }
+
+            /*
+             * Signal-passed state.
+             *
+             * A prior stage receives the muted blue treatment only when a
+             * later workflow stage is active. It communicates traversal, not
+             * real-world completion of the underlying organizational work.
              */
             [data-testid="stSidebarNav"] li:nth-child(2):has(
                 ~ li:nth-child(3) a[aria-current="page"]
@@ -254,8 +253,8 @@ def inject_global_styles() -> None:
             [data-testid="stSidebarNav"] li:nth-child(4):has(
                 ~ li:nth-child(5) a[aria-current="page"]
             ) a {
-                background: rgba(47, 53, 255, 0.10);
-                border-color: rgba(94, 100, 255, 0.19);
+                background: rgba(47, 53, 255, 0.09);
+                border-color: rgba(94, 100, 255, 0.18);
                 color: #D9DAFF;
             }
 
@@ -285,8 +284,11 @@ def inject_global_styles() -> None:
             }
 
             /*
-             * Active workflow stage:
-             * stronger visual separation without a large or flashy pill.
+             * Active processing stage.
+             *
+             * Applies to Signal Desk, Pattern Library, and Action Queue.
+             * The border and inset rail are deliberately restrained so the
+             * sidebar remains professional rather than card-heavy.
              */
             [data-testid="stSidebarNav"] li:nth-child(2) a[aria-current="page"],
             [data-testid="stSidebarNav"] li:nth-child(3) a[aria-current="page"],
@@ -317,17 +319,17 @@ def inject_global_styles() -> None:
             }
 
             /*
-             * Learning Loop: a calm, distinct final state.
-             * It intentionally does not use the "signal in motion" treatment
-             * that connects Signal, Pattern, and Action.
+             * Learning Loop is the narrative outcome rather than another
+             * "signal travelling" stage. It uses a calm green memory state
+             * and has no connector below it.
              */
             [data-testid="stSidebarNav"] li:nth-child(5) {
-                margin-top: 0.38rem;
+                margin-top: 0.42rem;
             }
 
             [data-testid="stSidebarNav"] li:nth-child(5) a {
                 background: rgba(97, 208, 149, 0.035);
-                border-color: rgba(97, 208, 149, 0.12);
+                border-color: rgba(97, 208, 149, 0.13);
             }
 
             [data-testid="stSidebarNav"] li:nth-child(5) a::before {
@@ -360,8 +362,8 @@ def inject_global_styles() -> None:
             }
 
             /*
-             * Prototype Context: neutral bottom bookend, held down by the
-             * flexible sidebar list space. No lifecycle line enters this item.
+             * Prototype Context is the lower bookend. It is pushed to the
+             * bottom of the list and separated from workflow navigation.
              */
             [data-testid="stSidebarNav"] li:last-child {
                 margin: auto 0.6rem 0.3rem;
@@ -379,13 +381,15 @@ def inject_global_styles() -> None:
             }
 
             [data-testid="stSidebarNav"] li:last-child a {
+                margin: 0;
+                padding-left: 0.8rem;
                 background: rgba(247, 247, 250, 0.025);
-                border-color: rgba(247, 247, 250, 0.07);
+                border-color: rgba(247, 247, 250, 0.08);
                 color: var(--mmc-muted);
             }
 
             /*
-             * Standard active style for the two bookend pages.
+             * The two bookend pages use a neutral active treatment.
              */
             [data-testid="stSidebarNav"] li:first-child a[aria-current="page"],
             [data-testid="stSidebarNav"] li:last-child a[aria-current="page"] {
@@ -394,6 +398,22 @@ def inject_global_styles() -> None:
                 box-shadow: inset 3px 0 0 rgba(247, 247, 250, 0.68);
                 color: #FFFFFF;
                 font-weight: 760;
+            }
+
+            /*
+             * Author credit, deliberately understated like a small footer.
+             */
+            .mmc-sidebar-credit {
+                flex: 0 0 auto;
+                margin: 0 1rem 0.95rem;
+                padding-top: 0.8rem;
+                border-top: 1px solid rgba(247, 247, 250, 0.08);
+                color: #6F7080 !important;
+                font-size: 0.68rem;
+                font-weight: 500;
+                letter-spacing: 0.035em;
+                line-height: 1.4;
+                text-align: center;
             }
 
             .block-container {
@@ -1086,6 +1106,11 @@ def render_sidebar_identity() -> None:
                 <p class="mmc-sidebar-tagline">{escape(PROJECT_TAGLINE)}</p>
             </div>
             """,
+            unsafe_allow_html=True,
+        )
+
+        st.markdown(
+            '<div class="mmc-sidebar-credit">By Robin Sylvester</div>',
             unsafe_allow_html=True,
         )
 
