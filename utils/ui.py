@@ -97,14 +97,6 @@ def inject_global_styles() -> None:
                 color: var(--mmc-text);
             }
 
-            /*
-             * The sidebar has three visual groups:
-             *
-             * 1. Overview: neutral entry point.
-             * 2. Signal Desk → Pattern Library → Action Queue → Learning Loop:
-             *    the workflow narrative.
-             * 3. Prototype Context: neutral closing / reference page.
-             */
             [data-testid="stSidebarContent"] {
                 display: flex;
                 flex-direction: column;
@@ -129,12 +121,6 @@ def inject_global_styles() -> None:
                 position: relative;
             }
 
-            /*
-             * Base navigation link.
-             *
-             * The left padding reserves intentional space for workflow nodes.
-             * It keeps dots clear of names rather than letting them collide.
-             */
             [data-testid="stSidebarNav"] a {
                 position: relative;
                 z-index: 2;
@@ -161,10 +147,6 @@ def inject_global_styles() -> None:
                 transform: translateX(2px);
             }
 
-            /*
-             * Overview is the upper bookend. It intentionally has no workflow
-             * node, no dotted signal line, and extra separation below it.
-             */
             [data-testid="stSidebarNav"] li:first-child {
                 margin: 0 0.6rem 1.35rem;
             }
@@ -177,10 +159,6 @@ def inject_global_styles() -> None:
                 color: var(--mmc-text);
             }
 
-            /*
-             * Workflow nodes, used only for Signal Desk, Pattern Library,
-             * Action Queue, and Learning Loop.
-             */
             [data-testid="stSidebarNav"] li:nth-child(2) a::before,
             [data-testid="stSidebarNav"] li:nth-child(3) a::before,
             [data-testid="stSidebarNav"] li:nth-child(4) a::before,
@@ -204,11 +182,6 @@ def inject_global_styles() -> None:
                     transform 160ms ease;
             }
 
-            /*
-             * Dotted signal line appears beneath each processing-stage tab.
-             * It does not sit beside the label, and it ends before Learning
-             * Loop so Learning remains visually distinct.
-             */
             [data-testid="stSidebarNav"] li:nth-child(2)::after,
             [data-testid="stSidebarNav"] li:nth-child(3)::after,
             [data-testid="stSidebarNav"] li:nth-child(4)::after {
@@ -228,13 +201,6 @@ def inject_global_styles() -> None:
                 opacity: 0.52;
             }
 
-            /*
-             * Signal-passed state.
-             *
-             * A prior stage receives the muted blue treatment only when a
-             * later workflow stage is active. It communicates traversal, not
-             * real-world completion of the underlying organizational work.
-             */
             [data-testid="stSidebarNav"] li:nth-child(2):has(
                 ~ li:nth-child(3) a[aria-current="page"]
             ) a,
@@ -283,13 +249,6 @@ def inject_global_styles() -> None:
                     0 0 12px rgba(47, 53, 255, 0.48);
             }
 
-            /*
-             * Active processing stage.
-             *
-             * Applies to Signal Desk, Pattern Library, and Action Queue.
-             * The border and inset rail are deliberately restrained so the
-             * sidebar remains professional rather than card-heavy.
-             */
             [data-testid="stSidebarNav"] li:nth-child(2) a[aria-current="page"],
             [data-testid="stSidebarNav"] li:nth-child(3) a[aria-current="page"],
             [data-testid="stSidebarNav"] li:nth-child(4) a[aria-current="page"] {
@@ -318,11 +277,6 @@ def inject_global_styles() -> None:
                 transform: translateY(-50%) scale(1.12);
             }
 
-            /*
-             * Learning Loop is the narrative outcome rather than another
-             * "signal travelling" stage. It uses a calm green memory state
-             * and has no connector below it.
-             */
             [data-testid="stSidebarNav"] li:nth-child(5) {
                 margin-top: 0.42rem;
             }
@@ -361,10 +315,6 @@ def inject_global_styles() -> None:
                 transform: translateY(-50%) scale(1.12);
             }
 
-            /*
-             * Prototype Context is the lower bookend. It is pushed to the
-             * bottom of the list and separated from workflow navigation.
-             */
             [data-testid="stSidebarNav"] li:last-child {
                 margin: auto 0.6rem 0.3rem;
                 padding-top: 1.15rem;
@@ -388,9 +338,6 @@ def inject_global_styles() -> None:
                 color: var(--mmc-muted);
             }
 
-            /*
-             * The two bookend pages use a neutral active treatment.
-             */
             [data-testid="stSidebarNav"] li:first-child a[aria-current="page"],
             [data-testid="stSidebarNav"] li:last-child a[aria-current="page"] {
                 background: rgba(247, 247, 250, 0.08);
@@ -400,9 +347,6 @@ def inject_global_styles() -> None:
                 font-weight: 760;
             }
 
-            /*
-             * Author credit, deliberately understated like a small footer.
-             */
             .mmc-sidebar-credit {
                 flex: 0 0 auto;
                 margin: 0 1rem 0.95rem;
@@ -650,6 +594,67 @@ def inject_global_styles() -> None:
                 line-height: 1.58;
                 max-width: 100%;
                 padding: 0.96rem 1.04rem;
+            }
+
+            /*
+             * Premium empty state:
+             * used when a workflow view has no records to show.
+             */
+            .mmc-empty-state {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                min-height: 14.5rem;
+                padding: 2rem 1.5rem;
+                border: 1px dashed rgba(117, 122, 255, 0.30);
+                border-radius: var(--mmc-radius);
+                background:
+                    radial-gradient(
+                        circle at 50% 0%,
+                        rgba(47, 53, 255, 0.12),
+                        transparent 44%
+                    ),
+                    linear-gradient(
+                        145deg,
+                        rgba(28, 28, 35, 0.72),
+                        rgba(18, 18, 23, 0.68)
+                    );
+                text-align: center;
+            }
+
+            .mmc-empty-state-icon {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                width: 2.8rem;
+                height: 2.8rem;
+                margin-bottom: 0.95rem;
+                border: 1px solid rgba(113, 119, 255, 0.38);
+                border-radius: 50%;
+                background: rgba(47, 53, 255, 0.14);
+                color: #A8ACFF;
+                font-size: 1.16rem;
+                font-weight: 800;
+                box-shadow:
+                    0 0 0 6px rgba(47, 53, 255, 0.045),
+                    0 10px 26px rgba(0, 0, 0, 0.20);
+            }
+
+            .mmc-empty-state-title {
+                color: var(--mmc-text);
+                font-size: 1.04rem;
+                font-weight: 760;
+                letter-spacing: -0.02em;
+                line-height: 1.3;
+            }
+
+            .mmc-empty-state-copy {
+                max-width: 31rem;
+                margin: 0.48rem 0 0;
+                color: var(--mmc-muted);
+                font-size: 0.92rem;
+                line-height: 1.6;
             }
 
             .mmc-sidebar-identity {
@@ -996,6 +1001,11 @@ def inject_global_styles() -> None:
                 .mmc-divider {
                     margin: 1.65rem 0;
                 }
+
+                .mmc-empty-state {
+                    min-height: 12rem;
+                    padding: 1.6rem 1rem;
+                }
             }
         </style>
         """,
@@ -1009,10 +1019,12 @@ def render_page_header(
     description: str | None = None,
 ) -> None:
     safe_eyebrow = escape(eyebrow)
+
     st.markdown(
         f'<div class="mmc-eyebrow">{safe_eyebrow}</div>',
         unsafe_allow_html=True,
     )
+
     st.title(title)
 
     if description:
@@ -1040,6 +1052,23 @@ def render_card(title: str, copy: str) -> None:
         <div class="mmc-card">
             <div class="mmc-card-title">{escape(title)}</div>
             <p class="mmc-card-copy">{escape(copy)}</p>
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
+
+
+def render_empty_state(
+    title: str,
+    description: str,
+    symbol: str = "·",
+) -> None:
+    st.markdown(
+        f"""
+        <div class="mmc-empty-state">
+            <div class="mmc-empty-state-icon">{escape(symbol)}</div>
+            <div class="mmc-empty-state-title">{escape(title)}</div>
+            <p class="mmc-empty-state-copy">{escape(description)}</p>
         </div>
         """,
         unsafe_allow_html=True,
@@ -1083,6 +1112,7 @@ def render_badges(labels: list[str]) -> None:
         for label in labels
         if label
     )
+
     st.markdown(badge_markup, unsafe_allow_html=True)
 
 
