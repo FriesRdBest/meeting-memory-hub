@@ -8,8 +8,11 @@ from uuid import uuid4
 import streamlit as st
 
 from models.action import Action
+from models.pattern import Pattern
 from repositories.action_repository import ActionRepository
+from repositories.pattern_repository import PatternRepository
 from services.action_service import ActionService
+from services.pattern_service import PatternService
 from utils.ui import (
     configure_page,
     render_badges,
@@ -22,11 +25,16 @@ from utils.ui import (
 )
 
 ACTION_FILE_PATH = Path("data/actions.json")
+PATTERN_FILE_PATH = Path("data/patterns.json")
 DATE_STORAGE_FORMAT = "%b %d, %Y"
 
 
 def get_action_service() -> ActionService:
     return ActionService(ActionRepository(ACTION_FILE_PATH))
+
+
+def get_pattern_service() -> PatternService:
+    return PatternService(PatternRepository(PATTERN_FILE_PATH))
 
 
 def initialise_state() -> None:
@@ -35,6 +43,12 @@ def initialise_state() -> None:
             st.session_state.actions = get_action_service().list_actions()
         except (OSError, ValueError):
             st.session_state.actions = []
+
+    if "patterns" not in st.session_state:
+        try:
+            st.session_state.patterns = get_pattern_service().list_patterns()
+        except (OSError, ValueError, KeyError):
+            st.session_state.patterns = []
 
     if "action_history" not in st.session_state:
         st.session_state.action_history = []
@@ -46,7 +60,11 @@ def initialise_state() -> None:
 def get_signal(signal_id: str) -> dict[str, str]:
     signals = st.session_state.get("signals", [])
 
-    return next(signal for signal in signals if signal["id"] == signal_id)
+    return next(
+        signal
+        for signal in signals
+        if signal["id"] == signal_id
+    )
 
 
 def get_action_for_signal(signal_id: str) -> Action | None:
@@ -58,6 +76,15 @@ def get_action_for_signal(signal_id: str) -> Action | None:
         ),
         None,
     )
+
+
+def get_patterns_for_signal(signal_id: str) -> list[Pattern]:
+    return [
+        pattern
+        for pattern in st.session_state.get("patterns", [])
+        if signal_id in pattern.source_signal_ids
+        and pattern.status != "Dismissed"
+    ]
 
 
 def get_or_create_action(signal: dict[str, str]) -> Action:
@@ -153,6 +180,45 @@ def apply_decision(
     return save_actions()
 
 
+def render_pattern_context(signal_id: str) -> None:
+    linked_patterns = get_patterns_for_signal(signal_id)
+
+    st.markdown("### Pattern context")
+
+    if not linked_patterns:
+        st.caption(
+            "No active emerging or confirmed patterns are linked to this "
+            "signal yet. The decision can still proceed with the available "
+            "signal evidence."
+        )
+        return
+
+    for pattern in linked_patterns:
+        st.markdown(f"**{pattern.id} · {pattern.title}**")
+
+        render_badges(
+            [
+                pattern.status,
+                f"{pattern.confidence} confidence",
+                pattern.trend,
+                f"{pattern.evidence_count} evidence sources",
+            ]
+        )
+
+        st.write(pattern.description)
+
+        if pattern.status == "Confirmed":
+            st.success(
+                "This is confirmed organizational memory. Consider it before "
+                "recording the next action."
+            )
+        else:
+            st.caption(
+                "This is emerging evidence, not an automatic conclusion. "
+                "Review Pattern Library if you need to inspect the sources."
+            )
+
+
 def render_action_detail(signal: dict[str, str], action: Action) -> None:
     st.markdown(f"## {signal['id']} · {signal['title']}")
 
@@ -168,6 +234,8 @@ def render_action_detail(signal: dict[str, str], action: Action) -> None:
 
     st.markdown("### What the evidence says")
     st.markdown(f"> {signal['evidence']}")
+
+    render_pattern_context(signal["id"])
 
     st.markdown("### Proposed route")
 
@@ -189,8 +257,8 @@ def render_action_detail(signal: dict[str, str], action: Action) -> None:
     st.write(action.description)
 
     st.caption(
-        "Before recording a decision, use Pattern Library to check whether "
-        "related evidence has already revealed a broader organizational pattern."
+        "Pattern context informs human judgment. It does not automatically "
+        "assign work, determine ownership, or make a decision."
     )
 
 
@@ -205,7 +273,9 @@ def render_action_feedback() -> None:
     feedback_saved = feedback["saved"]
 
     if feedback_saved:
-        st.success(f"{feedback_signal_id} decision recorded: {feedback_decision}.")
+        st.success(
+            f"{feedback_signal_id} decision recorded: {feedback_decision}."
+        )
         return
 
     st.warning(
@@ -326,18 +396,22 @@ render_page_header(
 )
 
 render_notice(
-    "Action Queue is intentionally human controlled. Suggestions may guide "
-    "review, but a person must confirm ownership, destination, and the "
-    "decision before work progresses."
+    "Action Queue is intentionally human controlled. Suggestions and pattern "
+    "context may guide review, but a person must confirm ownership, "
+    "destination, and the decision before work progresses."
 )
 
 st.info(
-    "Demo journey: Choose **SIG-001**, confirm the proposed route, then use "
-    "**Start work** followed by **Mark completed**. Learning Loop will then "
-    "let you record what the organization learned."
+    "Demo journey: Choose **SIG-001**, review its pattern context, confirm "
+    "the proposed route, then use **Start work** followed by **Mark "
+    "completed**. Learning Loop will then let you record what the "
+    "organization learned."
 )
 
-actions_by_signal = {action.signal_id: action for action in st.session_state.actions}
+actions_by_signal = {
+    action.signal_id: action
+    for action in st.session_state.actions
+}
 
 metric_columns = st.columns(4)
 
@@ -361,13 +435,19 @@ with metric_columns[1]:
 with metric_columns[2]:
     render_metric(
         "Work in progress",
-        sum(action.status == "In progress" for action in st.session_state.actions),
+        sum(
+            action.status == "In progress"
+            for action in st.session_state.actions
+        ),
     )
 
 with metric_columns[3]:
     render_metric(
         "Completed",
-        sum(action.status == "Completed" for action in st.session_state.actions),
+        sum(
+            action.status == "Completed"
+            for action in st.session_state.actions
+        ),
     )
 
 render_divider()
@@ -379,6 +459,7 @@ st.markdown("## What needs a decision")
 for signal in signals:
     action = get_action_for_signal(signal["id"])
     status = action.status if action else signal["status"]
+    linked_patterns = get_patterns_for_signal(signal["id"])
 
     with st.expander(
         f"{signal['id']} · {signal['title']} · {status}",
@@ -394,9 +475,15 @@ for signal in signals:
             ]
         )
 
+        if linked_patterns:
+            st.caption(
+                f"Pattern context available: {len(linked_patterns)} linked "
+                "emerging or confirmed pattern."
+            )
+
         st.write(
-            "Select this signal below to review the evidence and record an "
-            "accountable decision."
+            "Select this signal below to review the evidence, inspect its "
+            "available pattern context, and record an accountable decision."
         )
 
         st.caption(
@@ -415,7 +502,9 @@ else:
     selected_signal_id = st.selectbox(
         "Choose a signal to review",
         options=[signal["id"] for signal in signals],
-        format_func=lambda signal_id: f"{signal_id} · {get_signal(signal_id)['title']}",
+        format_func=lambda signal_id: (
+            f"{signal_id} · {get_signal(signal_id)['title']}"
+        ),
     )
 
     selected_signal = get_signal(selected_signal_id)
@@ -437,7 +526,8 @@ render_card(
     "From action to organizational memory",
     "Completion is not the end of the workflow. Learning Loop captures what "
     "happened after the work, what the organization should remember, and any "
-    "next step that remains. That learning makes future pattern review stronger.",
+    "next step that remains. Retained learning can strengthen future pattern "
+    "review without replacing human judgment.",
 )
 
 feedback = st.session_state.get("action_feedback")
