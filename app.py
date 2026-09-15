@@ -5,9 +5,9 @@ from pathlib import Path
 
 import streamlit as st
 
-from models.pattern import Pattern
-from repositories.pattern_repository import PatternRepository
-from services.pattern_service import PatternService
+from models.signal import Signal
+from repositories.signal_repository import SignalRepository
+from services.signal_service import SignalService
 from utils.ui import (
     configure_page,
     render_badges,
@@ -18,207 +18,83 @@ from utils.ui import (
     render_sidebar_identity,
 )
 
-PATTERN_FILE_PATH = Path("data/patterns.json")
+SIGNAL_FILE_PATH = Path("data/signals.json")
 
 
-def get_pattern_service() -> PatternService:
-    return PatternService(PatternRepository(PATTERN_FILE_PATH))
+def get_signal_service() -> SignalService:
+    return SignalService(SignalRepository(SIGNAL_FILE_PATH))
 
 
 def initialise_state() -> None:
-    if "patterns" not in st.session_state:
+    if "signals" not in st.session_state:
         try:
-            st.session_state.patterns = get_pattern_service().list_patterns()
+            st.session_state.signals = get_signal_service().list_signals()
         except (OSError, ValueError):
-            st.session_state.patterns = []
+            st.session_state.signals = []
 
 
-def save_patterns() -> bool:
-    try:
-        get_pattern_service().save_patterns(st.session_state.patterns)
-        return True
-    except OSError:
-        return False
-
-
-def add_pattern(
-    title: str,
-    description: str,
-    examples: str,
-    implications: str,
-    status: str,
-) -> Pattern:
-    pattern_id = f"PAT-{len(st.session_state.patterns) + 1:03d}"
-
-    pattern = Pattern(
-        id=pattern_id,
-        title=title,
-        description=description,
-        examples=examples,
-        implications=implications,
-        status=status,
-        created_at=datetime.now().strftime("%b %d, %Y at %I:%M %p"),
-    )
-
-    st.session_state.patterns.append(pattern)
-    return pattern
-
-
-def render_pattern_form() -> None:
-    st.markdown("### Record a pattern")
-
-    with st.form("pattern_form"):
-        title = st.text_input(
-            "Pattern title",
-            placeholder="For example, Decisions stall without a named owner",
-        )
-
-        description = st.text_area(
-            "What keeps happening",
-            placeholder=(
-                "Describe the recurring situation in plain language. "
-                "Focus on what you observe, not why it happens."
-            ),
-            height=70,
-        )
-
-        examples = st.text_area(
-            "Evidence from meetings",
-            placeholder=(
-                "List 2–4 concrete examples from reviewed meetings. "
-                "For example: 'SIG-003, SIG-007, SIG-012 all show this.'"
-            ),
-            height=70,
-        )
-
-        implications = st.text_area(
-            "Why this matters",
-            placeholder=(
-                "Explain the organizational impact if this pattern continues. "
-                "For example: 'Work queues grow, owners stay unclear, and "
-                "learning never compounds.'"
-            ),
-            height=70,
-        )
-
-        status = st.selectbox(
-            "Status",
-            ["Emerging", "Confirmed", "Addressed"],
-            help=(
-                "Emerging: early signs. "
-                "Confirmed: repeated across meetings. "
-                "Addressed: action has been taken and learning recorded."
-            ),
-        )
-
-        submitted = st.form_submit_button("Save pattern")
-
-        # Force button text to bold white for contrast on dark theme
-        st.markdown(
-            "<style>"
-            "div[data-testid='stFormSubmitButton'] button {"
-            "color: #FFFFFF !important;"
-            "font-weight: 700 !important;"
-            "}"
-            "</style>",
-            unsafe_allow_html=True,
-        )
-
-    if submitted:
-        if not title or not description:
-            st.warning("Title and description are required.")
-        else:
-            pattern = add_pattern(
-                title=title,
-                description=description,
-                examples=examples,
-                implications=implications,
-                status=status,
-            )
-
-            if save_patterns():
-                st.success(
-                    f"{pattern.id} recorded. Pattern Library now includes this "
-                    "signal for future review."
-                )
-            else:
-                st.warning(
-                    f"{pattern.id} was added for this session, but the host "
-                    "could not save it permanently."
-                )
-
-            st.rerun()
-
-
-def render_pattern_list() -> None:
-    st.markdown("### Existing patterns")
-
-    if not st.session_state.patterns:
-        st.caption(
-            "No patterns have been recorded yet. Use the form above to capture "
-            "the first organizational pattern."
-        )
-        return
-
-    for pattern in st.session_state.patterns:
-        st.markdown(f"**{pattern.id} · {pattern.title}**")
-        render_badges([pattern.status])
-        st.write(pattern.description)
-
-        if pattern.examples:
-            st.caption(f"Evidence: {pattern.examples}")
-
-        if pattern.implications:
-            st.caption(f"Implications: {pattern.implications}")
-
-        st.caption(f"Created {pattern.created_at}")
-
-        render_divider()
-
-
-configure_page("Pattern Library | Meeting Memory Console")
+configure_page("Overview | Meeting Memory Console")
 render_sidebar_identity()
 initialise_state()
 
+signals = st.session_state.get("signals", [])
+
 render_page_header(
-    eyebrow="Pattern Library",
-    title="What keeps happening",
+    eyebrow="Meeting Memory Console",
+    title="Your organization's intelligence layer",
     description=(
-        "Patterns turn repeated signals into organizational knowledge. They "
-        "help you see what to fix at the system level, not just in single "
-        "meetings."
+        "Meeting Memory Console turns meeting signals into patterns, "
+        "actions, and learning. It helps you see what keeps happening, who "
+        "owns the next move, and what the organization should remember."
     ),
 )
 
 st.info(
-    "Demo journey: After using Action Queue and Learning Loop, return here to "
-    "record a pattern such as 'Decisions stall without a named owner'."
+    "Demo journey: Start with **Signal Triage**, then explore **Pattern "
+    "Library**, **Action Queue**, and **Learning Loop** to see the full "
+    "workflow."
 )
 
-metric_columns = st.columns(3)
+metric_columns = st.columns(4)
 
 with metric_columns[0]:
-    render_metric("Patterns recorded", len(st.session_state.patterns))
+    render_metric("Signals in view", len(signals))
 
 with metric_columns[1]:
     render_metric(
-        "Confirmed",
-        sum(p.status == "Confirmed" for p in st.session_state.patterns),
+        "Need review",
+        sum(s.status == "Needs review" for s in signals),
     )
 
 with metric_columns[2]:
     render_metric(
-        "Addressed",
-        sum(p.status == "Addressed" for p in st.session_state.patterns),
+        "Patterns identified",
+        sum(1 for s in signals if s.pattern_hint),
+    )
+
+with metric_columns[3]:
+    render_metric(
+        "Actions created",
+        sum(1 for s in signals if s.action_created),
     )
 
 render_divider()
 
-render_pattern_form()
-render_divider()
-render_pattern_list()
+st.markdown("## The organization at a glance")
 
-render_divider()
+st.markdown(
+    "This overview shows the current state of your organizational memory. "
+    "Use the left sidebar to navigate between Signal Triage, Pattern Library, "
+    "Action Queue, and Learning Loop."
+)
+
+render_card(
+    "How the system works",
+    "Signals are captured from meetings. Patterns reveal what keeps "
+    "happening. Actions assign ownership and next steps. Learning captures "
+    "what the organization should remember. Together, they form a complete "
+    "intelligence workflow."
+)
 
 # ──────────────────────────────────────────────────────────────────────────────
 # Journey band (full-width, near bottom, above "Start with one complete journey")
