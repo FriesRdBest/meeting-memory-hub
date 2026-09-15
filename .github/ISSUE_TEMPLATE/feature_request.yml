@@ -1,0 +1,68 @@
+name: Feature request
+description: Suggest a focused improvement to Meeting Memory Console.
+title: "[Feature]: "
+labels:
+  - enhancement
+  - needs-triage
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thank you for suggesting an improvement.
+
+        Meeting Memory Console focuses on turning conversation into trusted
+        signals, accountable decisions, and retained learning. Please keep
+        requests focused on that purpose.
+
+  - type: checkboxes
+    id: code_of_conduct
+    attributes:
+      label: Code of Conduct
+      options:
+        - label: I agree to follow this project's Code of Conduct.
+          required: true
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: What problem would this solve?
+      description: Describe the user or organizational problem, not only the feature.
+      placeholder: As a ..., I need ..., because ...
+    validations:
+      required: true
+
+  - type: textarea
+    id: proposed_solution
+    attributes:
+      label: Proposed solution
+      description: Describe the smallest useful change.
+    validations:
+      required: true
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives considered
+      description: Describe any simpler workaround or alternative approach.
+
+  - type: dropdown
+    id: workflow_area
+    attributes:
+      label: Relevant workflow area
+      options:
+        - Signal Desk
+        - Pattern Library
+        - Action Queue
+        - Learning Loop
+        - Insights Dashboard
+        - Prototype Context
+        - Shared interface or accessibility
+        - Other
+    validations:
+      required: true
+
+  - type: textarea
+    id: additional_context
+    attributes:
+      label: Additional context
+      description: Add mockups, examples, or non-sensitive context if useful.
