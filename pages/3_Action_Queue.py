@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from datetime import datetime
 from pathlib import Path
+from time import sleep
 from uuid import uuid4
 
 import streamlit as st
@@ -36,6 +37,9 @@ def initialise_state() -> None:
 
     if "action_history" not in st.session_state:
         st.session_state.action_history = []
+
+    if "action_feedback" not in st.session_state:
+        st.session_state.action_feedback = None
 
 
 def get_signal(signal_id: str) -> dict[str, str]:
@@ -166,6 +170,44 @@ def render_action_detail(signal: dict[str, str], action: Action) -> None:
     )
 
 
+def render_action_feedback() -> None:
+    feedback = st.session_state.get("action_feedback")
+
+    if not feedback:
+        return
+
+    feedback_signal_id = feedback["signal_id"]
+    feedback_decision = feedback["decision"]
+    feedback_saved = feedback["saved"]
+
+    if feedback_saved:
+        st.markdown(
+            f"""
+            <div class="mmc-action-feedback">
+                <span class="mmc-action-feedback-check">✓</span>
+                <span>
+                    {feedback_signal_id} decision recorded:
+                    <strong>{feedback_decision}</strong>
+                </span>
+            </div>
+            """,
+            unsafe_allow_html=True,
+        )
+    else:
+        st.markdown(
+            f"""
+            <div class="mmc-action-feedback mmc-action-feedback--warning">
+                <span class="mmc-action-feedback-check">!</span>
+                <span>
+                    {feedback_signal_id} was updated for this session, but it
+                    could not be saved permanently.
+                </span>
+            </div>
+            """,
+            unsafe_allow_html=True,
+        )
+
+
 def render_action_form(signal: dict[str, str], action: Action) -> None:
     st.markdown("### Confirm the next move")
 
@@ -212,17 +254,6 @@ def render_action_form(signal: dict[str, str], action: Action) -> None:
 
         submitted = st.form_submit_button("Record Accountable Decision")
 
-        # Force button text to bold white for contrast on dark theme
-        st.markdown(
-            "<style>"
-            "div[data-testid='stFormSubmitButton'] button {"
-            "color: #FFFFFF !important;"
-            "font-weight: 700 !important;"
-            "}"
-            "</style>",
-            unsafe_allow_html=True,
-        )
-
     if submitted:
         saved = apply_decision(
             action=action,
@@ -233,16 +264,11 @@ def render_action_form(signal: dict[str, str], action: Action) -> None:
             note=note,
         )
 
-        if saved:
-            st.success(
-                f"{signal['id']} is now recorded as '{decision}'. The "
-                "decision is available for this workflow."
-            )
-        else:
-            st.warning(
-                f"{signal['id']} was updated for this session, but the host "
-                "could not save it permanently."
-            )
+        st.session_state.action_feedback = {
+            "signal_id": signal["id"],
+            "decision": decision,
+            "saved": saved,
+        }
 
         st.rerun()
 
@@ -259,7 +285,10 @@ def render_history() -> None:
 
     for event in st.session_state.action_history:
         st.markdown(f"**{event['signal_id']} · {event['decision']}**")
-        st.caption(f"{event['updated_at']} · {event['owner']} → {event['destination']}")
+        st.caption(
+            f"{event['updated_at']} · {event['owner']} → "
+            f"{event['destination']}"
+        )
 
         if event["note"]:
             st.write(event["note"])
@@ -294,7 +323,10 @@ st.info(
     "let you record what the organization learned."
 )
 
-actions_by_signal = {action.signal_id: action for action in st.session_state.actions}
+actions_by_signal = {
+    action.signal_id: action
+    for action in st.session_state.actions
+}
 
 metric_columns = st.columns(4)
 
@@ -318,16 +350,24 @@ with metric_columns[1]:
 with metric_columns[2]:
     render_metric(
         "Work in progress",
-        sum(action.status == "In progress" for action in st.session_state.actions),
+        sum(
+            action.status == "In progress"
+            for action in st.session_state.actions
+        ),
     )
 
 with metric_columns[3]:
     render_metric(
         "Completed",
-        sum(action.status == "Completed" for action in st.session_state.actions),
+        sum(
+            action.status == "Completed"
+            for action in st.session_state.actions
+        ),
     )
 
 render_divider()
+
+render_action_feedback()
 
 st.markdown("## What needs a decision")
 
@@ -368,7 +408,9 @@ else:
     selected_signal_id = st.selectbox(
         "Choose a signal to review",
         options=[signal["id"] for signal in signals],
-        format_func=lambda signal_id: f"{signal_id} · {get_signal(signal_id)['title']}",
+        format_func=lambda signal_id: (
+            f"{signal_id} · {get_signal(signal_id)['title']}"
+        ),
     )
 
     selected_signal = get_signal(selected_signal_id)
@@ -388,3 +430,10 @@ render_card(
     "happened after the work, what the organization should remember, and any "
     "next step that remains. That learning makes future pattern review stronger.",
 )
+
+feedback = st.session_state.get("action_feedback")
+
+if feedback:
+    sleep(0.8)
+    st.session_state.action_feedback = None
+    st.rerun()
