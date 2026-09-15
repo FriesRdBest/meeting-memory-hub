@@ -5,7 +5,6 @@ from pathlib import Path
 
 import streamlit as st
 
-from models.signal import Signal
 from repositories.signal_repository import SignalRepository
 from services.signal_service import SignalService
 from utils.ui import (
@@ -63,19 +62,31 @@ with metric_columns[0]:
 with metric_columns[1]:
     render_metric(
         "Need review",
-        sum(s.status == "Needs review" for s in signals),
+        sum(
+            1
+            for s in signals
+            if isinstance(s, dict) and s.get("status") == "Needs review"
+        ),
     )
 
 with metric_columns[2]:
     render_metric(
         "Patterns identified",
-        sum(1 for s in signals if s.pattern_hint),
+        sum(
+            1
+            for s in signals
+            if isinstance(s, dict) and s.get("pattern_hint")
+        ),
     )
 
 with metric_columns[3]:
     render_metric(
         "Actions created",
-        sum(1 for s in signals if s.action_created),
+        sum(
+            1
+            for s in signals
+            if isinstance(s, dict) and s.get("action_created")
+        ),
     )
 
 render_divider()
