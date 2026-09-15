@@ -9,8 +9,11 @@ from utils.ui import configure_page, render_divider
 configure_page("Usage · admin only")
 
 # Simple admin gate: only show if ?admin=1 is present in the URL
-params = st.experimental_get_query_params()
-admin_flag = params.get("admin", ["0"])[0]
+try:
+    params = st.query_params
+    admin_flag = params.get("admin", "0")
+except Exception:
+    admin_flag = "0"
 
 if admin_flag != "1":
     st.markdown(
