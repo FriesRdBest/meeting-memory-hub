@@ -1,0 +1,85 @@
+name: Bug report
+description: Report behavior that is broken, unexpected, or inconsistent.
+title: "[Bug]: "
+labels:
+  - bug
+  - needs-triage
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thank you for helping improve Meeting Memory Console.
+
+        Please do not include credentials, private meeting content, personal
+        information, or confidential organizational data.
+
+  - type: checkboxes
+    id: code_of_conduct
+    attributes:
+      label: Code of Conduct
+      options:
+        - label: I agree to follow this project's Code of Conduct.
+          required: true
+
+  - type: textarea
+    id: summary
+    attributes:
+      label: What happened?
+      description: Clearly describe the unexpected behavior.
+      placeholder: Tell us what you expected and what happened instead.
+    validations:
+      required: true
+
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Steps to reproduce
+      description: Provide the smallest reliable sequence of steps.
+      placeholder: |
+        1. Open ...
+        2. Select ...
+        3. Enter ...
+        4. Observe ...
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behavior
+      description: Explain what should have happened.
+    validations:
+      required: true
+
+  - type: textarea
+    id: environment
+    attributes:
+      label: Environment
+      description: Share only non-sensitive technical details.
+      placeholder: |
+        - OS:
+        - Browser:
+        - Python version:
+        - Streamlit version:
+        - Deployment or local environment:
+    validations:
+      required: true
+
+  - type: textarea
+    id: logs
+    attributes:
+      label: Relevant logs or screenshots
+      description: Redact sensitive information before submitting.
+      placeholder: Paste redacted logs or drag in redacted screenshots.
+
+  - type: dropdown
+    id: impact
+    attributes:
+      label: Impact
+      options:
+        - Blocks a core workflow
+        - Affects a major workflow
+        - Minor visual or usability issue
+        - Other
+    validations:
+      required: true
