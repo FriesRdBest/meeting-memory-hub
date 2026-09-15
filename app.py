@@ -170,7 +170,7 @@ pages = [
     st.Page(
         "pages/1_Signal_Desk.py",
         title="Signal Desk",
-        icon=":material/search_insights:",
+        icon="",
         url_path="signal-desk",
     ),
     st.Page(
