@@ -1,371 +1,203 @@
 from __future__ import annotations
 
-from pathlib import Path
-
 import streamlit as st
-import streamlit.components.v1 as components
 
-from repositories.signal_repository import SignalRepository
-from services.signal_service import SignalService
+from data.demo_signals import DEMO_SIGNALS
 from utils.ui import (
     configure_page,
     render_card,
     render_divider,
     render_metric,
+    render_notice,
     render_page_header,
     render_sidebar_identity,
 )
 
-SIGNAL_FILE_PATH = Path("data/signals.json")
 
-
-def get_signal_service() -> SignalService:
-    return SignalService(SignalRepository(SIGNAL_FILE_PATH))
-
-
-def initialise_state() -> None:
+def initialise_workflow_state() -> None:
     if "signals" not in st.session_state:
-        try:
-            st.session_state.signals = get_signal_service().list_signals()
-        except (OSError, ValueError):
-            st.session_state.signals = []
+        st.session_state.signals = [signal.copy() for signal in DEMO_SIGNALS]
+
+    if "actions" not in st.session_state:
+        st.session_state.actions = []
+
+    if "reflections" not in st.session_state:
+        st.session_state.reflections = []
 
 
-def get_signal_value(signal: object, field_name: str, default: object = None) -> object:
-    if isinstance(signal, dict):
-        return signal.get(field_name, default)
+def render_overview() -> None:
+    render_sidebar_identity()
 
-    return getattr(signal, field_name, default)
+    signals = st.session_state.get("signals", [])
+    actions = st.session_state.get("actions", [])
+    reflections = st.session_state.get("reflections", [])
 
+    signals_needing_review = sum(
+        signal["status"] == "Needs review" for signal in signals
+    )
+    patterns_in_motion = sum(
+        signal["status"] in {"Needs review", "Watching"} for signal in signals
+    )
+    actions_in_progress = sum(action.status == "In progress" for action in actions)
 
-def count_by_status(signals: list[object], status: str) -> int:
-    return sum(
-        get_signal_value(signal, "status") == status
-        for signal in signals
+    render_page_header(
+        eyebrow="Meeting Memory Console",
+        title="From conversation to consequence",
+        description=(
+            "A working organizational intelligence system that makes important "
+            "signals visible, checks what the organization already knows, "
+            "creates accountable action, and preserves learning."
+        ),
+    )
+
+    render_notice(
+        "This demonstration uses fictional data. It proves the operating "
+        "model: a useful signal can become an accountable action and a "
+        "recorded learning outcome within one workspace session."
+    )
+
+    st.markdown("## The organization at a glance")
+
+    metric_columns = st.columns(4)
+
+    with metric_columns[0]:
+        render_metric("Signals needing review", signals_needing_review)
+
+    with metric_columns[1]:
+        render_metric("Patterns in motion", patterns_in_motion)
+
+    with metric_columns[2]:
+        render_metric("Work in progress", actions_in_progress)
+
+    with metric_columns[3]:
+        render_metric("Learning retained", len(reflections))
+
+    render_divider()
+
+    st.markdown("## How the system works")
+
+    workflow_columns = st.columns(4)
+
+    workflow = [
+        (
+            workflow_columns[0],
+            "1. Signal Desk",
+            "Useful observations from conversations become visible with their "
+            "original evidence and a proposed route for human review.",
+        ),
+        (
+            workflow_columns[1],
+            "2. Pattern Library",
+            "Related signals are examined together so the organization can "
+            "check what keeps happening before it commits resources.",
+        ),
+        (
+            workflow_columns[2],
+            "3. Action Queue",
+            "A person confirms ownership, destination, and the next move. "
+            "The system records the decision rather than making it automatically.",
+        ),
+        (
+            workflow_columns[3],
+            "4. Learning Loop",
+            "Completed work is connected to an observed outcome and retained "
+            "learning, making the next decision more informed.",
+        ),
+    ]
+
+    for column, title, description in workflow:
+        with column:
+            render_card(title, description)
+
+    render_divider()
+
+    st.markdown("## Start with one complete journey")
+
+    journey_columns = st.columns(2)
+
+    with journey_columns[0]:
+        render_card(
+            "Explore the workflow",
+            "Begin in Signal Desk with SIG-001, the onboarding friction signal. "
+            "Review the evidence, inspect Pattern Library for repeated context, "
+            "then move to Action Queue to start and complete the work. Finish "
+            "in Learning Loop by recording what the organization learned.",
+        )
+
+    with journey_columns[1]:
+        render_card(
+            "Understand the concept",
+            "Open Prototype Context to understand the product philosophy, "
+            "boundaries, privacy principles, and what a production "
+            "implementation would require.",
+        )
+
+    render_divider()
+
+    st.markdown("## Why Pattern Library comes before action")
+
+    render_card(
+        "Memory before momentum",
+        "Organizations often repeat work because important context stays inside "
+        "individual meetings, teams, or people. Pattern Library sits between "
+        "Signal Desk and Action Queue so a human can see whether the company "
+        "has encountered the issue before deciding what to do next.",
+    )
+
+    render_divider()
+
+    st.markdown("## Current scope")
+
+    st.write(
+        "This prototype focuses on the workflow from signal to action to "
+        "learning. It uses fictional demonstration data and session based "
+        "records. Authentication, live integrations, multi user collaboration, "
+        "production security, durable cloud storage, and advanced intelligence "
+        "features remain future work."
     )
 
 
-def count_with_value(signals: list[object], field_name: str) -> int:
-    return sum(
-        bool(get_signal_value(signal, field_name))
-        for signal in signals
-    )
+initialise_workflow_state()
+configure_page("Meeting Memory Console")
 
-
-def render_journey_band() -> None:
-    journey_html = '''
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <style>
-        :root {
-            --mmc-blue: #2f35ff;
-            --mmc-muted: #b7b7c6;
-            --mmc-border: rgba(247, 247, 250, 0.12);
-            --mmc-surface-start: rgba(28, 28, 35, 0.96);
-            --mmc-surface-end: rgba(18, 18, 23, 0.92);
-        }
-
-        * {
-            box-sizing: border-box;
-        }
-
-        body {
-            margin: 0;
-            padding: 0;
-            background: transparent;
-            font-family:
-                Inter,
-                ui-sans-serif,
-                system-ui,
-                -apple-system,
-                BlinkMacSystemFont,
-                "Segoe UI",
-                sans-serif;
-        }
-
-        .mmc-journey-band {
-            width: 100%;
-            min-height: 220px;
-            padding: 2rem 1.5rem;
-            overflow: hidden;
-            border: 1px solid var(--mmc-border);
-            border-radius: 1rem;
-            background: linear-gradient(
-                145deg,
-                var(--mmc-surface-start),
-                var(--mmc-surface-end)
-            );
-        }
-
-        .mmc-journey-title {
-            margin: 0 0 1.5rem;
-            color: var(--mmc-muted);
-            font-size: 0.78rem;
-            font-weight: 800;
-            letter-spacing: 0.13em;
-            text-align: center;
-            text-transform: uppercase;
-        }
-
-        .mmc-journey-track {
-            position: relative;
-            display: flex;
-            align-items: flex-start;
-            justify-content: space-between;
-            gap: 0.75rem;
-            width: 100%;
-            padding: 0.6rem 0 0;
-        }
-
-        .mmc-journey-line {
-            position: absolute;
-            top: 1.95rem;
-            right: 7%;
-            left: 7%;
-            z-index: 0;
-            height: 2px;
-            border-radius: 999px;
-            background: linear-gradient(
-                90deg,
-                rgba(47, 53, 255, 0.15) 0%,
-                rgba(47, 53, 255, 0.95) 20%,
-                rgba(47, 53, 255, 0.95) 80%,
-                rgba(47, 53, 255, 0.15) 100%
-            );
-            box-shadow: 0 0 10px rgba(47, 53, 255, 0.78);
-        }
-
-        .mmc-journey-step {
-            position: relative;
-            z-index: 1;
-            display: flex;
-            flex: 1;
-            flex-direction: column;
-            align-items: center;
-            min-width: 0;
-            gap: 0.6rem;
-        }
-
-        .mmc-journey-pill {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: 0.45rem;
-            min-height: 2.4rem;
-            padding: 0.48rem 0.8rem;
-            border: 1px solid rgba(47, 53, 255, 0.42);
-            border-radius: 999px;
-            background: rgba(21, 22, 42, 0.98);
-            color: #f4f4ff;
-            font-size: 0.82rem;
-            font-weight: 750;
-            line-height: 1;
-            white-space: nowrap;
-            box-shadow:
-                0 0 0 4px rgba(18, 18, 23, 0.98),
-                0 8px 18px rgba(0, 0, 0, 0.28);
-        }
-
-        .mmc-journey-icon {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            width: 1.2rem;
-            height: 1.2rem;
-            border-radius: 50%;
-            background: rgba(47, 53, 255, 0.38);
-            color: #ffffff;
-            font-size: 0.67rem;
-            font-weight: 850;
-        }
-
-        .mmc-journey-label {
-            max-width: 8.5rem;
-            color: var(--mmc-muted);
-            font-size: 0.73rem;
-            font-weight: 600;
-            line-height: 1.35;
-            text-align: center;
-        }
-
-        @media (max-width: 640px) {
-            .mmc-journey-band {
-                min-height: 0;
-                padding: 1.25rem 0.85rem;
-            }
-
-            .mmc-journey-track {
-                flex-direction: column;
-                align-items: stretch;
-                gap: 0.9rem;
-                padding: 0;
-            }
-
-            .mmc-journey-line {
-                top: 1rem;
-                bottom: 1rem;
-                left: 1.2rem;
-                right: auto;
-                width: 2px;
-                height: auto;
-                background: linear-gradient(
-                    180deg,
-                    rgba(47, 53, 255, 0.15),
-                    rgba(47, 53, 255, 0.95),
-                    rgba(47, 53, 255, 0.15)
-                );
-            }
-
-            .mmc-journey-step {
-                flex-direction: row;
-                align-items: center;
-                justify-content: flex-start;
-                gap: 0.75rem;
-            }
-
-            .mmc-journey-pill {
-                min-width: 7.8rem;
-            }
-
-            .mmc-journey-label {
-                max-width: none;
-                text-align: left;
-            }
-        }
-    </style>
-</head>
-<body>
-    <section class="mmc-journey-band">
-        <div class="mmc-journey-title">Your intelligence workflow</div>
-
-        <div class="mmc-journey-track">
-            <div class="mmc-journey-line"></div>
-
-            <div class="mmc-journey-step">
-                <div class="mmc-journey-pill">
-                    <span class="mmc-journey-icon">S</span>
-                    <span>Signal</span>
-                </div>
-                <div class="mmc-journey-label">
-                    What deserves attention
-                </div>
-            </div>
-
-            <div class="mmc-journey-step">
-                <div class="mmc-journey-pill">
-                    <span class="mmc-journey-icon">P</span>
-                    <span>Pattern</span>
-                </div>
-                <div class="mmc-journey-label">
-                    What keeps happening
-                </div>
-            </div>
-
-            <div class="mmc-journey-step">
-                <div class="mmc-journey-pill">
-                    <span class="mmc-journey-icon">A</span>
-                    <span>Action</span>
-                </div>
-                <div class="mmc-journey-label">
-                    Who owns the next move
-                </div>
-            </div>
-
-            <div class="mmc-journey-step">
-                <div class="mmc-journey-pill">
-                    <span class="mmc-journey-icon">L</span>
-                    <span>Learning</span>
-                </div>
-                <div class="mmc-journey-label">
-                    What we carry forward
-                </div>
-            </div>
-        </div>
-    </section>
-</body>
-</html>
-'''
-
-    components.html(journey_html, height=240, scrolling=False)
-
-
-configure_page("Overview | Meeting Memory Console")
-render_sidebar_identity()
-initialise_state()
-
-signals = st.session_state.get("signals", [])
-
-render_page_header(
-    eyebrow="Meeting Memory Console",
-    title="Your organization's intelligence layer",
-    description=(
-        "Meeting Memory Console turns meeting signals into patterns, actions, "
-        "and learning. It helps you see what keeps happening, who owns the "
-        "next move, and what the organization should remember."
+pages = [
+    st.Page(
+        render_overview,
+        title="Overview",
+        icon=":material/home:",
+        url_path="overview",
     ),
-)
+    st.Page(
+        "pages/1_Signal_Desk.py",
+        title="Signal Desk",
+        icon=":material/search_insights:",
+        url_path="signal-desk",
+    ),
+    st.Page(
+        "pages/2_Pattern_Library.py",
+        title="Pattern Library",
+        icon=":material/hub:",
+        url_path="pattern-library",
+    ),
+    st.Page(
+        "pages/3_Action_Queue.py",
+        title="Action Queue",
+        icon=":material/task_alt:",
+        url_path="action-queue",
+    ),
+    st.Page(
+        "pages/4_Learning_Loop.py",
+        title="Learning Loop",
+        icon=":material/school:",
+        url_path="learning-loop",
+    ),
+    st.Page(
+        "pages/5_Prototype_Context.py",
+        title="Prototype Context",
+        icon=":material/info:",
+        url_path="prototype-context",
+    ),
+]
 
-st.info(
-    "Demo journey: Start with **Signal Triage**, then explore **Pattern "
-    "Library**, **Action Queue**, and **Learning Loop** to see the full "
-    "workflow."
-)
-
-metric_columns = st.columns(4)
-
-with metric_columns[0]:
-    render_metric("Signals in view", len(signals))
-
-with metric_columns[1]:
-    render_metric(
-        "Need review",
-        count_by_status(signals, "Needs review"),
-    )
-
-with metric_columns[2]:
-    render_metric(
-        "Patterns identified",
-        count_with_value(signals, "pattern_hint"),
-    )
-
-with metric_columns[3]:
-    render_metric(
-        "Actions created",
-        count_with_value(signals, "action_created"),
-    )
-
-render_divider()
-
-st.markdown("## The organization at a glance")
-
-st.write(
-    "This overview shows the current state of your organizational memory. "
-    "Use the left sidebar to navigate between Signal Triage, Pattern Library, "
-    "Action Queue, and Learning Loop."
-)
-
-render_card(
-    "How the system works",
-    "Signals are captured from meetings. Patterns reveal what keeps "
-    "happening. Actions assign ownership and next steps. Learning captures "
-    "what the organization should remember. Together, they form a complete "
-    "intelligence workflow.",
-)
-
-render_divider()
-
-render_journey_band()
-
-render_divider()
-
-st.markdown("## Start with one complete journey")
-
-render_card(
-    "From signal to learning",
-    "Pick one signal and carry it through Pattern Library, Action Queue, and "
-    "Learning Loop. That complete loop is how your organization builds memory "
-    "that compounds over time.",
-)
+current_page = st.navigation(pages, position="sidebar")
+current_page.run()
