@@ -224,6 +224,16 @@ def inject_global_styles() -> None:
                     inset 0 1px 0 rgba(255, 255, 255, 0.025);
                 min-height: 100%;
                 padding: 1.42rem;
+                transition:
+                    transform 0.15s ease,
+                    box-shadow 0.15s ease;
+            }
+
+            .mmc-card:hover {
+                transform: translateY(-2px);
+                box-shadow:
+                    0 22px 52px rgba(0, 0, 0, 0.26),
+                    inset 0 1px 0 rgba(255, 255, 255, 0.035);
             }
 
             .mmc-card-title {
@@ -257,6 +267,16 @@ def inject_global_styles() -> None:
                 overflow: hidden;
                 padding: 1.32rem;
                 position: relative;
+                transition:
+                    transform 0.15s ease,
+                    box-shadow 0.15s ease;
+            }
+
+            .mmc-metric:hover {
+                transform: translateY(-2px);
+                box-shadow:
+                    0 22px 52px rgba(0, 0, 0, 0.28),
+                    inset 0 1px 0 rgba(255, 255, 255, 0.08);
             }
 
             .mmc-metric::after {
@@ -307,6 +327,14 @@ def inject_global_styles() -> None:
                 letter-spacing: -0.01em;
                 margin: 0 0.34rem 0.46rem 0;
                 padding: 0.3rem 0.65rem;
+                transition:
+                    transform 0.12s ease,
+                    box-shadow 0.12s ease;
+            }
+
+            .mmc-badge:hover {
+                transform: translateY(-1px);
+                box-shadow: 0 6px 14px rgba(47, 53, 255, 0.18);
             }
 
             .mmc-badge--success {
@@ -369,6 +397,9 @@ def inject_global_styles() -> None:
                 border-color: rgba(247, 247, 250, 0.13) !important;
                 border-radius: var(--mmc-radius-small) !important;
                 color: var(--mmc-text) !important;
+                transition:
+                    border-color 160ms ease,
+                    box-shadow 160ms ease;
             }
 
             div[data-testid="stTextInput"] input::placeholder,
@@ -423,12 +454,16 @@ def inject_global_styles() -> None:
                 border-color: rgba(247, 247, 250, 0.13);
                 box-shadow: none;
                 color: var(--mmc-text) !important;
+                transition:
+                    background 160ms ease,
+                    border-color 160ms ease,
+                    transform 160ms ease;
             }
 
             div[data-testid="stButton"] > button[kind="secondary"]:hover {
                 background: rgba(47, 53, 255, 0.14);
                 border-color: var(--mmc-border-strong);
-                box-shadow: none;
+                transform: translateY(-1px);
             }
 
             [data-testid="stExpander"] {
@@ -436,6 +471,14 @@ def inject_global_styles() -> None:
                 border: 1px solid rgba(247, 247, 250, 0.13);
                 border-radius: 0.84rem;
                 overflow: hidden;
+                transition:
+                    border-color 160ms ease,
+                    box-shadow 160ms ease;
+            }
+
+            [data-testid="stExpander"]:hover {
+                border-color: rgba(119, 125, 255, 0.28);
+                box-shadow: 0 8px 22px rgba(0, 0, 0, 0.18);
             }
 
             [data-testid="stExpander"] summary {
@@ -446,6 +489,14 @@ def inject_global_styles() -> None:
             [data-testid="stAlert"] {
                 border: 1px solid rgba(247, 247, 250, 0.13);
                 border-radius: 0.78rem;
+                transition:
+                    transform 0.12s ease,
+                    box-shadow 0.12s ease;
+            }
+
+            [data-testid="stAlert"]:hover {
+                transform: translateY(-1px);
+                box-shadow: 0 10px 24px rgba(0, 0, 0, 0.16);
             }
 
             [data-testid="stAlert"] * {
@@ -476,12 +527,44 @@ def inject_global_styles() -> None:
                 outline: none !important;
             }
 
+            /* Subtle fade-in for newly added rows */
+            @keyframes mmcFadeInRow {
+                from {
+                    opacity: 0;
+                    transform: translateY(4px);
+                }
+                to {
+                    opacity: 1;
+                    transform: translateY(0);
+                }
+            }
+
+            .mmc-new-row {
+                animation: mmcFadeInRow 0.2s ease-out;
+            }
+
+            /* Soft pulse for “new” / “alert” badges only */
+            @keyframes mmcSoftPulse {
+                0%, 100% {
+                    box-shadow: 0 0 0 0 rgba(47, 53, 255, 0.35);
+                }
+                50% {
+                    box-shadow: 0 0 0 6px rgba(47, 53, 255, 0);
+                }
+            }
+
+            .mmc-badge-new,
+            .mmc-badge-alert {
+                animation: mmcSoftPulse 1.8s infinite;
+            }
+
             @media (prefers-reduced-motion: reduce) {
                 *,
                 *::before,
                 *::after {
                     scroll-behavior: auto !important;
                     transition-duration: 0.01ms !important;
+                    animation-duration: 0.01ms !important;
                 }
             }
 
