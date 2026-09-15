@@ -1,15 +1,14 @@
 from __future__ import annotations
 
-from datetime import datetime
 from pathlib import Path
 
 import streamlit as st
+import streamlit.components.v1 as components
 
 from repositories.signal_repository import SignalRepository
 from services.signal_service import SignalService
 from utils.ui import (
     configure_page,
-    render_badges,
     render_card,
     render_divider,
     render_metric,
@@ -32,262 +31,164 @@ def initialise_state() -> None:
             st.session_state.signals = []
 
 
-configure_page("Overview | Meeting Memory Console")
-render_sidebar_identity()
-initialise_state()
+def get_value(signal: object, field_name: str, default: object = None) -> object:
+    """Read a value from either a dict-based or object-based signal."""
+    if isinstance(signal, dict):
+        return signal.get(field_name, default)
 
-signals = st.session_state.get("signals", [])
+    return getattr(signal, field_name, default)
 
-render_page_header(
-    eyebrow="Meeting Memory Console",
-    title="Your organization's intelligence layer",
-    description=(
-        "Meeting Memory Console turns meeting signals into patterns, "
-        "actions, and learning. It helps you see what keeps happening, who "
-        "owns the next move, and what the organization should remember."
-    ),
-)
 
-st.info(
-    "Demo journey: Start with **Signal Triage**, then explore **Pattern "
-    "Library**, **Action Queue**, and **Learning Loop** to see the full "
-    "workflow."
-)
+def count_signals_with_status(signals: list[object], status: str) -> int:
+    return sum(get_value(signal, "status") == status for signal in signals)
 
-metric_columns = st.columns(4)
 
-with metric_columns[0]:
-    render_metric("Signals in view", len(signals))
+def count_signals_with_value(signals: list[object], field_name: str) -> int:
+    return sum(bool(get_value(signal, field_name)) for signal in signals)
 
-with metric_columns[1]:
-    render_metric(
-        "Need review",
-        sum(
-            1
-            for s in signals
-            if isinstance(s, dict) and s.get("status") == "Needs review"
-        ),
-    )
 
-with metric_columns[2]:
-    render_metric(
-        "Patterns identified",
-        sum(
-            1
-            for s in signals
-            if isinstance(s, dict) and s.get("pattern_hint")
-        ),
-    )
+def render_journey_band() -> None:
+    journey_html = """
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <style>
+            :root {
+                --mmc-blue: #2f35ff;
+                --mmc-muted: #b7b7c6;
+                --mmc-border: rgba(247, 247, 250, 0.12);
+                --mmc-surface-start: rgba(28, 28, 35, 0.96);
+                --mmc-surface-end: rgba(18, 18, 23, 0.92);
+            }
 
-with metric_columns[3]:
-    render_metric(
-        "Actions created",
-        sum(
-            1
-            for s in signals
-            if isinstance(s, dict) and s.get("action_created")
-        ),
-    )
+            * {
+                box-sizing: border-box;
+            }
 
-render_divider()
+            body {
+                margin: 0;
+                padding: 0;
+                background: transparent;
+                font-family:
+                    Inter,
+                    ui-sans-serif,
+                    system-ui,
+                    -apple-system,
+                    BlinkMacSystemFont,
+                    "Segoe UI",
+                    sans-serif;
+            }
 
-st.markdown("## The organization at a glance")
+            .mmc-journey-band {
+                width: 100%;
+                min-height: 215px;
+                padding: 2rem 1.5rem;
+                overflow: hidden;
+                border: 1px solid var(--mmc-border);
+                border-radius: 1rem;
+                background: linear-gradient(
+                    145deg,
+                    var(--mmc-surface-start),
+                    var(--mmc-surface-end)
+                );
+            }
 
-st.markdown(
-    "This overview shows the current state of your organizational memory. "
-    "Use the left sidebar to navigate between Signal Triage, Pattern Library, "
-    "Action Queue, and Learning Loop."
-)
+            .mmc-journey-title {
+                margin: 0 0 1.5rem;
+                color: var(--mmc-muted);
+                font-size: 0.78rem;
+                font-weight: 800;
+                letter-spacing: 0.13em;
+                text-align: center;
+                text-transform: uppercase;
+            }
 
-render_card(
-    "How the system works",
-    "Signals are captured from meetings. Patterns reveal what keeps "
-    "happening. Actions assign ownership and next steps. Learning captures "
-    "what the organization should remember. Together, they form a complete "
-    "intelligence workflow."
-)
+            .mmc-journey-track {
+                position: relative;
+                display: flex;
+                align-items: flex-start;
+                justify-content: space-between;
+                gap: 0.75rem;
+                width: 100%;
+                padding: 0.6rem 0 0;
+            }
 
-# ──────────────────────────────────────────────────────────────────────────────
-# Journey band (full-width, near bottom, above "Start with one complete journey")
-# ──────────────────────────────────────────────────────────────────────────────
+            .mmc-journey-line {
+                position: absolute;
+                top: 1.95rem;
+                right: 7%;
+                left: 7%;
+                z-index: 0;
+                height: 2px;
+                border-radius: 999px;
+                background: linear-gradient(
+                    90deg,
+                    rgba(47, 53, 255, 0.15) 0%,
+                    rgba(47, 53, 255, 0.95) 20%,
+                    rgba(47, 53, 255, 0.95) 80%,
+                    rgba(47, 53, 255, 0.15) 100%
+                );
+                box-shadow: 0 0 10px rgba(47, 53, 255, 0.78);
+            }
 
-st.markdown(
-    """
-    <style>
-    .mmc-journey-band {
-        width: 100%;
-        max-width: 980px;
-        margin: 2.5rem auto 1.5rem auto;
-        background:
-            linear-gradient(
-                145deg,
-                rgba(28, 28, 35, 0.96),
-                rgba(18, 18, 23, 0.92)
-            );
-        border: 1px solid rgba(247, 247, 250, 0.12);
-        border-radius: 1rem;
-        padding: 2rem 1.5rem;
-        position: relative;
-        overflow: hidden;
-    }
+            .mmc-journey-step {
+                position: relative;
+                z-index: 1;
+                display: flex;
+                flex: 1;
+                flex-direction: column;
+                align-items: center;
+                min-width: 0;
+                gap: 0.6rem;
+            }
 
-    .mmc-journey-title {
-        color: #B7B7C6;
-        font-size: 0.85rem;
-        font-weight: 700;
-        letter-spacing: 0.12em;
-        text-transform: uppercase;
-        margin-bottom: 1.4rem;
-        text-align: center;
-    }
+            .mmc-journey-pill {
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                gap: 0.45rem;
+                min-height: 2.4rem;
+                padding: 0.48rem 0.8rem;
+                border: 1px solid rgba(47, 53, 255, 0.42);
+                border-radius: 999px;
+                background: rgba(21, 22, 42, 0.98);
+                color: #f4f4ff;
+                font-size: 0.82rem;
+                font-weight: 750;
+                line-height: 1;
+                white-space: nowrap;
+                box-shadow:
+                    0 0 0 4px rgba(18, 18, 23, 0.98),
+                    0 8px 18px rgba(0, 0, 0, 0.28);
+                transition:
+                    transform 160ms ease,
+                    border-color 160ms ease,
+                    box-shadow 160ms ease;
+            }
 
-    .mmc-journey-track {
-        position: relative;
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        padding: 0.5rem 0;
-    }
+            .mmc-journey-pill:hover {
+                border-color: rgba(47, 53, 255, 0.9);
+                box-shadow:
+                    0 0 0 4px rgba(18, 18, 23, 0.98),
+                    0 0 18px rgba(47, 53, 255, 0.5),
+                    0 10px 24px rgba(0, 0, 0, 0.34);
+                transform: translateY(-2px);
+            }
 
-    .mmc-journey-line {
-        position: absolute;
-        left: 0;
-        right: 0;
-        top: 50%;
-        height: 2px;
-        background: linear-gradient(
-            90deg,
-            rgba(47, 53, 255, 0.15) 0%,
-            rgba(47, 53, 255, 0.9) 45%,
-            rgba(47, 53, 255, 0.9) 55%,
-            rgba(47, 53, 255, 0.15) 100%
-        );
-        transform: translateY(-50%);
-        z-index: 0;
-        filter: drop-shadow(0 0 6px rgba(47, 53, 255, 0.7));
-    }
+            .mmc-journey-icon {
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                width: 1.2rem;
+                height: 1.2rem;
+                border-radius: 50%;
+                background: rgba(47, 53, 255, 0.38);
+                color: #ffffff;
+                font-size: 0.67rem;
+                font-weight: 850;
+            }
 
-    .mmc-journey-step {
-        position: relative;
-        z-index: 1;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        gap: 0.5rem;
-    }
-
-    .mmc-journey-pill {
-        display: flex;
-        align-items: center;
-        gap: 0.45rem;
-        padding: 0.45rem 0.7rem;
-        border-radius: 999px;
-        background: rgba(47, 53, 255, 0.12);
-        border: 1px solid rgba(47, 53, 255, 0.35);
-        color: #E9E9FF;
-        font-size: 0.8rem;
-        font-weight: 700;
-        letter-spacing: 0.02em;
-        box-shadow: 0 6px 18px rgba(0, 0, 0, 0.25);
-        transition: transform 160ms ease, box-shadow 160ms ease;
-    }
-
-    .mmc-journey-pill:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 10px 26px rgba(0, 0, 0, 0.32);
-    }
-
-    .mmc-journey-icon {
-        width: 1.1rem;
-        height: 1.1rem;
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        border-radius: 50%;
-        background: rgba(47, 53, 255, 0.25);
-        color: #FFFFFF;
-        font-size: 0.65rem;
-        font-weight: 800;
-    }
-
-    .mmc-journey-label {
-        color: #B7B7C6;
-        font-size: 0.75rem;
-        font-weight: 600;
-        text-align: center;
-        max-width: 6rem;
-    }
-
-    @media (max-width: 640px) {
-        .mmc-journey-band {
-            padding: 1.25rem 0.75rem;
-        }
-
-        .mmc-journey-pill {
-            padding: 0.35rem 0.55rem;
-            font-size: 0.7rem;
-        }
-
-        .mmc-journey-label {
-            font-size: 0.65rem;
-        }
-    }
-    </style>
-    """,
-    unsafe_allow_html=True,
-)
-
-st.markdown(
-    """
-    <div class="mmc-journey-band">
-        <div class="mmc-journey-title">Your intelligence workflow</div>
-        <div class="mmc-journey-track">
-            <div class="mmc-journey-line"></div>
-
-            <div class="mmc-journey-step">
-                <div class="mmc-journey-pill">
-                    <span class="mmc-journey-icon">S</span>
-                    <span>Signal</span>
-                </div>
-                <div class="mmc-journey-label">What deserves attention</div>
-            </div>
-
-            <div class="mmc-journey-step">
-                <div class="mmc-journey-pill">
-                    <span class="mmc-journey-icon">P</span>
-                    <span>Pattern</span>
-                </div>
-                <div class="mmc-journey-label">What keeps happening</div>
-            </div>
-
-            <div class="mmc-journey-step">
-                <div class="mmc-journey-pill">
-                    <span class="mmc-journey-icon">A</span>
-                    <span>Action</span>
-                </div>
-                <div class="mmc-journey-label">Who owns the next move</div>
-            </div>
-
-            <div class="mmc-journey-step">
-                <div class="mmc-journey-pill">
-                    <span class="mmc-journey-icon">L</span>
-                    <span>Learning</span>
-                </div>
-                <div class="mmc-journey-label">What we carry forward</div>
-            </div>
-        </div>
-    </div>
-    """,
-    unsafe_allow_html=True,
-)
-
-render_divider()
-
-st.markdown("## Start with one complete journey")
-
-render_card(
-    "From signal to learning",
-    "Pick one signal and carry it through Pattern Library, Action Queue, and "
-    "Learning Loop. That complete loop is how your organization builds memory "
-    "that compounds over time.",
-)
+            .mmc-journey-label {
+                max-width: 8.5rem;
