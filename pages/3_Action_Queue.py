@@ -210,13 +210,14 @@ def render_action_form(signal: dict[str, str], action: Action) -> None:
             ),
         )
 
-        submitted = st.form_submit_button("Record accountable decision")
+        submitted = st.form_submit_button("Record Accountable Decision")
 
-        # Force button text to white for contrast on dark theme
+        # Force button text to bold white for contrast on dark theme
         st.markdown(
             "<style>"
             "div[data-testid='stFormSubmitButton'] button {"
             "color: #FFFFFF !important;"
+            "font-weight: 700 !important;"
             "}"
             "</style>",
             unsafe_allow_html=True,
