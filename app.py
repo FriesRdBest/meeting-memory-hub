@@ -12,6 +12,7 @@ from utils.ui import (
     render_page_header,
     render_sidebar_identity,
 )
+from utils.analytics import log_usage
 
 
 def initialise_workflow_state() -> None:
@@ -160,6 +161,9 @@ def render_overview() -> None:
 initialise_workflow_state()
 configure_page("Meeting Memory Console")
 
+# Log usage for every page load (anonymous, for you only)
+log_usage()
+
 pages = [
     st.Page(
         render_overview,
@@ -196,6 +200,13 @@ pages = [
         title="Prototype Context",
         icon=":material/info:",
         url_path="prototype-context",
+    ),
+    # Hidden admin page for you only
+    st.Page(
+        "pages/7_Usage.py",
+        title="Usage",
+        icon=":material/insights:",
+        url_path="usage",
     ),
 ]
 
