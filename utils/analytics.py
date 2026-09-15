@@ -5,18 +5,28 @@ from datetime import datetime, timezone
 
 import streamlit as st
 
-from repositories import json_store
+
+def _ensure_analytics_state() -> None:
+    if "anonymous_user_id" not in st.session_state:
+        st.session_state.anonymous_user_id = str(uuid.uuid4())
+
+    if "session_start_time" not in st.session_state:
+        st.session_state.session_start_time = datetime.now(timezone.utc)
+
+    if "usage_events" not in st.session_state:
+        st.session_state.usage_events = []
+
+    if "sessions" not in st.session_state:
+        st.session_state.sessions = []
 
 
 def get_or_create_anonymous_user_id() -> str:
-    if "anonymous_user_id" not in st.session_state:
-        st.session_state.anonymous_user_id = str(uuid.uuid4())
+    _ensure_analytics_state()
     return st.session_state.anonymous_user_id
 
 
 def get_session_start_time() -> datetime:
-    if "session_start_time" not in st.session_state:
-        st.session_state.session_start_time = datetime.now(timezone.utc)
+    _ensure_analytics_state()
     return st.session_state.session_start_time
 
 
@@ -33,13 +43,14 @@ def _safe_current_page() -> str:
 
 
 def log_usage_heartbeat() -> None:
+    _ensure_analytics_state()
+
     user_id = get_or_create_anonymous_user_id()
     start_time = get_session_start_time()
     now = datetime.now(timezone.utc)
     page = _safe_current_page()
 
-    store = json_store.get_json_store()
-    usage_events = store.get("usage_events", [])
+    usage_events = st.session_state.usage_events
 
     usage_events.append(
         {
@@ -53,18 +64,17 @@ def log_usage_heartbeat() -> None:
 
     # Keep list bounded
     if len(usage_events) > 5000:
-        usage_events = usage_events[-5000:]
-
-    store["usage_events"] = usage_events
+        st.session_state.usage_events = usage_events[-5000:]
 
 
 def update_session_duration() -> None:
+    _ensure_analytics_state()
+
     user_id = get_or_create_anonymous_user_id()
     start_time = get_session_start_time()
     now = datetime.now(timezone.utc)
 
-    store = json_store.get_json_store()
-    sessions = store.get("sessions", [])
+    sessions = st.session_state.sessions
 
     session = None
     for s in sessions:
@@ -87,10 +97,9 @@ def update_session_duration() -> None:
         session["total_seconds"] += delta
     session["last_heartbeat"] = now.isoformat()
 
+    # Keep list bounded
     if len(sessions) > 2000:
-        sessions = sessions[-2000:]
-
-    store["sessions"] = sessions
+        st.session_state.sessions = sessions[-2000:]
 
 
 def log_usage() -> None:
