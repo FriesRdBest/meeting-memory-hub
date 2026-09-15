@@ -5,7 +5,7 @@ from datetime import datetime, timezone
 
 import streamlit as st
 
-from repositories.json_store import get_json_store
+from repositories import json_store
 
 
 def get_or_create_anonymous_user_id() -> str:
@@ -38,7 +38,7 @@ def log_usage_heartbeat() -> None:
     now = datetime.now(timezone.utc)
     page = _safe_current_page()
 
-    store = get_json_store()
+    store = json_store.get_json_store()
     usage_events = store.get("usage_events", [])
 
     usage_events.append(
@@ -63,7 +63,7 @@ def update_session_duration() -> None:
     start_time = get_session_start_time()
     now = datetime.now(timezone.utc)
 
-    store = get_json_store()
+    store = json_store.get_json_store()
     sessions = store.get("sessions", [])
 
     session = None
