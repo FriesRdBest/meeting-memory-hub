@@ -11,8 +11,12 @@
       "SIG-004",
       "SIG-006"
     ],
-    "source_action_ids": [],
-    "source_reflection_ids": [],
+    "source_action_ids": [
+      "ACT-DEMO-001"
+    ],
+    "source_reflection_ids": [
+      "LRN-001"
+    ],
     "affected_accounts": 4,
     "proposed_owner": "Customer Success",
     "proposed_destination": "Product discovery",
@@ -32,8 +36,12 @@
       "SIG-002",
       "SIG-005"
     ],
-    "source_action_ids": [],
-    "source_reflection_ids": [],
+    "source_action_ids": [
+      "ACT-DEMO-002"
+    ],
+    "source_reflection_ids": [
+      "LRN-002"
+    ],
     "affected_accounts": 3,
     "proposed_owner": "Product Operations",
     "proposed_destination": "Roadmap review",
