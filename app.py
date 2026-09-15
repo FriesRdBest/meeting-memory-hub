@@ -201,9 +201,9 @@ pages = [
         icon=":material/info:",
         url_path="prototype-context",
     ),
-    # Hidden admin page for you only
+    # Admin-only usage page
     st.Page(
-        "pages/7_Usage.py",
+        "pages/6_Usage.py",
         title="Usage",
         icon=":material/insights:",
         url_path="usage",
