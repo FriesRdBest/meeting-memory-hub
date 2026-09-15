@@ -558,15 +558,18 @@ def inject_global_styles() -> None:
                 animation: mmcSoftPulse 1.8s infinite;
             }
 
-            /* Signal-themed loading animation */
-            @keyframes mmcSignalPulse {
-                0%, 100% {
-                    opacity: 0.25;
-                    transform: scale(0.98);
+            /* Pulsing signal rings loader */
+            @keyframes mmcSignalRingPulse {
+                0% {
+                    transform: scale(0.6);
+                    opacity: 0.9;
                 }
-                50% {
-                    opacity: 1;
-                    transform: scale(1.02);
+                70% {
+                    opacity: 0.25;
+                }
+                100% {
+                    transform: scale(1.6);
+                    opacity: 0;
                 }
             }
 
@@ -574,32 +577,46 @@ def inject_global_styles() -> None:
                 display: flex;
                 align-items: center;
                 justify-content: center;
-                gap: 0.5rem;
+                gap: 0.75rem;
                 padding: 2.5rem 1rem;
+                position: relative;
             }
 
-            .mmc-signal-dot {
+            .mmc-signal-ring {
+                position: absolute;
+                width: 3.2rem;
+                height: 3.2rem;
+                border-radius: 50%;
+                border: 2px solid rgba(47, 53, 255, 0.9);
+                box-shadow: 0 0 10px rgba(47, 53, 255, 0.5);
+                animation: mmcSignalRingPulse 1.6s ease-out infinite;
+            }
+
+            .mmc-signal-ring:nth-child(2) {
+                animation-delay: 0.25s;
+            }
+
+            .mmc-signal-ring:nth-child(3) {
+                animation-delay: 0.5s;
+            }
+
+            .mmc-signal-center {
+                position: relative;
                 width: 0.7rem;
                 height: 0.7rem;
                 border-radius: 50%;
-                background: rgba(47, 53, 255, 0.9);
-                box-shadow: 0 0 12px rgba(47, 53, 255, 0.6);
-                animation: mmcSignalPulse 1.2s ease-in-out infinite;
-            }
-
-            .mmc-signal-dot:nth-child(2) {
-                animation-delay: 0.15s;
-            }
-
-            .mmc-signal-dot:nth-child(3) {
-                animation-delay: 0.3s;
+                background: rgba(47, 53, 255, 0.95);
+                box-shadow: 0 0 12px rgba(47, 53, 255, 0.7);
+                z-index: 1;
             }
 
             .mmc-signal-loader-label {
+                position: relative;
                 color: var(--mmc-muted);
                 font-size: 0.9rem;
                 font-weight: 600;
-                margin-left: 0.5rem;
+                margin-left: 2.6rem;
+                z-index: 1;
             }
 
             @media (prefers-reduced-motion: reduce) {
@@ -780,9 +797,10 @@ def render_signal_loader(label: str = "Tuning into signals...") -> None:
     st.markdown(
         f"""
         <div class="mmc-signal-loader">
-            <div class="mmc-signal-dot"></div>
-            <div class="mmc-signal-dot"></div>
-            <div class="mmc-signal-dot"></div>
+            <div class="mmc-signal-ring"></div>
+            <div class="mmc-signal-ring"></div>
+            <div class="mmc-signal-ring"></div>
+            <div class="mmc-signal-center"></div>
             <div class="mmc-signal-loader-label">{escape(label)}</div>
         </div>
         """,
