@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from html import escape
 
+# ruff: noqa: E501
 import streamlit as st
 
 from config import APP_ICON, PROJECT_NAME, PROJECT_TAGLINE
