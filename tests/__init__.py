@@ -1,1 +1,1 @@
-"""Automated checks for Meeting Memory Console."""
+# Tests package for pattern-library
