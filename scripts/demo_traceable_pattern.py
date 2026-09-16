@@ -1,4 +1,10 @@
 from pathlib import Path
+import sys
+
+# Ensure the repo root is on sys.path so imports like `from models.action import Action` work
+ROOT = Path(__file__).resolve().parent.parent
+if str(ROOT) not in sys.path:
+    sys.path.insert(0, str(ROOT))
 
 from models.action import Action
 from models.pattern import Pattern
