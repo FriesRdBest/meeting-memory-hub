@@ -1,1 +1,3 @@
-"""Storage repositories for Meeting Memory Console."""
+from repositories.pattern_repository import PatternRepository
+
+__all__ = ["PatternRepository"]
