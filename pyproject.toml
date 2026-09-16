@@ -3,21 +3,15 @@ requires = ["setuptools>=61.0"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "meeting-memory-console"
+name = "pattern-library"
 version = "0.1.0"
-description = "From conversation to consequence"
+description = "Evidence-led pattern library for recurring product and customer insights"
 requires-python = ">=3.11"
-dependencies = [
-    "streamlit>=1.30.0",
-    "pydantic>=2.0.0",
-    "pandas>=2.0.0",
-    "plotly>=5.18.0",
-]
+dependencies = []
 
 [project.optional-dependencies]
 dev = [
-    "pytest>=7.4.0",
-    "ruff>=0.1.0",
+    "pytest>=8.0",
 ]
 
 [tool.pytest.ini_options]
