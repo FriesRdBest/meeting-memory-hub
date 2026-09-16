@@ -1,7 +1,5 @@
-from __future__ import annotations
-
-from models.pattern import Pattern
 from repositories.pattern_repository import PatternRepository
+from models.pattern import Pattern
 
 
 class PatternService:
