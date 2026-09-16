@@ -1,4 +1,5 @@
 from dataclasses import dataclass, field, asdict
+from typing import Optional
 
 
 @dataclass
@@ -15,13 +16,13 @@ class Pattern:
     affected_accounts: int
     proposed_owner: str
     proposed_destination: str
-    description: str
+    description: str = ""
     review_note: str = ""
     reviewed_by: str = ""
     reviewed_at: str = ""
 
     def __post_init__(self) -> None:
-        # Ensure list fields are lists (in case mutable default was passed)
+        # Ensure list fields are lists (defensive, in case mutable default was passed)
         if not isinstance(self.source_signal_ids, list):
             object.__setattr__(self, "source_signal_ids", list(self.source_signal_ids))
         if not isinstance(self.source_action_ids, list):
