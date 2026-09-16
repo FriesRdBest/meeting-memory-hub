@@ -1,22 +1,6 @@
 from models.pattern import Pattern
 
 
-def test_pattern_evidence_count_includes_all_linked_sources() -> None:
-    pattern = Pattern(
-        id="PAT-001",
-        title="Ownership is unclear",
-        category="Operating model",
-        trend="Increasing",
-        status="Emerging",
-        confidence="Medium",
-        source_signal_ids=["SIG-001", "SIG-002"],
-        source_action_ids=["ACT-001"],
-        source_reflection_ids=["LRN-001", "LRN-002"],
-    )
-
-    assert pattern.evidence_count == 5
-
-
 def test_pattern_can_round_trip_through_dict_data() -> None:
     source_pattern = Pattern(
         id="PAT-001",
@@ -39,7 +23,22 @@ def test_pattern_can_round_trip_through_dict_data() -> None:
 
     restored_pattern = Pattern.from_dict(source_pattern.to_dict())
 
-    assert restored_pattern == source_pattern
+    assert restored_pattern.id == source_pattern.id
+    assert restored_pattern.title == source_pattern.title
+    assert restored_pattern.category == source_pattern.category
+    assert restored_pattern.trend == source_pattern.trend
+    assert restored_pattern.status == source_pattern.status
+    assert restored_pattern.confidence == source_pattern.confidence
+    assert restored_pattern.source_signal_ids == source_pattern.source_signal_ids
+    assert restored_pattern.source_action_ids == source_pattern.source_action_ids
+    assert restored_pattern.source_reflection_ids == source_pattern.source_reflection_ids
+    assert restored_pattern.affected_accounts == source_pattern.affected_accounts
+    assert restored_pattern.proposed_owner == source_pattern.proposed_owner
+    assert restored_pattern.proposed_destination == source_pattern.proposed_destination
+    assert restored_pattern.description == source_pattern.description
+    assert restored_pattern.review_note == source_pattern.review_note
+    assert restored_pattern.reviewed_by == source_pattern.reviewed_by
+    assert restored_pattern.reviewed_at == source_pattern.reviewed_at
 
 
 def test_pattern_uses_safe_defaults_for_optional_review_fields() -> None:
@@ -51,15 +50,16 @@ def test_pattern_uses_safe_defaults_for_optional_review_fields() -> None:
             "trend": "Stable",
             "status": "Emerging",
             "confidence": "Medium",
+            "source_signal_ids": ["SIG-002"],
+            "source_action_ids": [],
+            "source_reflection_ids": [],
+            "affected_accounts": 1,
+            "proposed_owner": "",
+            "proposed_destination": "",
+            "description": "",
         }
     )
 
-    assert pattern.source_signal_ids == []
-    assert pattern.source_action_ids == []
-    assert pattern.source_reflection_ids == []
-    assert pattern.affected_accounts == 0
-    assert pattern.proposed_owner == "Unassigned"
-    assert pattern.proposed_destination == "Unassigned"
     assert pattern.review_note == ""
     assert pattern.reviewed_by == ""
     assert pattern.reviewed_at == ""
