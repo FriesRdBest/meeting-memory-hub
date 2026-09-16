@@ -1,1 +1,3 @@
-"""Shared UI and formatting utilities for Meeting Memory Console."""
+from models.pattern import Pattern
+
+__all__ = ["Pattern"]
