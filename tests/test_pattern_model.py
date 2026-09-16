@@ -31,7 +31,9 @@ def test_pattern_can_round_trip_through_dict_data() -> None:
     assert restored_pattern.confidence == source_pattern.confidence
     assert restored_pattern.source_signal_ids == source_pattern.source_signal_ids
     assert restored_pattern.source_action_ids == source_pattern.source_action_ids
-    assert restored_pattern.source_reflection_ids == source_pattern.source_reflection_ids
+    assert (
+        restored_pattern.source_reflection_ids == source_pattern.source_reflection_ids
+    )
     assert restored_pattern.affected_accounts == source_pattern.affected_accounts
     assert restored_pattern.proposed_owner == source_pattern.proposed_owner
     assert restored_pattern.proposed_destination == source_pattern.proposed_destination

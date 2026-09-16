@@ -84,8 +84,7 @@ def test_keep_watching_preserves_emerging_status() -> None:
     assert pattern.confidence == "High"
     assert pattern.reviewed_by == "Robin Sylvester"
     assert (
-        pattern.review_note
-        == "Wait for another completed outcome before confirming."
+        pattern.review_note == "Wait for another completed outcome before confirming."
     )
 
 

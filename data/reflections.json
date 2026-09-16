@@ -1,18 +1,10 @@
 [
   {
     "id": "LRN-001",
-    "action_id": "ACT-DEMO-001",
-    "outcome": "A revised onboarding checklist reduced the number of implementation questions raised during the first customer review.",
-    "learning": "New teams adopt the workflow more confidently when the first setup path is explicit, guided, and owned by Customer Success.",
-    "next_step": "Use the revised onboarding checklist for the next three new customer implementations and compare early adoption feedback.",
-    "recorded_at": "Sep 12, 2026 at 10:30 AM"
-  },
-  {
-    "id": "LRN-002",
-    "action_id": "ACT-DEMO-002",
-    "outcome": "A single owner was assigned to the reporting request review, which made the next roadmap discussion more focused and easier to close.",
-    "learning": "Reporting requests become more actionable when evidence is grouped by recurring user need rather than handled as isolated feature requests.",
-    "next_step": "Review the next set of reporting requests during the monthly product discovery session.",
-    "recorded_at": "Sep 13, 2026 at 02:15 PM"
+    "action_id": "ACT-001",
+    "outcome": "Checklist updated and deployed.",
+    "learning": "Early clarity reduces support load.",
+    "next_step": "Monitor onboarding tickets for change.",
+    "recorded_at": "2026-09-10"
   }
 ]

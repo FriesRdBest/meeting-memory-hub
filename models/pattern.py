@@ -1,5 +1,4 @@
-from dataclasses import dataclass, field, asdict
-from typing import Optional
+from dataclasses import asdict, dataclass
 
 
 @dataclass
@@ -28,7 +27,9 @@ class Pattern:
         if not isinstance(self.source_action_ids, list):
             object.__setattr__(self, "source_action_ids", list(self.source_action_ids))
         if not isinstance(self.source_reflection_ids, list):
-            object.__setattr__(self, "source_reflection_ids", list(self.source_reflection_ids))
+            object.__setattr__(
+                self, "source_reflection_ids", list(self.source_reflection_ids)
+            )
 
     @property
     def evidence_count(self) -> int:

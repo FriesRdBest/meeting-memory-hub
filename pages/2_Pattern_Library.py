@@ -161,8 +161,7 @@ def render_review_feedback() -> None:
 
     if feedback["saved"]:
         st.success(
-            f"{feedback['pattern_id']} is now recorded as "
-            f"'{feedback['decision']}'."
+            f"{feedback['pattern_id']} is now recorded as '{feedback['decision']}'."
         )
         return
 
@@ -285,10 +284,7 @@ def render_pattern_review(pattern: Pattern) -> None:
         )
 
         if pattern.reviewed_at:
-            st.caption(
-                f"Confirmed by {pattern.reviewed_by} · "
-                f"{pattern.reviewed_at}"
-            )
+            st.caption(f"Confirmed by {pattern.reviewed_by} · {pattern.reviewed_at}")
 
         if pattern.review_note:
             st.markdown("**Review note**")
@@ -482,18 +478,9 @@ with filter_columns[3]:
 filtered_patterns = [
     pattern
     for pattern in patterns
-    if (
-        selected_category == "All"
-        or pattern.category == selected_category
-    )
-    and (
-        selected_trend == "All"
-        or pattern.trend == selected_trend
-    )
-    and (
-        selected_status == "All"
-        or pattern.status == selected_status
-    )
+    if (selected_category == "All" or pattern.category == selected_category)
+    and (selected_trend == "All" or pattern.trend == selected_trend)
+    and (selected_status == "All" or pattern.status == selected_status)
     and matches_search(pattern, search_text)
 ]
 
@@ -507,28 +494,19 @@ with metric_columns[0]:
 with metric_columns[1]:
     render_metric(
         "Emerging",
-        sum(
-            pattern.status == "Emerging"
-            for pattern in filtered_patterns
-        ),
+        sum(pattern.status == "Emerging" for pattern in filtered_patterns),
     )
 
 with metric_columns[2]:
     render_metric(
         "Confirmed",
-        sum(
-            pattern.status == "Confirmed"
-            for pattern in filtered_patterns
-        ),
+        sum(pattern.status == "Confirmed" for pattern in filtered_patterns),
     )
 
 with metric_columns[3]:
     render_metric(
         "Evidence linked",
-        sum(
-            pattern.evidence_count
-            for pattern in filtered_patterns
-        ),
+        sum(pattern.evidence_count for pattern in filtered_patterns),
     )
 
 render_divider()

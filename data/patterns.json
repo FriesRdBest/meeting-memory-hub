@@ -1,75 +1,27 @@
 [
   {
     "id": "PAT-001",
-    "title": "Onboarding friction is becoming a repeatable adoption risk",
+    "title": "Onboarding friction is recurring",
     "category": "Customer experience",
     "trend": "Increasing",
-    "status": "Emerging",
+    "status": "Confirmed",
     "confidence": "High",
     "source_signal_ids": [
       "SIG-001",
-      "SIG-004",
-      "SIG-006"
+      "SIG-004"
     ],
     "source_action_ids": [
-      "ACT-DEMO-001"
+      "ACT-001"
     ],
     "source_reflection_ids": [
       "LRN-001"
     ],
     "affected_accounts": 4,
-    "proposed_owner": "Customer Success",
-    "proposed_destination": "Product discovery",
-    "description": "Multiple conversations point to early workflow friction that may be slowing adoption for new teams.",
-    "review_note": "",
-    "reviewed_by": "",
-    "reviewed_at": ""
-  },
-  {
-    "id": "PAT-002",
-    "title": "Reporting requests are forming a product theme",
-    "category": "Product insight",
-    "trend": "Stable",
-    "status": "Emerging",
-    "confidence": "Medium",
-    "source_signal_ids": [
-      "SIG-002",
-      "SIG-005"
-    ],
-    "source_action_ids": [
-      "ACT-DEMO-002"
-    ],
-    "source_reflection_ids": [
-      "LRN-002"
-    ],
-    "affected_accounts": 3,
     "proposed_owner": "Product Operations",
-    "proposed_destination": "Roadmap review",
-    "description": "Reporting needs have appeared in more than one conversation and may represent a broader product opportunity.",
-    "review_note": "",
-    "reviewed_by": "",
-    "reviewed_at": ""
-  },
-  {
-    "id": "PAT-003",
-    "title": "Important commitments are losing operational ownership",
-    "category": "Operating model",
-    "trend": "Increasing",
-    "status": "Emerging",
-    "confidence": "High",
-    "source_signal_ids": [
-      "SIG-003",
-      "SIG-007",
-      "SIG-008"
-    ],
-    "source_action_ids": [],
-    "source_reflection_ids": [],
-    "affected_accounts": 2,
-    "proposed_owner": "Leadership Operations",
-    "proposed_destination": "Leadership follow up",
-    "description": "Strategic commitments are being acknowledged in meetings without a consistent owner or visible next step.",
-    "review_note": "",
-    "reviewed_by": "",
-    "reviewed_at": ""
+    "proposed_destination": "Onboarding roadmap",
+    "description": "Early workflow friction is recurring for new teams.",
+    "review_note": "Consistent evidence across interviews and support tickets.",
+    "reviewed_by": "Robin Sylvester",
+    "reviewed_at": "Sep 16, 2026 at 02:30 PM"
   }
 ]

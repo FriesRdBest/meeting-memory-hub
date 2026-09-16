@@ -60,11 +60,7 @@ def initialise_state() -> None:
 def get_signal(signal_id: str) -> dict[str, str]:
     signals = st.session_state.get("signals", [])
 
-    return next(
-        signal
-        for signal in signals
-        if signal["id"] == signal_id
-    )
+    return next(signal for signal in signals if signal["id"] == signal_id)
 
 
 def get_action_for_signal(signal_id: str) -> Action | None:
@@ -82,8 +78,7 @@ def get_patterns_for_signal(signal_id: str) -> list[Pattern]:
     return [
         pattern
         for pattern in st.session_state.get("patterns", [])
-        if signal_id in pattern.source_signal_ids
-        and pattern.status != "Dismissed"
+        if signal_id in pattern.source_signal_ids and pattern.status != "Dismissed"
     ]
 
 
@@ -273,9 +268,7 @@ def render_action_feedback() -> None:
     feedback_saved = feedback["saved"]
 
     if feedback_saved:
-        st.success(
-            f"{feedback_signal_id} decision recorded: {feedback_decision}."
-        )
+        st.success(f"{feedback_signal_id} decision recorded: {feedback_decision}.")
         return
 
     st.warning(
@@ -408,10 +401,7 @@ st.info(
     "organization learned."
 )
 
-actions_by_signal = {
-    action.signal_id: action
-    for action in st.session_state.actions
-}
+actions_by_signal = {action.signal_id: action for action in st.session_state.actions}
 
 metric_columns = st.columns(4)
 
@@ -435,19 +425,13 @@ with metric_columns[1]:
 with metric_columns[2]:
     render_metric(
         "Work in progress",
-        sum(
-            action.status == "In progress"
-            for action in st.session_state.actions
-        ),
+        sum(action.status == "In progress" for action in st.session_state.actions),
     )
 
 with metric_columns[3]:
     render_metric(
         "Completed",
-        sum(
-            action.status == "Completed"
-            for action in st.session_state.actions
-        ),
+        sum(action.status == "Completed" for action in st.session_state.actions),
     )
 
 render_divider()
@@ -502,9 +486,7 @@ else:
     selected_signal_id = st.selectbox(
         "Choose a signal to review",
         options=[signal["id"] for signal in signals],
-        format_func=lambda signal_id: (
-            f"{signal_id} · {get_signal(signal_id)['title']}"
-        ),
+        format_func=lambda signal_id: f"{signal_id} · {get_signal(signal_id)['title']}",
     )
 
     selected_signal = get_signal(selected_signal_id)

@@ -1,35 +1,13 @@
 [
   {
-    "id": "ACT-DEMO-001",
+    "id": "ACT-001",
     "signal_id": "SIG-001",
-    "title": "New customer onboarding friction",
-    "description": "Review the onboarding evidence, confirm ownership, and improve the first workflow for new customer teams.",
-    "owner": "Customer Success",
-    "destination": "Product discovery",
-    "status": "Completed",
-    "due_date": "Sep 10, 2026",
-    "created_at": "Sep 05, 2026 at 09:30 AM"
-  },
-  {
-    "id": "ACT-DEMO-002",
-    "signal_id": "SIG-002",
-    "title": "Reporting needs are recurring",
-    "description": "Group repeated reporting requests, confirm product ownership, and prepare evidence for roadmap review.",
-    "owner": "Product Operations",
-    "destination": "Roadmap review",
-    "status": "Completed",
-    "due_date": "Sep 11, 2026",
-    "created_at": "Sep 06, 2026 at 01:15 PM"
-  },
-  {
-    "id": "ACT-DEMO-003",
-    "signal_id": "SIG-003",
-    "title": "Strategic commitments need ownership",
-    "description": "Review recurring ownership gaps and assign one accountable person to the next visible operational commitment.",
-    "owner": "Leadership Operations",
-    "destination": "Leadership follow up",
+    "title": "Improve onboarding checklist",
+    "description": "Clarify first-week steps for new teams.",
+    "owner": "Product",
+    "destination": "Onboarding flow",
     "status": "In progress",
-    "due_date": "Sep 18, 2026",
-    "created_at": "Sep 08, 2026 at 11:00 AM"
+    "due_date": "2026-10-15",
+    "created_at": "2026-09-01"
   }
 ]

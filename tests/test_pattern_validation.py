@@ -274,7 +274,4 @@ def test_valid_pattern_instantiates_without_error() -> None:
     assert pattern.affected_accounts == 1
     assert pattern.proposed_owner == "Customer Success"
     assert pattern.proposed_destination == "Product discovery"
-    assert (
-        pattern.description
-        == "Early workflow friction is recurring for new teams."
-    )
+    assert pattern.description == "Early workflow friction is recurring for new teams."

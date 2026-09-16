@@ -21,11 +21,7 @@ def read_records(file_path: Path) -> list[dict[str, object]]:
             f"Expected a list of records in {file_path}, but found another type."
         )
 
-    return [
-        record
-        for record in records
-        if isinstance(record, dict)
-    ]
+    return [record for record in records if isinstance(record, dict)]
 
 
 def write_records(
