@@ -1,100 +1,76 @@
-# Meeting Memory Console
+# Meeting Memory Hub
 
-Turn useful conversation signals into structured, reviewable workflow.
+A Streamlit workspace for turning meeting transcripts and notes into structured, searchable memory that supports follow-up, accountability, and institutional recall.
 
-## What this is
+The app ingests transcripts or notes, extracts decisions, actions, owners, and context, and exposes them through filters and search so teams can quickly reconstruct what was decided, who owns what, and why.
 
-Meeting Memory Console helps organizations:
+## Features
 
-- Surface meaningful signals from conversations
-- Group repeated signals into patterns
-- Propose destinations and owners for review
-- Record human decisions before action
-- Preserve outcomes and learning as organizational memory
+- **Ingest** — Paste or upload meeting transcripts and notes in common formats.
+- **Extract** — Derive decisions, action items, owners, deadlines, and context from raw text.
+- **Organize** — Group items by meeting, project, team, or owner.
+- **Search** — Find past decisions and commitments using keywords, people, or date ranges.
+- **Export** — Generate summaries for follow-up emails, status reports, or project documentation.
 
-The current build uses fictional demonstration data to make the intended operating model tangible and inspectable.
+## Local development
 
-## Quick start
+### Requirements
 
-1. Install dependencies:
+- Python 3.10 or later
+- `pip`
 
-   ```bash
-   pip install -r requirements.txt
-   ```
-
-2. Run the app:
-
-   ```bash
-   streamlit run app.py
-   ```
-
-3. Open the URL shown in your terminal.
-
-## Demo walkthrough
-
-For a guided end-to-end demo, see:
-
-- [docs/demo-walkthrough.md](docs/demo-walkthrough.md)
-
-This walks you through:
-
-- Signal Desk → Action Queue → Learning Loop
-- Creating an action from SIG-001
-- Recording a reflection and seeing the full trace
-
-## Testing and code quality
-
-Run tests.
+### Setup
 
 ```bash
-python -m pytest tests/
+git clone https://github.com/FriesRdBest/meeting-memory-hub.git
+cd meeting-memory-hub
+python -m venv .venv
+source .venv/bin/activate
+python -m pip install -r requirements.txt
+python -m streamlit run app.py
 ```
 
-Check formatting.
+On Windows PowerShell:
 
-```bash
-python -m ruff format --check .
+```powershell
+.venv\Scripts\Activate.ps1
+python -m pip install -r requirements.txt
+python -m streamlit run app.py
 ```
 
-Run linting.
+Streamlit will provide a local URL, normally `http://localhost:8501`.
 
-```bash
-python -m ruff check .
+## Repository structure
+
+```text
+.
+├── app.py                 # Streamlit application
+├── config.py              # Configuration helpers
+├── pages/                 # Additional Streamlit pages
+├── models/                # Data models and schemas
+├── services/              # Core services (parsing, extraction, export)
+├── utils/                 # Shared utilities
+├── tests/                 # Unit and integration tests
+├── data/                  # Example transcripts and fixtures
+├── docs/                  # Documentation and usage notes
+├── scripts/               # Build and maintenance scripts
+├── repositories/          # Data-access abstractions
+├── requirements.txt       # Runtime dependencies
+├── pyproject.toml         # Project metadata and tooling
+├── .github/               # GitHub configuration
+├── .streamlit/            # Streamlit configuration
+├── .devcontainer/         # Codespaces / dev container setup
+├── CHANGELOG.md           # Notable changes
+├── CONTRIBUTING.md        # Contribution guidance
+└── LICENSE                # Apache License 2.0
 ```
 
-Apply formatting locally.
+## Contributing
 
-```bash
-python -m ruff format .
-```
+Contributions and focused feedback are welcome. Please read [CONTRIBUTING.md](CONTRIBUTING.md) before opening an issue or pull request.
 
-### Automated quality checks
+## License
 
-This branch includes automated tests that run before a pull request is considered for merge.
+Copyright 2026 Robin Sylvester.
 
-- `tests/test_models.py` — Domain model round trip tests
-- `tests/test_json_store.py` — JSON storage helper tests
-- `tests/test_repositories.py` — Repository layer tests
-- `tests/test_services.py` — Service layer tests
-- `tests/test_workflow.py` — End to end workflow test
-- `tests/test_quality_checks.py` — Quality checks before merge
-
-GitHub Actions runs these tests automatically on every push and pull request to `main`.
-
-## Documentation
-
-See the [docs/](docs/) folder for:
-
-- [Architecture](docs/architecture.md)
-- [Privacy and limitations](docs/privacy-and-limitations.md)
-- [Quality checks](docs/quality_checks.md)
-- [Demo walkthrough](docs/demo-walkthrough.md)
-
-## Next steps
-
-This prototype demonstrates the operating model. A production implementation would add:
-
-- Live meeting ingestion
-- Authentication and access control
-- Production security and privacy controls
-- Integration with existing systems
+Licensed under the [Apache License, Version 2.0](LICENSE).
